@@ -884,6 +884,59 @@ div.PropItem:hover {
     font-family: Noyland;
     float:right;
 }
+div.PropItemStrain {
+    float: right;
+    background-color: #fff;
+    border-bottom: 2px dotted #ede7d5;
+    margin: 5px;
+    padding: 5px;
+    color: #0d4133;
+    font-size: 18px;
+    font-family: Noyland;
+    width: 90%;
+    text-align: right;
+}
+div.PropItemStrainTitle {
+    float: right;
+    background-color: #fff;
+    /*border: 2px solid #0d4133;*/
+    margin: 15px;
+       color: #0d4133;
+    font-size: 24px;
+    font-family: Noyland;
+ }
+div.PropItemStrainSubTitle {
+    float: right;
+    background-color: #fff;
+    /*border: 2px solid #0d4133;*/
+    margin: 5px;
+    color: #ab6c00;
+    font-size: 14px;
+    font-family: Noyland;
+}
+
+div.PropItemStrainBtn {
+    float: left;
+    background-color: #fff;
+    margin-top: 25px;
+    color: #ab6c00;
+    font-size: 24px;
+    font-family: Noyland;
+    cursor:pointer;
+}
+    div.PropItemStraiqwn:hover {
+        background-color: #0d4133;
+        /* border: 2px solid #0d4133;*/
+        margin: 5px;
+        padding: 5px;
+        border-radius: 20px;
+        color: #fff;
+        font-size: 18px;
+        font-family: Noyland;
+        float: right;
+        width: 90%;
+        text-align: center;
+    }
 
 div.infLabel {
     overflow: auto;

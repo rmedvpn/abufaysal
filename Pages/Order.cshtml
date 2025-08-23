@@ -31,6 +31,9 @@
 
     sqlSelect = "SELECT * FROM strainOptions WHERE is_active=1";
     var strainOptions = faysal.Query(sqlSelect);
+
+    int strainCnt = 0;
+
 }
 
 
@@ -117,6 +120,30 @@
                                 <button class="accordion" id="AccStrain" style="display:none"></button>
                                 <div class="panel" style="width:90%">
                                     <div class="PropItemMenu">
+
+                                        @foreach (var item in strainOptions)
+                                        {
+                                            strainCnt++;
+                                            string floatDir = "right";
+                                            if (strainCnt % 2 == 0) { floatDir = "left"; }
+                                            <div class="PropItemStrain" >
+                                                <div class="B" style="float:right">
+                                                    <div class="B" style="float:right;width:80px;text-align:center">
+                                                        <img style="height: 60px;max-width: 60px;border-radius: 10px;margin: 3px;padding: 3px;" src="pImgView?strain_id=@item.id" />
+                                                    </div>
+                                                    
+                                                    <div class="PropItemStrainTitle">
+                                                        <div class="B">@item.title</div>
+                                                        <div class="PropItemStrainSubTitle" style="font-size:16px;">@item.cat_title</div>
+                                                        </div>
+                                                    
+                                                </div>
+                                                
+                                                <div class="PropItemStrainBtn" style="display:none" >+</div>
+                                                <div class="PropItemStrainBtn">+</div>
+                                            </div>
+                                        }
+
                                         <select class="PropSelector" id="strain" name="strain" onchange="CalcItemCost();" style="display:none;">
                                             <option value="0">נא לבחור את הזן המבוקש..</option>
                                             @foreach (var item in strainOptions)

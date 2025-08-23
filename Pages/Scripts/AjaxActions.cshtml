@@ -21,7 +21,7 @@
         Request.HasFormContentType && Request.Form.ContainsKey(key)
             ? Request.Form[key].ToString()
             : Request.Query.ContainsKey(key)
-                ? Request.Query[key].ToString()
+        ? Request.Query[key].ToString()
                 : "";
 
     DateTime local_time = AppFunctions.LocalTime();
