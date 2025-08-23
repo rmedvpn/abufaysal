@@ -1,0 +1,942 @@
+﻿@page
+@using System.Data.SqlClient
+@using Dapper
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Mvc.RazorPages
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration Configuration
+@functions {
+    public void OnPost()
+    {
+        // Logic will be placed here
+    }
+}
+@{
+    Layout = null; // This is an AJAX-only endpoint, no layout needed
+    var context = HttpContextAccessor.HttpContext;
+    var request = context.Request;
+    var connectionString = Configuration.GetConnectionString("m_join");
+
+    var sqlSelect = "";
+    string theAction = "";
+    string theValue = "";
+    string theHtmlOutput = "";
+    string logMsg = "";
+    System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("he-IL");
+
+    DateTime local_time = AppFunctions.LocalTime();
+
+    theAction = Request["theAction"];
+    theValue = Request["value"];
+
+    string username = "";
+
+
+    switch (theAction)
+    {
+        case "":
+            theHtmlOutput = "ERROR";
+            break;
+
+        case "RegisterProspect":
+            if (true)
+            {
+                bool is_valid_entry = true;
+                string validationFailureMsg = "!$!";
+                string prospect_name = Request["prospect_name"];
+                DateTime birth_date = Convert.ToDateTime("1/1/1900");
+                int gender = 0; try { gender = Convert.ToInt32(Request["gender"]); } catch { }
+                string city = Request["city"];
+                string wanum = Request["wanum"];
+                string email = Request["email"];
+                string tlg_nick = Request["tlg_nick"];
+                string fb = Request["fb"];
+                string instagram = Request["instagram"];
+                string ref_source = Request["ref_source"];
+                string occupation = Request["occupation"];
+                string more_info = Request["more_info"];
+                string involvement = Request["involvement"];
+                string inv_other_desc = Request["inv_other_desc"];
+                string ref_source_desc = Request["ref_source_desc"];
+                string ref_source_other = Request["ref_source_other"];
+                int ref_id = 0; try { ref_id = Convert.ToInt32(Request["ref_id"]); } catch { }
+                int aff_id = 0; try { aff_id = Convert.ToInt32(Request["aff_id"]); } catch { }
+                string usage_habits = ""; usage_habits = Request["usage_habits"];
+                string ref_txt = "";
+                bool is_license = false; if (Request["is_license"] == "yes") { is_license = true; }
+                string license_info = Request["license_info"];
+                bool involvement_volunteer = false; if (!Request["involvement_volunteer"].IsEmpty()) { involvement_volunteer = true; }
+                bool involvement_paid = false; if (!Request["involvement_paid"].IsEmpty()) { involvement_paid = true; }
+                bool involvement_social = false; if (!Request["involvement_social"].IsEmpty()) { involvement_social = true; }
+                bool involvement_other = false; if (!Request["involvement_other"].IsEmpty()) { involvement_other = true; }
+                string involvement_other_info = Request["involvement_other_info"];
+                string lang = Request["lang"];
+                int age = 0;
+
+                try { birth_date = Convert.ToDateTime(Request["birth_date"]); } catch { birth_date = Convert.ToDateTime("1/1/1900"); }
+
+                if (birth_date != Convert.ToDateTime("1/1/1900"))
+                {
+                    DateTime zeroTime = new DateTime(1, 1, 1);
+                    TimeSpan span = local_time - birth_date;
+                    age = (zeroTime + span).Year - 1;
+                }
+
+                if (lang == "en")
+                {
+                    if (birth_date == Convert.ToDateTime("1/1/1900") || age < 0) { is_valid_entry = false; validationFailureMsg += "Please enter valid birth date!<BR>"; }
+                    if (age < 18 && age > 0) { is_valid_entry = false; validationFailureMsg += "18 is the minimum age to join us!<br>"; }
+                    if (prospect_name == "") { is_valid_entry = false; validationFailureMsg += "Full name is a required field!<br>"; }
+                    if (city == "") { is_valid_entry = false; validationFailureMsg += "City is a required field!<br>"; }
+                    if (wanum == "") { is_valid_entry = false; validationFailureMsg += "WhatsApp# is a required field!<br>"; }
+                    if (ref_source == "") { is_valid_entry = false; validationFailureMsg += "Please specify how did you find us!<br>"; }
+                    if (ref_source == "other" && ref_source_other == "") { is_valid_entry = false; validationFailureMsg += "Please specify how did you find us!<br>"; }
+                    if (usage_habits == "") { is_valid_entry = false; validationFailureMsg += "Usage habbits is a required field!<br>"; }
+                    if (ref_source == "other") { ref_source_desc = ref_source_other; }
+                }
+                else
+                {
+                    if (birth_date == Convert.ToDateTime("1/1/1900") || age < 0) { is_valid_entry = false; validationFailureMsg += "תאריך לידה לא תקין!<BR>"; }
+                    if (age < 18 && age > 0) { is_valid_entry = false; validationFailureMsg += "ההצטרפות מגיל 18 בלבד!<br>"; }
+                    if (prospect_name == "") { is_valid_entry = false; validationFailureMsg += "שם הוא שדה חובה!<br>"; }
+                    if (city == "") { is_valid_entry = false; validationFailureMsg += "עיר הוא שדה חובה!<br>"; }
+                    if (wanum == "") { is_valid_entry = false; validationFailureMsg += "מספר ווטסאפ הוא שדה חובה!<br>"; }
+                    if (ref_source == "") { is_valid_entry = false; validationFailureMsg += "חובה לציין איך הגעת אלינו!<br>"; }
+                    if (ref_source == "other" && ref_source_other == "") { is_valid_entry = false; validationFailureMsg += "חובה לפרט איך הגעת אלינו!<br>"; }
+                    if (usage_habits == "") { is_valid_entry = false; validationFailureMsg += "חובה לציין הרגלי צריכה!<br>"; }
+                    if (ref_source == "other") { ref_source_desc = ref_source_other; }
+                }
+
+
+                if (is_valid_entry)
+                {
+                    try { wanum = AppFunctions.wanumize(wanum); } catch { }
+                    var m_join = Database.Open("m_join");
+                    sqlSelect = "SELECT serial FROM webprospects WHERE wanum=@0";
+                    var checkDup = m_join.QuerySingle(sqlSelect, wanum);
+                    if (checkDup == null)
+                    {
+                        sqlSelect = "INSERT INTO WebProspects (ts,prospect_name,birth_date,gender,city,wanum,email,fb,instagram,tlg_nick,ref_txt,occupation,refer_id,ref_source,usage_habits,ref_source_desc,more_info,is_license,license_info,involvement_volunteer,involvement_paid,involvement_social,involvement_other,involvement_other_info) VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19,@20,@21,@22,@23)";
+                        m_join.Execute(sqlSelect, local_time, prospect_name, birth_date, gender, city, wanum, email, fb, instagram, tlg_nick, ref_txt, occupation, ref_id, ref_source, usage_habits, ref_source_desc, more_info, is_license, license_info, involvement_volunteer, involvement_paid, involvement_social, involvement_other, involvement_other_info);
+                        AppFunctions.WriteWebStats("LEAD", 1, ref_id);
+                        theHtmlOutput = " הכל תקין!";
+                    }
+                    else
+                    {
+                        if (lang == "en") { validationFailureMsg += "The WhatsApp# you are trying to register already exists in our system, we will contact you shortly!<br>"; }
+                        else { validationFailureMsg += "מספר הטלפון שהוזן כבר קיים, בקרוב ניצור איתך קשר!<br>"; }
+
+                        theHtmlOutput = validationFailureMsg;
+                    }
+
+                    m_join.Close();
+
+                }
+                else
+                {
+                    theHtmlOutput = validationFailureMsg;
+
+                }
+            }
+            break;
+
+        case "NickSelect":
+            if (true)
+            {
+                int prospect_id = 0; try { prospect_id = Convert.ToInt32(Request["i1"]); } catch { };
+                int wanum_code = 0; try { wanum_code = Convert.ToInt32(Request["i2"]); } catch { };
+                int approval_id = 0; try { approval_id = Convert.ToInt32(Request["i3"]); } catch { };
+
+                string requested_nick = Request["requested_nick"];
+                requested_nick = requested_nick.Trim();
+
+                if (requested_nick.Length < 4)
+                {
+                    theHtmlOutput = "!$!חובה לבחור כינוי בעל 4 תווים לפחות!";
+                }
+
+                if (requested_nick == "")
+                {
+                    theHtmlOutput = "!$!חובה לבחור כינוי!";
+                }
+                if (theHtmlOutput == "")
+                {
+                    var m_join = Database.Open("m_join");
+
+                    sqlSelect = "SELECT * FROM prospectsapprovals WHERE prospect_id=@0 AND wanum_code=@1";
+                    var rsChk = m_join.QuerySingle(sqlSelect, prospect_id, wanum_code);
+                    if (rsChk != null)
+                    {
+                        sqlSelect = "UPDATE prospectsapprovals SET is_completed=1,requested_nick=@0, complete_ts=@1 WHERE serial=@2";
+                        m_join.Execute(sqlSelect, requested_nick, local_time, approval_id);
+                        sqlSelect = "UPDATE webprospects SET status_code=3,status_change_ts=@0 WHERE serial=@1";
+                        m_join.Execute(sqlSelect, local_time, prospect_id);
+                    }
+                    else
+                    {
+                        theHtmlOutput = "!$!משהו השתבש!";
+                    }
+
+                }
+            }
+            break;
+
+        case "ReviewOrder":
+            if (true)
+            {
+                bool is_valid_entry = true;
+                string validationFailureMsg = "!$!";
+                string nick_name = Request["nick_name"];
+                string lang = Request["lang"];
+                string wanum = Request["wanum"];
+                int menu_id = 0; try { menu_id = Convert.ToInt32(Request["menu_id"]); } catch { }
+                string address = Request["address"];
+                string city = Request["city"];
+                string order_body = Request["order_body"];
+                int donation = 0; try { donation = Convert.ToInt32(Request["donation"]); } catch { donation = 0; }
+                string orderpw = Request["orderpw"];
+                bool is_new_member = false; if (!Request["is_new_member"].IsEmpty()) { is_new_member = true; }
+                string full_name= Request["full_name"];
+                string email = Request["email"];
+                string ref_source= Request["ref_source"];
+                string ref_source_desc = Request["ref_source_desc"];
+                string ref_source_other = Request["ref_source_other"];
+                DateTime birth_date = Convert.ToDateTime("1/1/1900");
+                bool is_ship_phone = false; if (!Request["is_ship_phone"].IsEmpty()) { is_ship_phone = true; }
+                string ship_name = Request["ship_name"];
+                string ship_phone = Request["ship_phone"];
+                bool is_postponed = false; if (Request["is_for_today"].IsEmpty()) { is_postponed = true; }
+                DateTime shipping_date = Convert.ToDateTime("1/1/1900");
+                string shipping_time = Request["shipping_time"];
+                string ver = Request["ver"];
+
+                if (lang.IsEmpty()) { lang = "he"; }
+
+                if (lang == "en")
+                {
+
+                    if (is_new_member)
+                    {
+
+                        try { birth_date = Convert.ToDateTime(Request["birth_date"]); } catch { is_valid_entry = false; validationFailureMsg += "Birth Date is a required field!<br>"; }
+                        if (full_name == "") { is_valid_entry = false; validationFailureMsg += "Full name is a required field!<br>"; }
+
+                        if (ref_source == "") { is_valid_entry = false; validationFailureMsg += "How did you reach us is a required field!<br>"; }
+                        if (ref_source == "other" && ref_source_other == "") { is_valid_entry = false; validationFailureMsg += "How did you reach us is a required field!<br>"; }
+
+                    }
+                    else
+                    {
+                        if (nick_name == "") { is_valid_entry = false; validationFailureMsg += "Nick Name is a required field!<br>"; }
+                        if (orderpw == "") { is_valid_entry = false; validationFailureMsg += "Daily Password is a required field!<br>"; }
+                        if (is_ship_phone) { if (ship_name == "" || ship_phone == "") { is_valid_entry = false; validationFailureMsg += "Plese enter recipient's contact infotmation!<br>"; } }
+
+                    }
+
+                    if (is_postponed)
+                    {
+                        try { shipping_date = Convert.ToDateTime(Request["shipping_date"]); } catch { is_valid_entry = false; validationFailureMsg += "Shipping Date is a required field!<br>"; }
+                        if (shipping_time == "") { is_valid_entry = false; validationFailureMsg += "Shipping Time is a required field!<br>"; }
+                    }
+                    else
+                    {
+                        if (menu_id == 0) { is_valid_entry = false; validationFailureMsg += "Delivery Method is a required field!<br>"; }
+                    }
+
+                    if (wanum == "") { is_valid_entry = false; validationFailureMsg += "WhatsApp# is a required field!<br>"; }
+                    if (!ValidationFunctions.IsNumbersOnly(wanum) || wanum.Length < 10) { is_valid_entry = false; validationFailureMsg += "Please enter a valid whatsApp#, digits only!<br>"; }
+
+
+                    if (address == "") { is_valid_entry = false; validationFailureMsg += "Delivery Address is a required field!<br>"; }
+
+                    if (city == "") { is_valid_entry = false; validationFailureMsg += "Delivery City is a required field!<br>"; }
+
+                    if (order_body == "") { is_valid_entry = false; validationFailureMsg += "Requested order is a required field!<br>"; }
+
+                    if (Request["is_terms"].IsEmpty() || Request["is_disc"].IsEmpty()) { is_valid_entry = false; validationFailureMsg += "You must accept our terms & disclousre!<br>"; }
+
+
+                }
+                else
+                {
+                    if (is_new_member)
+                    {
+
+                        try { birth_date = Convert.ToDateTime(Request["birth_date"]); } catch { is_valid_entry = false; validationFailureMsg += "תאריך לידה הוא שדה חובה!<br>"; }
+                        if (full_name == "") { is_valid_entry = false; validationFailureMsg += "שם מלא הוא שדה חובה!<br>"; }
+
+                        if (ref_source == ""){is_valid_entry = false; validationFailureMsg += "איך הגעת אלינו הוא שדה חובה!<br>";}
+                        if (ref_source == "other" && ref_source_other==""){ is_valid_entry = false; validationFailureMsg += "חובה לפרט איך הגעת אלינו!<br>"; }
+
+                    }
+                    else
+                    {
+                        if (nick_name == "") { is_valid_entry = false; validationFailureMsg += "כינוי מזהה הוא שדה חובה!<br>"; }
+                        if (orderpw == "") { is_valid_entry = false; validationFailureMsg += "חובה להזין סיסמת הזמנות יומית!<br>"; }
+                        if (is_ship_phone){if (ship_name == "" || ship_phone=="") { is_valid_entry = false; validationFailureMsg += "חובה להזין את פרטי הקשר של מקבל.ת המשלוח!<br>"; }                                }
+
+                    }
+
+                    if (is_postponed)
+                    {
+                        try { shipping_date = Convert.ToDateTime(Request["shipping_date"]); } catch { is_valid_entry = false; validationFailureMsg += "תאריך למשלוח הוא שדה חובה!<br>"; }
+                        if (shipping_time == "") { is_valid_entry = false; validationFailureMsg += "זמן למשלוח הוא שדה חובה!<br>"; }
+                    }
+                    else
+                    {
+                        if (menu_id == 0) { is_valid_entry = false; validationFailureMsg += "חובה לבחור סוג משלוח!<br>"; }
+                    }
+
+                    if (wanum == "") { is_valid_entry = false; validationFailureMsg += "מספר ווטסאפ הוא שדה חובה!<br>"; }
+                    if (!ValidationFunctions.IsNumbersOnly(wanum) || wanum.Length < 10) { is_valid_entry = false; validationFailureMsg += "נא להזין מספר ווטסאפ תקין, ספרות בלבד!<br>"; }
+
+                    // if (menu_id == 0) { is_valid_entry = false; validationFailureMsg += "חובה לבחור סוג משלוח!<br>"; }
+
+                    if (address == "") { is_valid_entry = false; validationFailureMsg += "כתובת למשלוח הוא שדה חובה!<br>"; }
+
+                    if (city == "") { is_valid_entry = false; validationFailureMsg += "עיר למשלוח הוא שדה חובה!<br>"; }
+
+                    if (order_body == "") { is_valid_entry = false; validationFailureMsg += "חובה לציין מה ברצונך להזמין!<br>"; }
+
+                    if (Request["is_terms"].IsEmpty() || Request["is_disc"].IsEmpty()) { is_valid_entry = false; validationFailureMsg += "חובה לקבל את הנהלים ואת הגילוי הנאות!<br>"; }
+
+
+                }
+
+
+
+
+
+
+                if (is_valid_entry)
+                {
+                    theHtmlOutput = "sadfsfsdfS";
+                    /*
+                    try { wanum = AppFunctions.wanumize(wanum); } catch { }
+                    var m_join = Database.Open("m_join");
+                    sqlSelect = "SELECT serial FROM webprospects WHERE wanum=@0";
+                    var checkDup = m_join.QuerySingle(sqlSelect, wanum);
+                    if (checkDup == null)
+                    {
+                        sqlSelect = "INSERT INTO WebProspects (ts,prospect_name,birth_date,gender,city,wanum,email,fb,instagram,tlg_nick,ref_txt,occupation,refer_id,ref_source,usage_habits,ref_source_desc,more_info,is_license,license_info,involvement_volunteer,involvement_paid,involvement_social,involvement_other,involvement_other_info) VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19,@20,@21,@22,@23)";
+                        m_join.Execute(sqlSelect, local_time, prospect_name, birth_date, gender, city, wanum, email, fb, instagram, tlg_nick, ref_txt, occupation, ref_id, ref_source, usage_habits, ref_source_desc, more_info, is_license, license_info, involvement_volunteer, involvement_paid, involvement_social, involvement_other, involvement_other_info);
+                        AppFunctions.WriteWebStats("LEAD", 1, ref_id);
+                        theHtmlOutput = " הכל תקין!";
+                    }
+                    else
+                    {
+                        validationFailureMsg += "מספר הטלפון שהוזן כבר קיים, בקרוב ניצור איתך קשר!<br>";
+                        theHtmlOutput = validationFailureMsg;
+                    }
+
+                    m_join.Close();
+                    */
+                }
+                else
+                {
+                    theHtmlOutput = validationFailureMsg;
+
+                }
+            }
+            break;
+        case "PlaceOrder":
+            if (true)
+            {
+                bool is_ok = true;
+                string validationFailureMsg = "!$!";
+                string nick_name = Request["nick_name"];
+                string wanum = Request["wanum"];
+                int menu_id = 0; try { menu_id = Convert.ToInt32(Request["menu_id"]); } catch { }
+                string address = Request["address"];
+                string city = Request["city"];
+                string order_body = Request["order_body"];
+                string menu_title = Request["menu_title"];
+                int donation = 0; try { donation = Convert.ToInt32(Request["donation"]); } catch { donation = 0; }
+                string orderpw = Request["orderpw"];
+                string langCode = Request["lang"];
+                int lang = 0;
+                if (langCode == "he") { lang = 1; }
+                if (langCode == "en") { lang = 2; }
+                int active_orders_count = 0;
+                bool is_new_member = false; if (!Request["is_new_member"].IsEmpty()) { is_new_member = true; }
+                string full_name = Request["full_name"];
+                string email = Request["email"];
+                string ref_source = Request["ref_source"];
+                string ref_source_desc = Request["ref_source_desc"];
+                string ref_source_other = Request["ref_source_other"];
+                DateTime birth_date = Convert.ToDateTime("1/1/1900");
+                try { birth_date = Convert.ToDateTime(Request["birth_date"]); } catch { }
+                bool is_ship_phone = false; if (!Request["is_ship_phone"].IsEmpty()) { is_ship_phone = true; }
+                string ship_name = Request["ship_name"];
+                string ship_phone = Request["ship_phone"];
+                bool is_postponed = false; if (!Request["is_postponed"].IsEmpty()) { is_postponed = true; }
+                DateTime shipping_date = Convert.ToDateTime("1/1/1900"); try { shipping_date = Convert.ToDateTime(Request["shipping_date"]); } catch { }
+                string shipping_time = Request["shipping_time"];
+
+                int ref_id = 0; try { ref_id = Convert.ToInt32(Session["ref_id"]); } catch { };
+                int aff_id = 0; try { aff_id = Convert.ToInt32(Session["aff_id"]); } catch { };
+
+                try { wanum = AppFunctions.wanumize(wanum); } catch { }
+                var m_join = Database.Open("m_join");
+
+                sqlSelect = "SELECT count(serial) AS the_cnt FROM WebOrders WHERE wanum=@0";
+                var secCheck = m_join.QuerySingle(sqlSelect, wanum);
+                active_orders_count = secCheck.the_cnt;
+                if (active_orders_count <= 5)
+                {
+                    sqlSelect = "INSERT INTO WebOrders (o_id,orderpw,ts,nick_name,city,wanum,orderBody,termsOK,m_id,delivery_option,lang,menu_id,address,pb_id,donation,menu_title,is_new_member,full_name,email,ref_source,ref_source_desc,birth_date,ref_id,aff_id,is_ship_phone,ship_phone,ship_name,is_postponed,shipping_date,shipping_time) VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19,@20,@21,@22,@23,@24,@25,@26,@27,@28,@29)";
+                    //try { m_join.Execute(sqlSelect, 0, orderpw, local_time, nick_name, city, wanum, order_body, 1, 0, menu_title, lang, menu_id, address, 0, donation, menu_title, is_new_member, full_name, email, ref_source, ref_source_desc, birth_date, ref_id, aff_id); } catch { is_ok = false; }
+                    m_join.Execute(sqlSelect, 0, orderpw, local_time, nick_name, city, wanum, order_body, 1, 0, menu_title, lang, menu_id, address, 0, donation, menu_title, is_new_member, full_name, email, ref_source, ref_source_desc, birth_date, ref_id, aff_id, is_ship_phone, ship_phone, ship_name,is_postponed,shipping_date,shipping_time);
+
+                }
+                else
+                {
+                    is_ok = false;
+                    theHtmlOutput = "בעיה בהזמנה";
+                }
+
+
+                if (is_ok)
+                {
+
+                    AppFunctions.WriteWebStats("ORDER", 1, ref_id);
+                    theHtmlOutput = "";
+                }
+                else
+                {
+                    theHtmlOutput = "!$!";
+                }
+
+                m_join.Close();
+
+
+
+            }
+            break;
+
+
+        case "ReviewOrderFeedback":
+            if (true)
+            {
+                bool is_valid_entry = true;
+                string validationFailureMsg = "!$!";
+
+                DateTime defDate = Convert.ToDateTime("1/1/1900");
+
+                DateTime order_date = defDate; try { order_date = Convert.ToDateTime(Request["order_date"]); } catch { }
+                string nick_name = Request["nick_name"];
+                string lang = Request["lang"];
+                string wanum = Request["wanum"];
+                int menu_id = 0; try { menu_id = Convert.ToInt32(Request["menu_id"]); } catch { }
+                int gen_sat_grade = 0; try { gen_sat_grade = Convert.ToInt32(Request["gen_sat_grade"]); } catch { }
+                int prod_qual_grade = 0; try { prod_qual_grade = Convert.ToInt32(Request["prod_qual_grade"]); } catch { }
+                int delivery_grade = 0; try { delivery_grade = Convert.ToInt32(Request["delivery_grade"]); } catch { }
+                int is_ok_weight = 0; try { is_ok_weight = Convert.ToInt32(Request["is_ok_weight"]); } catch { }
+                int is_happy = 0; try { is_happy = Convert.ToInt32(Request["is_happy"]); } catch { }
+                int is_contact = 0; try { is_contact = Convert.ToInt32(Request["is_contact"]); } catch { }
+                string order_notes = Request["order_notes"];
+
+
+
+                if (lang.IsEmpty()) { lang = "he"; }
+
+                if (lang == "en")
+                {
+                    if (order_date == defDate || order_date > local_time) { is_valid_entry = false; validationFailureMsg += "Valid order date is required!<br>"; }
+
+                    if (nick_name == "") { is_valid_entry = false; validationFailureMsg += "Nick Name is a required field!<br>"; }
+
+                    if (wanum == "") { is_valid_entry = false; validationFailureMsg += "WhatsApp# is a required field!<br>"; }
+                    if (!ValidationFunctions.IsNumbersOnly(wanum) || wanum.Length < 10) { is_valid_entry = false; validationFailureMsg += "Please enter a valid whatsApp#, digits only!<br>"; }
+                    if (gen_sat_grade == 0) { is_valid_entry = false; validationFailureMsg += "Please rate your general satisfaction!<br>"; }
+                    if (menu_id == 0) { is_valid_entry = false; validationFailureMsg += "Please select delivery method!<br>"; }
+
+
+
+                }
+                else
+                {
+
+                    if(order_date==defDate || order_date > local_time) { is_valid_entry = false; validationFailureMsg += "חובה להזין תאריך תקין!<br>"; }
+
+                    if (nick_name == "") { is_valid_entry = false; validationFailureMsg += "כינוי מזהה הוא שדה חובה!<br>"; }
+
+                    if (wanum == "") { is_valid_entry = false; validationFailureMsg += "מספר ווטסאפ הוא שדה חובה!<br>"; }
+                    if (!ValidationFunctions.IsNumbersOnly(wanum) || wanum.Length < 10) { is_valid_entry = false; validationFailureMsg += "נא להזין מספר ווטסאפ תקין, ספרות בלבד!<br>"; }
+                    if (gen_sat_grade == 0) { is_valid_entry = false; validationFailureMsg += "חובה לציין שביעות רצון כללית מההזמנה!<br>"; }
+                    if (menu_id == 0) { is_valid_entry = false; validationFailureMsg += "חובה לבחור באיזה אופן סופקה ההזמנה!<br>"; }
+
+
+
+                }
+
+
+
+
+
+
+                if (is_valid_entry)
+                {
+                    theHtmlOutput = "sadfsfsdfS";
+                    /*
+                    try { wanum = AppFunctions.wanumize(wanum); } catch { }
+                    var m_join = Database.Open("m_join");
+                    sqlSelect = "SELECT serial FROM webprospects WHERE wanum=@0";
+                    var checkDup = m_join.QuerySingle(sqlSelect, wanum);
+                    if (checkDup == null)
+                    {
+                        sqlSelect = "INSERT INTO WebProspects (ts,prospect_name,birth_date,gender,city,wanum,email,fb,instagram,tlg_nick,ref_txt,occupation,refer_id,ref_source,usage_habits,ref_source_desc,more_info,is_license,license_info,involvement_volunteer,involvement_paid,involvement_social,involvement_other,involvement_other_info) VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19,@20,@21,@22,@23)";
+                        m_join.Execute(sqlSelect, local_time, prospect_name, birth_date, gender, city, wanum, email, fb, instagram, tlg_nick, ref_txt, occupation, ref_id, ref_source, usage_habits, ref_source_desc, more_info, is_license, license_info, involvement_volunteer, involvement_paid, involvement_social, involvement_other, involvement_other_info);
+                        AppFunctions.WriteWebStats("LEAD", 1, ref_id);
+                        theHtmlOutput = " הכל תקין!";
+                    }
+                    else
+                    {
+                        validationFailureMsg += "מספר הטלפון שהוזן כבר קיים, בקרוב ניצור איתך קשר!<br>";
+                        theHtmlOutput = validationFailureMsg;
+                    }
+
+                    m_join.Close();
+                    */
+                }
+                else
+                {
+                    theHtmlOutput = validationFailureMsg;
+
+                }
+            }
+            break;
+
+
+        case "SubmitOrderFeedback":
+            if (true)
+            {
+                bool is_valid_entry = true;
+                string validationFailureMsg = "!$!";
+
+                DateTime defDate = Convert.ToDateTime("1/1/1900");
+                DateTime order_date = defDate; try { order_date = Convert.ToDateTime(Request["order_date"]); } catch { }
+
+
+
+                string nick_name = Request["nick_name"];
+                string langCode = Request["lang"];
+                string wanum = Request["wanum"];
+                int menu_id = 0; try { menu_id = Convert.ToInt32(Request["menu_id"]); } catch { }
+                int gen_sat_grade = 0; try { gen_sat_grade = Convert.ToInt32(Request["gen_sat_grade"]); } catch { }
+                int prod_qual_grade = 0; try { prod_qual_grade = Convert.ToInt32(Request["prod_qual_grade"]); } catch { }
+                int delivery_grade = 0; try { delivery_grade = Convert.ToInt32(Request["delivery_grade"]); } catch { }
+                int is_ok_weight = 0; try { is_ok_weight = Convert.ToInt32(Request["is_ok_weight"]); } catch { }
+                int is_happy = 0; try { is_happy = Convert.ToInt32(Request["is_happy"]); } catch { }
+                int is_contact = 0; try { is_contact = Convert.ToInt32(Request["is_contact"]); } catch { }
+                string order_notes = Request["order_notes"];
+                string menu_title = "";
+
+                bool isContact = false; if (is_contact == 1) { isContact = true; }
+
+                int lang = 0;
+                if (langCode == "he") { lang = 1; }
+                if (langCode == "en") { lang = 2; }
+
+                int active_orders_count = 0;
+
+                try { wanum = AppFunctions.wanumize(wanum); } catch { }
+                var m_join = Database.Open("m_join");
+                sqlSelect = "SELECT * FROM menus WHERE id=@0";
+                var menu = m_join.QuerySingle(sqlSelect, menu_id);
+                if (menu != null)
+                {
+                    if (langCode == "en")
+                    { menu_title = menu.title_e; }
+                    else
+                    { menu_title = menu.title_h; }
+                }
+
+                sqlSelect = "INSERT INTO OrderFeedback (ts,order_date,lang,nick_name,wanum,menu_id,menu_title,gen_sat_grade,prod_qual_grade,delivery_grade,is_ok_weight,is_happy,is_contact,order_notes) VALUES (@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13)";
+                m_join.Execute(sqlSelect, local_time, order_date, lang, nick_name, wanum, menu_id, menu_title, gen_sat_grade, prod_qual_grade, delivery_grade, is_ok_weight, is_happy, isContact, order_notes);
+
+                m_join.Close();
+
+
+
+            }
+            break;
+
+        case "ReviewListChange":
+            if (true)
+            {
+                bool is_valid_entry = true;
+                string validationFailureMsg = "!$!";
+                string nick_name = Request["nick_name"];
+                string lang = Request["lang"];
+                string wanum = Request["wanum"];
+                string req_action = Request["req_action"];
+                bool wa_daily = false; if (!Request["wa_daily"].IsEmpty()) { wa_daily = true; }
+                bool wa_lastcall = false; if (!Request["wa_lastcall"].IsEmpty()) { wa_lastcall = true; }
+                bool wa_specials = false; if (!Request["wa_specials"].IsEmpty()) { wa_specials = true; }
+                bool tlg_daily = false; if (!Request["tlg_daily"].IsEmpty()) { tlg_daily = true; }
+                bool tlg_lastcall = false; if (!Request["tlg_lastcall"].IsEmpty()) { tlg_lastcall = true; }
+                bool tlg_specials = false; if (!Request["tlg_specials"].IsEmpty()) { tlg_specials = true; }
+
+
+
+
+                if (lang.IsEmpty()) { lang = "he"; }
+
+                if (lang == "en")
+                {
+                    if (nick_name == "") { is_valid_entry = false; validationFailureMsg += "Nick Name is a required field!<br>"; }
+
+                    if (wanum == "") { is_valid_entry = false; validationFailureMsg += "WhatsApp# is a required field!<br>"; }
+                    if (!ValidationFunctions.IsNumbersOnly(wanum) || wanum.Length < 10) { is_valid_entry = false; validationFailureMsg += "Please insert a valid whatsApp#, digits only!<br>"; }
+
+                    if (!wa_daily && !wa_lastcall && !wa_specials && !tlg_daily && !tlg_lastcall && !tlg_specials)
+                    {
+                        is_valid_entry = false; validationFailureMsg += "Please select at least one service to add or remove!<br>";
+                    }
+
+                }
+                else
+                {
+                    if (nick_name == "") { is_valid_entry = false; validationFailureMsg += "כינוי מזהה הוא שדה חובה!<br>"; }
+
+                    if (wanum == "") { is_valid_entry = false; validationFailureMsg += "מספר ווטסאפ הוא שדה חובה!<br>"; }
+                    if (!ValidationFunctions.IsNumbersOnly(wanum) || wanum.Length < 10) { is_valid_entry = false; validationFailureMsg += "נא להזין מספר ווטסאפ תקין, ספרות בלבד!<br>"; }
+
+                    if (!wa_daily && !wa_lastcall && !wa_specials && !tlg_daily && !tlg_lastcall && !tlg_specials)
+                    {
+                        is_valid_entry = false; validationFailureMsg += "חובה לבחור לפחות שירות אחד להוספה / הסרה!<br>";
+                    }
+
+
+                }
+
+
+
+
+
+
+                if (is_valid_entry)
+                {
+                    theHtmlOutput = "sadfsfsdfS";
+                    /*
+                    try { wanum = AppFunctions.wanumize(wanum); } catch { }
+                    var m_join = Database.Open("m_join");
+                    sqlSelect = "SELECT serial FROM webprospects WHERE wanum=@0";
+                    var checkDup = m_join.QuerySingle(sqlSelect, wanum);
+                    if (checkDup == null)
+                    {
+                        sqlSelect = "INSERT INTO WebProspects (ts,prospect_name,birth_date,gender,city,wanum,email,fb,instagram,tlg_nick,ref_txt,occupation,refer_id,ref_source,usage_habits,ref_source_desc,more_info,is_license,license_info,involvement_volunteer,involvement_paid,involvement_social,involvement_other,involvement_other_info) VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19,@20,@21,@22,@23)";
+                        m_join.Execute(sqlSelect, local_time, prospect_name, birth_date, gender, city, wanum, email, fb, instagram, tlg_nick, ref_txt, occupation, ref_id, ref_source, usage_habits, ref_source_desc, more_info, is_license, license_info, involvement_volunteer, involvement_paid, involvement_social, involvement_other, involvement_other_info);
+                        AppFunctions.WriteWebStats("LEAD", 1, ref_id);
+                        theHtmlOutput = " הכל תקין!";
+                    }
+                    else
+                    {
+                        validationFailureMsg += "מספר הטלפון שהוזן כבר קיים, בקרוב ניצור איתך קשר!<br>";
+                        theHtmlOutput = validationFailureMsg;
+                    }
+
+                    m_join.Close();
+                    */
+                }
+                else
+                {
+                    theHtmlOutput = validationFailureMsg;
+
+                }
+            }
+            break;
+
+        case "SaveNewsLetPref":
+            if (true)
+            {
+                bool is_valid_entry = true;
+                string validationFailureMsg = "!$!";
+                string nick_name = Request["nick_name"];
+                string tlg_nick = Request["tlg_nick"];
+                string email = Request["email"];
+                DateTime ts = AppFunctions.LocalTime();
+
+                string lang = Request["lang"];
+                string wanum = Request["wanum"];
+                string req_action = Request["req_action"];
+                bool wa_daily = false; if (!Request["wa_daily"].IsEmpty()) { wa_daily = true; }
+                bool wa_lastcall = false; if (!Request["wa_lastcall"].IsEmpty()) { wa_lastcall = true; }
+                bool wa_specials = false; if (!Request["wa_specials"].IsEmpty()) { wa_specials = true; }
+                bool tlg_daily = false; if (!Request["tlg_daily"].IsEmpty()) { tlg_daily = true; }
+                bool tlg_lastcall = false; if (!Request["tlg_lastcall"].IsEmpty()) { tlg_lastcall = true; }
+                bool tlg_specials = false; if (!Request["tlg_specials"].IsEmpty()) { tlg_specials = true; }
+
+
+
+
+                if (lang.IsEmpty()) { lang = "he"; }
+
+                var m_join = Database.Open("m_join");
+                sqlSelect = "INSERT INTO newsletterRequests(ts,nick_name,wanum,tlg_nick,email,wa_daily,wa_lastcall,wa_specials,tlg_daily,tlg_lastcall,tlg_specials,lang) VALUES (@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11)";
+                m_join.Execute(sqlSelect, ts, nick_name, wanum, tlg_nick, email, wa_daily, wa_lastcall, wa_specials, tlg_daily, tlg_lastcall, tlg_specials, lang);
+
+            }
+            break;
+
+        case "UpdatePersonalInfo":
+            if (true)
+            {
+                bool is_valid_entry = true;
+                string validationFailureMsg = "!$!";
+                string lang = Request["lang"];
+
+                string nick_name = Request["nick_name"];
+                string new_nick_name = Request["new_nick_name"];
+                string wanum = Request["wanum"];
+                string new_wanum = Request["new_wanum"];
+                string tlg_nick = Request["tlg_nick"];
+                string email = Request["email"];
+                int gender = 0; try { gender = Convert.ToInt32(Request["gender"]); } catch { }
+                string city = Request["city"];
+                string fb = Request["fb"];
+                string instagram = Request["instagram"];
+                string occupation = Request["occupation"];
+                string more_info = Request["more_info"];
+                string involvement = Request["involvement"];
+                string inv_other_desc = Request["inv_other_desc"];
+                string usage_habits = ""; usage_habits = Request["usage_habits"];
+                string ref_txt = "";
+                bool is_license = false; if (Request["is_license"] == "yes") { is_license = true; }
+                string license_info = Request["license_info"];
+                bool involvement_volunteer = false; if (!Request["involvement_volunteer"].IsEmpty()) { involvement_volunteer = true; }
+                bool involvement_paid = false; if (!Request["involvement_paid"].IsEmpty()) { involvement_paid = true; }
+                bool involvement_social = false; if (!Request["involvement_social"].IsEmpty()) { involvement_social = true; }
+                bool involvement_other = false; if (!Request["involvement_other"].IsEmpty()) { involvement_other = true; }
+                string involvement_other_info = Request["involvement_other_info"];
+
+
+                DateTime birth_date = Convert.ToDateTime("1/1/1900"); try { birth_date = Convert.ToDateTime(Request["birth_date"]); } catch {}
+
+                if (birth_date != Convert.ToDateTime("1/1/1900"))
+                {
+                    DateTime zeroTime = new DateTime(1, 1, 1);
+                    TimeSpan span = local_time - birth_date;
+                    // Because we start at year 1 for the Gregorian
+                    // calendar, we must subtract a year here.
+                    int age = (zeroTime + span).Year - 1;
+                    if (age < 18 || age>99)
+                    {
+                        birth_date = Convert.ToDateTime("1/1/1900");
+                    }
+                }
+
+                if (lang.IsEmpty()) { lang = "he"; }
+
+                if (lang == "en")
+                {
+                    if (nick_name.IsEmpty()) { is_valid_entry = false; validationFailureMsg += "Nick Name is a required field!<br>"; }
+                    if (wanum == "") { is_valid_entry = false; validationFailureMsg += "WhatsApp# is a required field!<br>"; }
+                }
+                else
+                {
+                    if (nick_name.IsEmpty()) { is_valid_entry = false; validationFailureMsg += "כינוי מזהה הוא שדה חובה!<br>"; }
+                    if (wanum == "") { is_valid_entry = false; validationFailureMsg += "מספר ווטסאפ הוא שדה חובה!<br>"; }
+                }
+
+
+                if (!new_wanum.IsEmpty()){new_wanum = AppFunctions.wanumize(new_wanum);}
+
+
+                if (is_valid_entry)
+                {
+                    try { wanum = AppFunctions.wanumize(wanum); } catch { }
+                    var m_join = Database.Open("m_join");
+                    sqlSelect = "INSERT INTO infoUpdateRequests (ts,nick_name,new_nick_name,birth_date,gender,city,wanum,new_wanum,email,fb,occupation,more_info,involvement,instagram,tlg_nick,is_license,license_info,involvement_volunteer,involvement_paid,involvement_social,involvement_other,involvement_other_info,usage_habits) VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19,@20,@21,@22)";
+                    m_join.Execute(sqlSelect, local_time, nick_name, new_nick_name, birth_date, gender, city, wanum, new_wanum, email, fb, occupation, more_info, involvement, instagram, tlg_nick, is_license, license_info, involvement_volunteer, involvement_paid, involvement_social, involvement_other, involvement_other_info, usage_habits);
+                    //AppFunctions.WriteWebStats("LEAD", 1, ref_id);
+                    theHtmlOutput = " הכל תקין!";
+
+                    m_join.Close();
+
+                }
+                else
+                {
+                    theHtmlOutput = validationFailureMsg;
+
+                }
+            }
+            break;
+
+        case "JobApp":
+            if (true)
+            {
+                bool is_valid_entry = true;
+                string validationFailureMsg = "!$!";
+
+                string nick_name = Request["nick_name"];
+                string wanum = Request["wanum"];
+                int age = 0; try { age = Convert.ToInt32(Request["age"]); } catch { }
+                int gender = 0; try { gender = Convert.ToInt32(Request["gender"]); } catch { }
+                string experience = Request["experience"];
+                string occupation = Request["occupation"];
+                string added_value = Request["added_value"];
+                string city = Request["city"];
+                string fb = Request["fb"];
+                string instagram = Request["instagram"];
+                string job_other_desc = Request["job_other_desc"];
+
+                string living_status = Request["living_status"];
+                string ls_other_desc = Request["ls_other_desc"];
+                string applyFor = "";
+
+                string lang = Request["lang"];
+
+                var m_join = Database.Open("m_join");
+                sqlSelect = "SELECT * FROM jobs WHERE is_open=1";
+                var jobs = m_join.Query(sqlSelect);
+                foreach(var job in jobs)
+                {
+                    string jobCode = "";
+                    jobCode = job.jobCode;
+                    if (!Request[jobCode].IsEmpty())
+                    {
+                        applyFor += job.job_title_h + "##";
+                    }
+                }
+
+                if (!Request["job_other_desc"].IsEmpty() && !Request["job_other"].IsEmpty())
+                {
+                    applyFor += "אחר##";
+                }
+
+                if (lang == "en") {
+                    if (nick_name.IsEmpty()) { is_valid_entry = false; validationFailureMsg += "Nick name is a required field!<br>"; }
+                    if (wanum == "") { is_valid_entry = false; validationFailureMsg += "WhatsApp# is a required field!<br>"; }
+                    if (applyFor == "") { is_valid_entry = false; validationFailureMsg += "Requested position is a required field!<br>"; }
+                    if (age == 0) { is_valid_entry = false; validationFailureMsg += "Age is a required field!<br>"; }
+                    if (age > 0 && age < 18) { is_valid_entry = false; validationFailureMsg += "Sorry, but you must be at least 18 to apply for a job with us!<br>"; }
+
+                }
+                else
+                {
+                    if (nick_name.IsEmpty()) { is_valid_entry = false; validationFailureMsg += "כינוי מזהה הוא שדה חובה!<br>"; }
+                    if (wanum == "") { is_valid_entry = false; validationFailureMsg += "מספר ווטסאפ הוא שדה חובה!<br>"; }
+                    if (applyFor == "") { is_valid_entry = false; validationFailureMsg += "חובה לבחור סוג משרה מבוקש!<br>"; }
+                    if (age == 0) { is_valid_entry = false; validationFailureMsg += "חובה לציין גיל!<br>"; }
+                    if (age > 0 && age < 18) { is_valid_entry = false; validationFailureMsg += "הגשת מועמדות לעבודה מגיל 18 ומעלה בלבד!<br>"; }
+                }
+
+
+
+                if (is_valid_entry)
+                {
+                    try { wanum = AppFunctions.wanumize(wanum); } catch { }
+                    sqlSelect = "INSERT INTO jobApps (ts,nick_name,wanum,age,gender,experience,occupation,added_value,city,fb,instagram,job_other_desc,living_status,ls_other_desc,applyFor) VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14)";
+                    m_join.Execute(sqlSelect, local_time, nick_name, wanum, age, gender, experience, occupation, added_value, city, fb, instagram, job_other_desc, living_status, ls_other_desc, applyFor);
+                    //AppFunctions.WriteWebStats("LEAD", 1, ref_id);
+                    theHtmlOutput = " הכל תקין!";
+
+
+                }
+                else
+                {
+                    theHtmlOutput = validationFailureMsg;
+
+                }
+                m_join.Close();
+
+            }
+            break;
+
+        case "ContactForm":
+            if (true)
+            {
+                bool is_valid_entry = true;
+                string validationFailureMsg = "!$!";
+
+                string nick_name = Request["nick_name"];
+                string wanum = Request["wanum"];
+                string contactActionCode = Request["c_a"];
+                string c_a_other = Request["c_a_other"];
+                string contact_subject = "";
+                string contact_body = Request["contact_body"];
+                bool cus_refresh = false; if (!Request["cus_refresh"].IsEmpty()) { cus_refresh = true; }
+                string lang = Request["lang"]; if (lang.IsEmpty()) { lang = "he"; }
+
+                var m_join = Database.Open("m_join");
+
+                if (contactActionCode == "OTHER")
+                {
+                    contact_subject = c_a_other;
+                }
+                else
+                {
+                    sqlSelect = "SELECT * FROM ContactActions WHERE ContactActionCode=@0";
+                    var caCode = m_join.QuerySingle(sqlSelect, contactActionCode);
+                    try { contact_subject = caCode.ca_title_h; } catch { }
+                }
+
+
+
+
+
+                if (lang == "en")
+                {
+                    if (cus_refresh)
+                    {
+                        if (wanum == "") { is_valid_entry = false; validationFailureMsg += "When requesting a reminder message, WhatsApp# is a required field!<br>"; }
+                        if (!ValidationFunctions.IsNumbersOnly(wanum) || wanum.Length < 10) { is_valid_entry = false; validationFailureMsg += "When requesting a reminder message, please insert a valid whatsApp#, digits only!<br>"; }
+                    }
+                    else
+                    {
+                        if (contact_subject.IsEmpty()) { is_valid_entry = false; validationFailureMsg += "Message Subject is a required field!<br>"; }
+                        if (contact_body.IsEmpty()) { is_valid_entry = false; validationFailureMsg += "Message Body is a required field!<br>"; }
+                    }
+
+
+                }
+                else
+                {
+
+
+                    if (cus_refresh)
+                    {
+                        if (wanum == "") { is_valid_entry = false; validationFailureMsg += "ביקשת הודעת תזכורת, ולכן מספר ווטסאפ הוא שדה חובה!<br>"; }
+                        if (!ValidationFunctions.IsNumbersOnly(wanum) || wanum.Length < 10) { is_valid_entry = false; validationFailureMsg += "ביקשת הודעת תזכורת, ולכן חובה להזין מספר ווטסאפ תקין, ספרות בלבד!<br>"; }
+                    }
+                    else
+                    {
+                        if (contact_subject.IsEmpty()) { is_valid_entry = false; validationFailureMsg += "חובה להזין את נושא ההודעה!<br>"; }
+                        if (contact_body.IsEmpty()) { is_valid_entry = false; validationFailureMsg += "חובה להזין את תוכן ההודעה!<br>"; }
+                    }
+
+                }
+
+
+
+                if (is_valid_entry)
+                {
+                    try { wanum = AppFunctions.wanumize(wanum); } catch { }
+
+                    sqlSelect = "INSERT INTO ContactForm (ts,nick_name,wanum,subject,message,lang,cus_refresh,contactActionCode) VALUES(@0,@1,@2,@3,@4,@5,@6,@7)";
+                    m_join.Execute(sqlSelect, local_time, nick_name, wanum, contact_subject, contact_body, lang,cus_refresh, contactActionCode);
+                    //AppFunctions.WriteWebStats("LEAD", 1, ref_id);
+                    theHtmlOutput = " הכל תקין!";
+
+
+                }
+                else
+                {
+                    theHtmlOutput = validationFailureMsg;
+
+                }
+                m_join.Close();
+
+            }
+            break;
+
+
+
+    }
+
+    Response.Write(theHtmlOutput);
+
+
+}

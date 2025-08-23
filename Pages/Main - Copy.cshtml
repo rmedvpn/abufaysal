@@ -1,0 +1,60 @@
+@page "/Main"
+@using Microsoft.AspNetCore.Http
+
+@{
+    Layout = "~/Pages/Shared/Layouts/_Members.cshtml";
+    string ref_id = ""; try { ref_id = HttpContext.Session.GetString("ref_id"); } catch { }
+    string aff_id = ""; try { aff_id = HttpContext.Session.GetString("aff_id"); } catch { }
+    string go_to = ""; try { go_to = HttpContext.Session.GetString("go_to"); } catch { }
+}
+
+<input type="hidden" name="starterpage" id="starter_page" value="@go_to" />
+<div style="display:none">SES: @ref_id aff: @aff_id goto: @go_to</div>
+
+<section class="wel_sec">
+    <div class="container">
+        <div class="center_wel">
+            <img src="/images/israel.png" />
+            <div class="welsc caption">
+                <h1>ברוכים הבאים<strong>למחתרת</strong></h1>
+                <span style="z-index:9999;font-size:16px;color:white;float:left;padding-left:10px;direction:ltr" onclick="window.location.href = 'MainEng';">
+                    <span> 🌐 </span>For English, click here
+                </span>
+                <span style="z-index:9999;font-size:16px;color:white;float:right;padding-right:10px;direction:ltr" onclick="sbload('MainSb','Contact?ref_id=@ref_id');">
+                    יצירת קשר<span> 📞 </span>
+                </span>
+            </div>
+            <div class="menubtn">
+                <ul>
+                    <li><a href="#" onclick="sbload('MainSb','Register_statement_he_1?ref_id=@ref_id');">הצטרפות</a></li>
+                    <li><a href="#" onclick="controller.open('MahWorld'); currentlyOpenSidebar = 'MahWorld'; ">תפריט</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','order?ref_id=@ref_id');">ביצוע הזמנה</a></li>
+                    <li><a href="#" onclick="controller.open('ordTrack'); currentlyOpenSidebar = 'ordTrack'; ">מעקב משלוחים</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','orderFeedback?ref_id=@ref_id');">משוב הזמנה</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','newsLetterPref?ref_id=@ref_id');">רשימות תפוצה</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','updatePersonalInfo?ref_id=@ref_id');">עדכון פרטים</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','JobApp?ref_id=@ref_id');">עבודה במחתרת</a></li>
+                    <li><a href="#" onclick="controller.open('comKop'); currentlyOpenSidebar = 'comKop'; ">קופת הקהילה</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','About_Heb');">אודותינו</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','Imposters_Heb');">הזהרו מחיקויים!</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="ft_bot">
+        <div class="container">
+            <div class="s_right">
+                <img src="/images/ftlogo.png" alt="Hamachteret" />
+            </div>
+            <div class="s_left">
+                <ul>
+                    <li><a href="http://instagram.com/A_mahteret" target="_blank"><img src="/images/instagram.png" alt="instagram" /></a></li>
+                    <li><a href="https://www.facebook.com/המחתרת-100417308826857" target="_blank"><img src="/images/facebook.png" alt="facebook" /></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="login-help"><br />
+            <center><span style="color:white"><span onclick="sbload('MainSb','prorder?ref_id=@ref_id');">2025</span> &copy; מערכות ישראל</span></center>
+        </div>
+    </div>
+</section>

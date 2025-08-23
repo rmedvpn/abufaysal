@@ -1,0 +1,102 @@
+﻿@page
+@attribute [IgnoreAntiforgeryToken]
+@using System.Data.SqlClient
+@using Dapper
+@using Faysal.Helpers
+
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration Configuration
+
+@{
+    Layout = null;
+    var lang = HttpContextAccessor.HttpContext!.Session.GetString("lang");
+
+    // grab the HttpRequest
+    var req = HttpContextAccessor.HttpContext!.Request;
+
+    // mimic WebMatrix Request["key"]
+    string Param(string key) =>
+        req.HasFormContentType && req.Form.ContainsKey(key)
+            ? req.Form[key].ToString()
+            : req.Query.ContainsKey(key)
+                ? req.Query[key].ToString()
+                : "";
+
+
+    int o_id = 0; int.TryParse(Param("o_id"), out o_id);
+
+    if (lang == "en")
+    {
+        <section class="hero_sec">
+            <div class="container">
+                <div class="form_wel" style="margin-top:25px;">
+                    <div class="welsc caption">
+                        <h1><strong>Thank You!</strong></h1>
+                    </div>
+                </div>
+
+                <div class="f_details">
+                    <div class="fldLabel" style="text-align:center">
+                        Thank you for for contacting us!<br /><br />
+                        If requested, we will contact you shortly.
+                    </div>
+                </div>
+
+                <div class="b_d">
+                    <button type="button" class="sub" style="float:right;" onclick="ControlButton();">Close</button>
+                </div>
+
+                <div class="form_ft_top">
+                    <div class="container">
+                        <div style="text-align:center">
+                            <a href="main"><img src="images/ftlogo.png" alt="Hamachteret" /></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    }
+    else
+    {
+        <section class="hero_sec">
+            <div class="container">
+                <div class="form_wel" style="margin-top:25px;">
+                    <div class="welsc caption">
+                        <h1><strong>תודה רבה!</strong></h1>
+                    </div>
+                </div>
+
+                <div class="f_details">
+                    <div class="fldLabel" style="text-align:center">
+                        תודה רבה על שפנית אלינו! <br /><br />
+                        במידה וביקשת זאת, נצור איתך קשר בהקדם.
+                    </div>
+                </div>
+                <div class="b_d">
+                    <button type="button" class="sub" style="float:left;" onclick="ControlButton();">סגירה</button>
+                </div>
+
+
+                <div class="form_ft_top">
+                    <div class="container">
+                        <div style="text-align:center">
+                            <a href="main"><img src="images/ftlogo.png" alt="Hamachteret" /></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+
+}
+
+
+
+
+@functions {
+    public void OnPost()
+    {
+        // This prevents 400s if POST is received
+    }
+}

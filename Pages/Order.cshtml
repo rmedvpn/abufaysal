@@ -1,0 +1,360 @@
+﻿@page
+@using System
+@using System.Data.SqlClient
+@using Dapper
+@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Configuration
+@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration Configuration
+
+@{
+    // Disable layout for AJAX requests — preserves WebMatrix behavior
+
+    Layout = "/Pages/Shared/Layouts/_Main.cshtml";
+
+    int ref_id = 0;    int.TryParse(HttpContextAccessor.HttpContext.Request.Query["ref_id"], out ref_id);
+    int aff_id = 0;    int.TryParse(HttpContextAccessor.HttpContext.Request.Query["aff_id"], out aff_id);
+
+    var faysal = Database.Open("faysal");
+    var sqlSelect = "SELECT * FROM mixtureOptions WHERE is_active=1";
+    var mixtureOptions = faysal.Query(sqlSelect);
+
+    sqlSelect = "SELECT * FROM mixturePotencyOptions WHERE is_active=1";
+    var mixturePotencyOptions = faysal.Query(sqlSelect);
+
+    sqlSelect = "SELECT * FROM paperOptions WHERE is_active=1";
+    var paperOptions = faysal.Query(sqlSelect);
+
+    sqlSelect = "SELECT * FROM quanOptions WHERE is_active=1 ORDER BY quan";
+    var quanOptions = faysal.Query(sqlSelect);
+
+    sqlSelect = "SELECT * FROM strainOptions WHERE is_active=1";
+    var strainOptions = faysal.Query(sqlSelect);
+}
+
+
+<section class="wel_sec">
+    <div class="container">
+        <div class="center_wel">
+            <div class="welsc caption">
+                <img style="margin:5px;" src="/images/logo.png" />
+                <span style="z-index:9999;font-size:16px;color:white;float:left;padding-left:10px;direction:ltr;display:none" onclick="window.location.href = '/?go=orderenglish';"><span> 🌐 </span>For English, click here</span>
+
+            </div>
+
+            <div class="A" >
+                <form id="CalcItemCostForm">
+                    <input type="hidden" value="ver2" name="ver" />
+                    <div class="fldLabel" style="display:none">
+                        <div class="tooltip" style="text-align:center">
+                            ג'וינטים פרימיום מגולגלים מראש
+                        </div>
+                        <div style="overflow:auto;height:30px;">&nbsp;</div>
+                    </div>
+
+
+
+
+
+                    <div class="PropItemSelection" id="MenuSelectDiv">
+
+                        <div class="PropRow"  onclick="Accordionize('AccQuan');">
+                            <div class="PropTitle">כמות</div>
+                            <span style="float:left;padding:5px;font-size:30px;margin-left:10px;">+</span>
+
+                        </div>
+
+                    </div>
+                    <div class="B" style="text-align:center">
+                        <div class="B" style="text-align:center">
+                            <center>
+                                <button class="accordion" id="AccQuan" style="display:none"></button>
+
+                                <div class="panel" style="width:90%">
+                                    <div class="PropItemMenu">
+
+                                        @foreach (var item in quanOptions)
+                                        {
+                                            <div class="PropItem">
+                                                @item.title
+                                            </div>
+                                        }
+
+
+                                        <select class="PropSelector" style="display:none;" id="quan" name="quan" onchange="AjaxUpdate('CalcItemCost','ItemCostReturnContainer','ItemCostLoader','CalcItemCostForm')">
+                                            <option value="0">נא לבחור את הכמות הרצויה..</option>
+                                            @foreach (var item in quanOptions)
+                                            {
+                                                <option value="@item.id">@item.title</option>
+                                            }
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+                            </center>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="PropItemSelection">
+
+                        <div class="PropRow" onclick="Accordionize('AccStrain');">
+                            <div class="PropTitle">
+                                זן</div>
+                            <span style="float:left;padding:5px;font-size:30px;margin-left:10px;">+</span>
+
+                        </div>
+
+                    </div>
+                    <div class="B" style="text-align:center">
+                        <div class="B" style="text-align:center">
+                            <center>
+                                <button class="accordion" id="AccStrain" style="display:none"></button>
+                                <div class="panel" style="width:90%">
+                                    <div class="PropItemMenu">
+                                        <select class="PropSelector" id="strain" name="strain" onchange="CalcItemCost();" style="display:none;">
+                                            <option value="0">נא לבחור את הזן המבוקש..</option>
+                                            @foreach (var item in strainOptions)
+                                            {
+                                                <option value="@item.id">@item.title</option>
+                                            }
+
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+                            </center>
+
+                        </div>
+
+                    </div>
+
+                    <div class="PropItemSelection">
+
+                        <div class="PropRow" onclick="Accordionize('AccPaper');">
+                            <div class="PropTitle">נייר</div>
+                            <span style="float:left;padding:5px;font-size:30px;margin-left:10px;">+</span>
+
+                        </div>
+                    
+
+                    </div>
+                    <div class="B" style="text-align:center">
+                        <div class="B" style="text-align:center">
+                            <center>
+                                <button class="accordion" id="AccPaper" style="display:none"></button>
+
+                                <div class="panel" style="width:90%">
+                                    <div class="PropItemMenu">
+                                        <select class="PropSelector" id="paper" name="paper" onchange="CalcItemCost();" style="display:none">
+                                            <option value="0">נא לבחור את נייר הגלגול המבוקש..</option>
+                                            @foreach (var item in paperOptions)
+                                            {
+                                                <option value="@item.id">@item.title</option>
+                                            }
+
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+
+                           
+                            </center>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="PropItemSelection">
+
+                        <div class="PropRow" onclick="Accordionize('AccMixturePotency');">
+                            <div class="PropTitle">מינון</div>
+                            <span style="float:left;padding:5px;font-size:30px;margin-left:10px;">+</span>
+
+                        </div>
+
+                    </div>
+                    <div class="B" style="text-align:center">
+                        <div class="B" style="text-align:center">
+                            <center>
+                                <button class="accordion" id="AccMixturePotency" style="display:none"></button>
+
+                                <div class="panel" style="width:90%">
+                                    <div class="PropItemMenu">
+                                        <select class="PropSelector" id="MixturePotency" name="MixturePotency" onchange="CalcItemCost();" style="display:none">
+                                            <option value="0">נא לבחור את המינון הרצוי..</option>
+                                            @foreach (var item in mixturePotencyOptions)
+                                            {
+                                                <option value="@item.id">@item.title</option>
+                                            }
+
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+
+
+                            </center>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="PropItemSelection">
+
+
+                        <div class="PropRow" onclick="Accordionize('AcMixture');">
+                            <div class="PropTitle">פארש</div>
+                            <span style="float:left;padding:5px;font-size:30px;margin-left:10px;">+</span>
+
+                        </div>
+
+
+
+
+                    </div>
+                    <div class="B" style="text-align:center">
+                        <div class="B" style="text-align:center">
+                            <center>
+                                <button class="accordion" id="AcMixture" style="display:none"></button>
+
+                                <div class="panel" style="width:90%">
+                                    <div class="PropItemMenu">
+                                        <select class="PropSelector" id="Mixture" name="Mixture" onchange="CalcItemCost();" style="display:none">
+                                            <option value="0">נא לבחור את תערובת הפארש הרצויה..</option>
+                                            @foreach (var item in mixtureOptions)
+                                            {
+                                                <option value="@item.id">@item.title</option>
+                                            }
+
+
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+
+
+                            </center>
+
+                        </div>
+
+                    </div>
+                    <center>
+                        <div class="spinner" style="font-size: 20px;display:none;" id="ItemCostLoader">
+                            <div class="bounce1"></div>
+                            <div class="bounce2"></div>
+                            <div class="bounce3"></div>
+                        </div>
+                        <div style="overflow:auto;" id="ItemCostReturnContainer">
+                            @await Html.PartialAsync("Shared/Partials/_CalcItemCost")
+
+                        </div>
+
+                        <div style="overflow:auto;" id="CartContainer">
+                            @await Html.PartialAsync("Shared/Partials/_Cart")
+
+                        </div>
+
+                        <div class="B" style="margin-top:10px;display:none" id="checkoutInfoDiv">
+                            <!-- Checkout Section -->
+                            <section id="checkout">
+                                <!-- Billing Details -->
+                                <div class="B">
+                                    <h3>פרטי משלוח</h3>
+
+                                    <div class="fldLabel" style="margin-top:10px;">
+
+                                        <div class="PropRow">
+                                            <div class="PropTitle">שם מלא</div>
+
+                                            <input type="text" class="PropSelector" id="full_name" name="full_name">
+
+                                        </div>
+                                    </div>
+                                    <div class="fldLabel">
+
+                                        <div class="PropRow">
+                                            <div class="PropTitle">#ווטסאפ</div>
+
+                                            <input type="text" class="PropSelector" id="wanum" name="wanum">
+
+                                        </div>
+                                    </div>
+
+                                    <div class="fldLabel">
+
+                                        <div class="PropRow">
+                                            <div class="PropTitle">כתובת</div>
+
+                                            <input type="text" class="PropSelector" id="address" name="address">
+
+                                        </div>
+                                    </div>
+                                    <div class="fldLabel">
+
+                                        <div class="PropRow">
+                                            <div class="PropTitle">עיר</div>
+
+                                            <input type="text" class="PropSelector" id="city" name="city">
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+
+                                <div class="A" style="text-align:center;">
+                                    <button class="A" type="button" onclick="ControlButton();">ביטול</button>
+
+                                    <button class="A" type="button" onclick="AjaxActions('ReviewOrder', '', 'MainLoader', 'CalcItemCostForm');">המשך>></button>
+                                    <button class="A" type="button" style="display:none" onclick="sbload('SubMenu','prOrderReview','','CalcItemCostForm');">ביצוע הזמנה</button>
+                                </div>
+
+
+                            </section>
+
+                        </div>
+
+                    </center>
+
+
+
+                    <div style="overflow:auto;display:none" id="prospectJoinActions">
+
+
+                        <div class="b_d">
+                            <button type="button" value="Reset" class="re" onclick="ControlButton();">ביטול</button>
+                        </div>
+
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@functions {
+    public void OnPost()
+    {
+        // This prevents 400s if POST is received
+    }
+}

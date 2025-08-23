@@ -1,0 +1,569 @@
+﻿@page
+@attribute [IgnoreAntiforgeryToken]
+@using System.Data.SqlClient
+@using Dapper
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration Configuration
+
+@{
+    // Disable layout for AJAX requests — preserves WebMatrix behavior
+
+    Layout = null;
+
+    int ref_id = 0;    int.TryParse(HttpContextAccessor.HttpContext.Request.Query["ref_id"], out ref_id);
+    int aff_id = 0;    int.TryParse(HttpContextAccessor.HttpContext.Request.Query["aff_id"], out aff_id);
+
+    var connectionString = Configuration.GetConnectionString("m_join");
+    using var conn = new SqlConnection(connectionString);
+    var menus = conn.Query("SELECT id, title,e_title FROM rounds WHERE is_active=1 ORDER BY round_type, sort_order").Cast<dynamic>().ToList();
+}
+
+
+<section class="wel_sec">
+    <div class="container" style="direction:ltr">
+        <div class="form_wel" style="margin-top:25px;">
+            <div class="welsc caption">
+                <h1>Place<strong>Order</strong></h1>
+                <span style="z-index:9999;font-size:16px;color:white;float:right;padding-left:10px;direction:rtl" onclick="window.location.href = '/?go=order';"><span> 🌐 </span>לגרסא בעברית</span>
+
+            </div>
+            <div class="f_details">
+                <form id="OrderForm">
+                    <input type="hidden" name="lang" id="lang" value="en" />
+
+                    <div class="fldLabel">
+                        <div style="overflow: auto;">
+                            <input type="checkbox" name="is_for_today" id="is_for_today" checked style="float:right" onclick="Accordionize('shipDateAcc'); if (this.checked) { showElement('MenuSelectDiv') } else {hideElement('MenuSelectDiv') }" />
+                            This order is for today <span class="reqField">*</span>
+                            <span style="float: right;" onclick="Accordionize('IsTodayToolTip');">💡</span>
+                        </div>
+                        <div style="overflow: auto;">
+                            <button class="accordion" id="IsTodayToolTip" style="display: none;"></button>
+                            <div class="panel" style=" padding: 0; margin: 0;">
+                                <div class="tooltip">
+                                    If you wish to receive your order on a different day, please mark accordingaly
+                                </div>
+                            </div>
+                        </div>
+                        <button class="accordion" id="shipDateAcc" style="display:none"></button>
+                        <div class="panel" style="padding:0;margin:0 ">
+                            <div style="overflow: auto;padding:0;margin-top:10px ">
+                                <div class="fldLabel">
+                                    <div style="overflow: auto;">
+                                        Requsted Shipping Date <span class="reqField">*</span>
+                                        <span style="float: right;" onclick="Accordionize('ShippingDateToolTip'); FixAccordion('shipDateAcc');">💡</span>
+                                    </div>
+                                    <div style="overflow: auto;">
+                                        <button class="accordion" id="ShippingDateToolTip" style="display: none;"></button>
+                                        <div class="panel" style=" padding: 0; margin: 0;">
+                                            <div class="tooltip">
+                                                Please specify requested delivery date
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="overflow:auto">
+                                        <input type="date" id="shipping_date" name="shipping_date" />
+                                    </div>
+                                </div>
+                                <div class="fldLabel">
+                                    <div style="overflow: auto;">
+                                        Preferred Shipping Time <span class="reqField">*</span>
+                                        <span style="float: right;" onclick="Accordionize('ShippingTimeToolTip'); FixAccordion('shipDateAcc');">💡</span>
+                                    </div>
+                                    <div style="overflow: auto;">
+                                        <button class="accordion" id="ShippingTimeToolTip" style="display: none;"></button>
+                                        <div class="panel" style=" padding: 0; margin: 0;">
+                                            <div class="tooltip">
+                                                Please specify requested delivery time
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="overflow:auto">
+                                        <select id="shipping_time" name="shipping_time">
+                                            <option value="">Please Choose..</option>
+                                            <option value="08:00">Morning</option>
+                                            <option value="12:00">Afternoon</option>
+                                            <option value="16:00">Evening</option>
+                                            <option value="20:00">Night</option>
+                                        </select>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="overflow:auto;height:30px;">&nbsp;</div>
+                    </div>
+
+
+                    <div class="fldLabel">
+                        <div style="overflow: auto;">
+                            <input type="checkbox" name="is_new_member" id="is_new_member" style="float:left" onclick="if (this.checked) {MiscActions('OrderNewMember'); } else {MiscActions('OrderExistingMember'); }" />
+                            This is my first order <span class="reqField">*</span>
+                            <span style="float: right;" onclick="Accordionize('IsNewMemberToolTip');">💡</span>
+                        </div>
+                        <div style="overflow: auto;">
+                            <button class="accordion" id="IsNewMemberToolTip" style="display: none;"></button>
+                            <div class="panel" style=" padding: 0; margin: 0;">
+                                <div class="tooltip">
+                                    If this is the first time you are using the system, we will contact you upon ordering to complete your verification process.
+
+                                </div>
+                            </div>
+                        </div>
+                        <div style="overflow:auto;height:30px;">&nbsp;</div>
+                    </div>
+
+                    <div class="fldLabel" id="OrderFormNick">
+                        <div style="overflow: auto;">
+                            Nick Name <span class="reqField">*</span>
+                            <span style="float: right;" onclick="Accordionize('NickNameToolTip');">💡</span>
+                        </div>
+                        <div style="overflow: auto;">
+                            <button class="accordion" id="NickNameToolTip" style="display: none;"></button>
+                            <div class="panel" style=" padding: 0; margin: 0;">
+                                <div class="tooltip">
+                                    If you do not have a nick name, please contact Members services desk
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="overflow:auto">
+                            <input type="text" id="nick_name" name="nick_name" onblur="if(IsAccordion('NickNameToolTip')){Accordionize('NickNameToolTip');}" />
+                        </div>
+                    </div>
+
+                    <div id="OrderFormFullName" style="display:none">
+                        <div class="fldLabel">
+                            <div style="overflow: auto;">
+                                Full Name <span class="reqField">*</span>
+                                <span style="float: right;" onclick="Accordionize('FullNameToolTip');">💡</span>
+                            </div>
+                            <div style="overflow: auto;">
+                                <button class="accordion" id="FullNameToolTip" style="display: none;"></button>
+                                <div class="panel" style=" padding: 0; margin: 0;">
+                                    <div class="tooltip">
+                                        What is your name?
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="overflow:auto">
+                                <input type="text" id="full_name" name="full_name" onblur="if(IsAccordion('FullNameToolTip')){Accordionize('FullNameToolTip');}" />
+                            </div>
+                        </div>
+
+                        <div class="fldLabel">
+                            <div style="overflow: auto;">
+                                Date Of Birth <span class="reqField">*</span>
+                                <span style="float: right;" onclick="Accordionize('BirthDateToolTip');">💡</span>
+                            </div>
+                            <div style="overflow: auto;">
+                                <button class="accordion" id="BirthDateToolTip" style="display: none;"></button>
+                                <div class="panel" style=" padding: 0; margin: 0;">
+                                    <div class="tooltip">
+                                        We ask for your birth date to make sure you are over 18, and also, so we can send you gifts & suprises for your birthday.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="overflow:auto">
+                                <input type="date" id="birth_date" name="birth_date" onblur="if(IsAccordion('BirthDateToolTip')){Accordionize('BirthDateToolTip');}" />
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="fldLabel">
+                        <div style="overflow: auto;">
+                            WhatsApp# <span class="reqField">*</span>
+                            <span style="float: right;" onclick="Accordionize('WAToolTip');">💡</span>
+                        </div>
+                        <div style="overflow: auto;">
+                            <button class="accordion" id="WAToolTip" style="display: none;"></button>
+                            <div class="panel" style=" padding: 0; margin: 0;">
+                                <div class="tooltip">
+                                    Please provide the WhatsApp number listed in our service
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="overflow:auto">
+                            <input type="text" id="wanum" name="wanum" onblur="if(IsAccordion('WAToolTip')){Accordionize('WAToolTip');}" />
+                        </div>
+                    </div>
+                    <div id="OrderFormShipToOther">
+                        <div class="fldLabel">
+                            <div style="overflow: auto;">
+
+                                <input type="checkbox" name="is_ship_phone" id="is_ship_phone" style="float:left" onclick="if (!this.checked) { document.getElementById('ship_phone').value = '';document.getElementById('ship_name').value = ''; } Accordionize('ShipPhoneAcc');" />
+                                Delivery to someone else?
+                                <span style="float: right;" onclick="Accordionize('IsShipPhoneToolTip');">💡</span>
+                            </div>
+                            <div style="overflow: auto;">
+                                <button class="accordion" id="IsShipPhoneToolTip" style="display: none;"></button>
+                                <div class="panel" style=" padding: 0; margin: 0;">
+                                    <div class="tooltip">
+                                        Please check here if someone else will receive the order for you.
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="overflow:auto;height:30px;">&nbsp;</div>
+                        </div>
+
+                        <button class="accordion" style="display:none" id="ShipPhoneAcc"></button>
+                        <div class="panel" style="margin:0;padding:3px;">
+                            <div style="overflow: auto; padding: 5px; ">
+                                <div class="fldLabel" id="ShipNameDiv">
+                                    <div style="overflow: auto;">
+                                        Recipient name <span class="reqField">*</span>
+                                        <span style="float: left;" onclick="Accordionize('ShipNameToolTip'); FixAccordion('ShipPhoneAcc');">💡</span>
+                                    </div>
+                                    <div style="overflow: auto;">
+                                        <button class="accordion" id="ShipNameToolTip" style="display: none;"></button>
+                                        <div class="panel" style=" padding: 0; margin: 0;">
+                                            <div class="tooltip">
+                                                Please provide recipient name..
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="overflow:auto">
+                                        <input type="text" id="ship_name" name="ship_name" />
+                                    </div>
+                                </div>
+                                <div class="fldLabel" id="ShipPhoneDiv">
+                                    <div style="overflow: auto;">
+                                        Recipient number <span class="reqField">*</span>
+                                        <span style="float: left;" onclick="Accordionize('ShipPhoneToolTip'); FixAccordion('ShipPhoneAcc');">💡</span>
+                                    </div>
+                                    <div style="overflow: auto;">
+                                        <button class="accordion" id="ShipPhoneToolTip" style="display: none;"></button>
+                                        <div class="panel" style=" padding: 0; margin: 0;">
+                                            <div class="tooltip">
+                                                Please provide recipient number..
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="overflow:auto">
+                                        <input type="text" id="ship_phone" name="ship_phone" />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="fldLabel" id="MenuSelectDiv">
+                        <div style="overflow: auto;">
+                            Please Select Delivery Method:
+                            <span style="float: right;" onclick="Accordionize('MenuIdToolTip');">💡</span>
+                        </div>
+                        <div style="overflow: auto;">
+                            <button class="accordion" id="MenuIdToolTip" style="display: none;"></button>
+                            <div class="panel" style=" padding: 0; margin: 0;">
+                                <div class="tooltip">
+                                    How would you like to receieve your order?
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="overflow:auto">
+                            <select id="menu_id" name="menu_id" onblur="if(IsAccordion('MenuIdToolTip')){Accordionize('MenuIdToolTip');}">
+                                <option value="0">Please Choose..</option>
+                                @foreach (var menu in menus)
+                                {
+                                    <option value="@menu.id">@menu.e_title</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="fldLabel">
+                        <div style="overflow: auto;">
+                            Delivery Address <span class="reqField">*</span>
+                            <span style="float: right;" onclick="Accordionize('AddressToolTip');">💡</span>
+                        </div>
+                        <div style="overflow: auto;">
+                            <button class="accordion" id="AddressToolTip" style="display: none;"></button>
+                            <div class="panel" style=" padding: 0; margin: 0;">
+                                <div class="tooltip">
+                                    Street Address and house number only. please AVOID providing any other information such as apartment#, floor, etc.
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="overflow:auto">
+                            <input type="text" id="address" name="address" onblur="if(IsAccordion('AddressToolTip')){Accordionize('AddressToolTip');}" />
+                        </div>
+                    </div>
+                    <div class="fldLabel">
+                        <div style="overflow: auto;">
+                            Delivery City <span class="reqField">*</span>
+                            <span style="float: right;" onclick="Accordionize('CityToolTip');">💡</span>
+                        </div>
+                        <div style="overflow: auto;">
+                            <button class="accordion" id="CityToolTip" style="display: none;"></button>
+                            <div class="panel" style=" padding: 0; margin: 0;">
+                                <div class="tooltip">
+                                    City Only
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="overflow:auto">
+                            <input type="text" id="city" name="city" onblur="if(IsAccordion('CityToolTip')){Accordionize('CityToolTip');}" />
+                        </div>
+                    </div>
+
+
+
+                    <div class="fldLabel">
+                        <div style="overflow: auto;">
+                            What is your order? <span class="reqField">*</span>
+                            <span style="float: right;" onclick="Accordionize('OrderBodyInfoTip');">💡</span>
+                            <span style="float: right;" onclick="controller.open('MahWorld'); currentlyOpenSidebar = 'MahWorld'; callerSidebar = 'MainSb'; ">📄</span>
+                        </div>
+                        <div style="overflow: auto;">
+                            <button class="accordion" id="OrderBodyInfoTip" style="display: none;"></button>
+                            <div class="panel" style=" padding: 0; margin: 0;">
+                                <div class="tooltip">
+                                    Please provide requested quantity, selected strain, and the amount to be paid. If you are ordering one of our specials, please provide the special name and price.
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="overflow:auto">
+                            <textarea id="order_body" name="order_body" rows="3" onblur="if(IsAccordion('OrderBodyInfoTip')){Accordionize('OrderBodyInfoTip');}"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="fldLabel">
+                        <div style="overflow: auto;">
+                            Community Charity Donation?
+                            <span style="float: right;" onclick="Accordionize('DonationToolTip');">💡</span>
+                        </div>
+                        <div style="overflow: auto;">
+                            <button class="accordion" id="DonationToolTip" style="display: none;"></button>
+                            <div class="panel" style=" padding: 0; margin: 0;">
+                                <div class="tooltip">
+                                    Our community charity foundation provides those in our community who are unable to afford high quality Cannabis with the option to do so.
+
+                                    The members of our service, our organization's management team and our entire staff, donate to our foundation on a regular basis, thus allowing our support in hundreds of needed individuals to purchase Cannabis without any cost or at a subsidized rate.
+
+                                    Needless to say, our cummunity charity foundation is a non profit foundation, managed voluntarily and with much love by our dedicated staff members, all for the benefit and well being of the Cannabis users community in Israel.
+
+                                    The community charity foundation operates in a transparant manner, and you may view it's status at any time.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="overflow:auto">
+                            <input type="text" id="donation" name="donation" onblur="if(IsAccordion('DonationToolTip')){Accordionize('DonationToolTip');}" />
+                        </div>
+                    </div>
+
+
+                    <div class="fldLabel" id="OrderFormOrderPw">
+                        <div style="overflow: auto;">
+                            What's today's password? <span class="reqField">*</span>
+
+                            <span style="float: right;" onclick="Accordionize('OrderPwToolTip');">💡</span>
+                        </div>
+                        <div style="overflow: auto;">
+                            <button class="accordion" id="OrderPwToolTip" style="display: none;"></button>
+                            <div class="panel" style=" padding: 0; margin: 0;">
+                                <div class="tooltip">
+                                    The password can be obtained by Members services desk.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="overflow:auto">
+                            <input type="text" id="orderpw" name="orderpw" onblur="if(IsAccordion('OrderPwToolTip')){Accordionize('OrderPwToolTip');}" />
+                        </div>
+                    </div>
+                    <div id="OrderFormNewMember" style="display:none">
+
+                        <div class="fldLabel">
+                            <div style="overflow: auto;">
+                                Email Address
+                                <span style="float: left;" onclick="Accordionize('EmailToolTip');">💡</span>
+                            </div>
+                            <div style="overflow: auto;">
+                                <button class="accordion" id="EmailToolTip" style="display: none;"></button>
+                                <div class="panel" style=" padding: 0; margin: 0;">
+                                    <div class="tooltip">
+                                        We rarely send emails, but it's a good idea to have it updated in our systems so we can notify you in the event of service interruptions.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="overflow:auto">
+                                <input type="text" id="email" name="email" onblur="if(IsAccordion('EmailToolTip')){Accordionize('EmailToolTip');}" />
+                            </div>
+                        </div>
+
+
+                        @if (aff_id == 0 && ref_id == 0)
+                        {
+                            <div class="fldLabel">
+                                <div style="overflow: auto;">
+                                    How did you reach us?
+                                    <span style="float: left;" onclick="Accordionize('RefSourceToolTip');">💡</span>
+                                </div>
+                                <div style="overflow: auto;">
+                                    <button class="accordion" id="RefSourceToolTip" style="display: none;"></button>
+                                    <div class="panel" style=" padding: 0; margin: 0;">
+                                        <div class="tooltip">
+                                            If you reached us via a friend's referral, please share his/her number with us so we can validate you automatically.
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="overflow:auto">
+                                    <select id="ref_source" name="ref_source" onchange="if (IsAccordion('refSourceDescAcc')) { Accordionize('refSourceDescAcc')} if (IsAccordion('refSourceOtherAcc')) { Accordionize('refSourceOtherAcc')} if (this.value == 'ref') { Accordionize('refSourceDescAcc'); } if (this.value == 'other') { Accordionize('refSourceOtherAcc') }">
+                                        <option value="">Please select..</option>
+                                        <option value="google">Google</option>
+                                        <option value="instagram">Instagram</option>
+                                        <option value="fb">Facebook</option>
+                                        <option value="barcode">Barcode scan</option>
+                                        <option value="ref">A friend..</option>
+                                        <option value="other">Other..</option>
+                                    </select>
+
+                                    <button class="accordion" id="refSourceOtherAcc" style="display:none"></button>
+                                    <div class="panel" style="padding:0;margin:0 ">
+                                        <div style="overflow: auto;padding:0;margin:0 ">
+                                            <div class="fldLabel">
+                                                <div style="overflow: auto;">
+                                                    Please Specify..<span class="reqField">*</span>
+                                                    <span style="float: left;" onclick="Accordionize('RefOtherToolTip'); FixAccordion('refSourceOtherAcc');">💡</span>
+                                                </div>
+                                                <div style="overflow: auto;">
+                                                    <button class="accordion" id="RefOtherToolTip" style="display: none;"></button>
+                                                    <div class="panel" style="padding: 0; margin: 0;">
+                                                        <div class="tooltip">
+                                                            Please specify how did you reach us..
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div style="overflow:auto">
+                                                    <input type="text" id="ref_source_other" name="ref_source_other" maxlength="100" />
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                    <button class="accordion" id="refSourceDescAcc" style="display:none"></button>
+                                    <div class="panel" style="padding:0;margin:0 ">
+                                        <div style="overflow: auto;  padding: 0; margin: 0">
+                                            <div class="fldLabel">
+                                                <div style="overflow: auto;">
+                                                    WhatsApp# of referring friend
+                                                    <span style="float: left;" onclick="Accordionize('RefFriendToolTip'); FixAccordion('refSourceDescAcc');">💡</span>
+                                                </div>
+                                                <div style="overflow: auto;">
+                                                    <button class="accordion" id="RefFriendToolTip" style="display: none;"></button>
+                                                    <div class="panel" style=" padding: 0; margin: 0;">
+                                                        <div class="tooltip">
+                                                            Please provide the number of the person who recommended you about our service.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div style="overflow:auto">
+                                                    <input type="text" id="ref_source_desc" name="ref_source_desc" maxlength="18" />
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <hr style=" margin-top: 5px; margin-bottom: 5px;" />
+                    <div class="fldLabel">
+                        <div style="overflow: auto;">
+                            Terms & Conditions
+
+                            <span style="float: right;" onclick="Accordionize('InvolvementToolTip');">💡</span>
+                        </div>
+                        <div style="overflow: auto;">
+                            <button class="accordion" id="InvolvementToolTip" style="display: none;"></button>
+                            <div class="panel" style=" padding: 0; margin: 0;">
+                                <div class="tooltip">
+                                    Please read our guidelines and disclouser carefully, as we abide by it and require you to do the same in order to use the service.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="overflow:auto">
+                            <div style="overflow:auto;font-size:16px;">
+                                <div style="overflow: auto;"><input type="checkbox" name="is_terms" id="is_terms" checked style="float:left" />I have read the service's <span style="color: #dfffbd" onclick="sbload('SubMenu','Terms_Eng');">guidelines</span> and agree to follow them</div>
+                                <div style="overflow: auto;"><input type="checkbox" name="is_disc" id="is_disc" checked style="float:left" /> I have read your <span style="color: #dfffbd" onclick="sbload('SubMenu','Disc_Eng');">disclousre</span> in regards to the provided strain, and i agree to it</div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <hr style=" margin-top: 5px; margin-bottom: 25px;" />
+
+
+
+
+
+                    <div style="overflow:auto;" id="prospectJoinActions">
+                        <div class="errBox" id="prospectJoinValidationError" style="direction:ltr;text-align:left">xvcbxcbv</div>
+                        <div class="b_d">
+                            <button type="button" value="Reset" class="re" style="float:left" onclick="ControlButton();">Cancel</button>
+                            <button type="button" value="submit" class="sub" style="float:right" onclick="hideElement('prospectJoinActions'); showElement('prospectJoinLoader'); AjaxActions('ReviewOrder', '', '', 'OrderForm');">Continue</button>
+                        </div>
+
+                    </div>
+                    <center>
+                        <div class="spinner" style="font-size: 20px;display:none;" id="prospectJoinLoader">
+                            <div class="bounce1"></div>
+                            <div class="bounce2"></div>
+                            <div class="bounce3"></div>
+                        </div>
+                    </center>
+
+
+                </form>
+            </div>
+        </div>
+        <div class="form_ft_top">
+            <div class="container">
+                <div class="s_right">
+                    <a href="main"><img src="images/ftlogo.png" alt="Hamachteret" /></a>
+                </div>
+                <div class="s_left">
+                    <ul>
+                        <li><a href="" target="_blank"><img src="images/instagram.png" alt="instagram" /></a></li>
+                        <li><a href="" target="_blank"><img src="images/facebook.png" alt="facebook" /></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@functions {
+    public void OnPost()
+    {
+        // This prevents 400s if POST is received
+    }
+}

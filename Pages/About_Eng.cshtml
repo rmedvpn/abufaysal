@@ -1,0 +1,76 @@
+﻿@page
+@attribute [IgnoreAntiforgeryToken]
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    // Disable layout for AJAX requests — preserves WebMatrix behavior
+
+    Layout = null;
+
+    int ref_id = 0; int.TryParse(HttpContextAccessor.HttpContext.Request.Query["ref_id"], out ref_id);
+    int aff_id = 0; int.TryParse(HttpContextAccessor.HttpContext.Request.Query["aff_id"], out aff_id);
+}
+<section class="wel_sec">
+    <div class="container">
+        <div class="form_wel" style="margin-top:25px;direction:ltr">
+            <div class="welsc caption">
+                <h1>Hamachteret<strong>About</strong></h1>
+            </div>
+            <div class="f_details" style="padding:5px;background-color:white;font-size:18px;">
+                <div style="overflow: auto; padding: 5px; margin: 5px;">
+                    Hello, we are the Machteret!
+                    
+                </div>
+                <div style="overflow: auto; padding: 5px; margin: 5px;">
+                    Our organization was founded at 2014 by a group of friends in order to create a safe, simple and affordable platform for Cannabis purchase in Israel.
+
+                </div>
+                <div style="overflow: auto; padding: 5px; margin: 5px;">
+                    At the time, buying medical grade Cannabis at a reasonable price was nearly impossible, 
+                    and the hudreds of thousands of Cannabis users thoroughout the country were forced to deal with criminals
+                    in order to get their weed. to pay extremly high prices, or simply to stay without it for long periods of time.
+                
+                </div>
+                <div style="overflow: auto; padding: 5px; margin: 5px;">
+                    Back in the day, even the Cannabis products that could be obtained were of very poor quality, and in general,
+                    the weed loving community was in a very bad place.
+                    
+                </div>
+                <div style="overflow: auto; padding: 5px; margin: 5px;">
+                    On that ground, the founding members of our organization has decided to start our first growing facility, which was very unstratigically 
+                    located in a semi ruined apartment building in southern Tel-Aviv.
+
+                </div>
+                <div style="overflow: auto; padding: 5px; margin: 5px;">
+                    It wasn't to long before the rumor of the high quality of our products took off, and as the demand grew, we grew with it.
+                    
+                    over the years we have expanded our growing facilities, created solid partnerships with other growers and distributers, and 
+                    our system began to take form.
+
+                    
+                </div>
+                <div class="btn_block">
+                    <a href="#" onclick="ControlButton();">Go Back!</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="form_ft_top">
+            <div class="container">
+                <div class="s_right">
+                    <a href="main"><img src="images/ftlogo.png" alt="Hamachteret" /></a>
+                </div>
+                <div class="s_left">
+                    <ul>
+                        <li><a href="" target="_blank"><img src="images/instagram.png" alt="instagram" /></a></li>
+                        <li><a href="" target="_blank"><img src="images/facebook.png" alt="facebook" /></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+

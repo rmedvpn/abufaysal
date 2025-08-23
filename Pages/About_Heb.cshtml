@@ -1,0 +1,66 @@
+﻿@page
+@attribute [IgnoreAntiforgeryToken]
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    // Disable layout for AJAX requests — preserves WebMatrix behavior
+
+    Layout = null;
+
+    int ref_id = 0; int.TryParse(HttpContextAccessor.HttpContext.Request.Query["ref_id"], out ref_id);
+    int aff_id = 0; int.TryParse(HttpContextAccessor.HttpContext.Request.Query["aff_id"], out aff_id);
+}
+<section class="wel_sec">
+    <div class="container">
+        <div class="form_wel" style="margin-top:25px;">
+            <div class="welsc caption">
+                <h1>המחתרת<strong>אודות</strong></h1>
+            </div>
+            <div class="f_details" style="padding:5px;background-color:white;font-size:18px;">
+                <div style="overflow: auto; padding: 5px; margin: 5px;">
+                    שלום עליך, ונעים להכיר, אנחנו "המחתרת".
+                </div>
+                <div style="overflow: auto; padding: 5px; margin: 5px;">
+                    ארגון המחתרת הוקם בשנת 2014 ע"י מספר חברים, מוותיקי קהילת הקנאביס הישראלית, במטרה ליצור פלטפורמה בטוחה ומשתלמת לרכישת קנאביס, לכל בגיר אשר יחפוץ בכך.
+                </div>
+                <div style="overflow: auto; padding: 5px; margin: 5px;">
+                    באותה תקופה רכישת קנאביס באיכות רפואית ובמחיר שפוי היתה כמעט בלתי אפשרית בישראל. בודדים בלבד החזיקו ברישיון לקנאביס רפואי המאושר ע"י משרד הבריאות ומאות אלפי צרכני הקנאביס במדינה נאלצו לפנות לדרכים עברייניות בכדי להשיג קנאביס, לשלם מחירים גבוהים או פשוט "להיות יבשים" לפרקי זמן ארוכים.
+                </div>
+                <div style="overflow: auto; padding: 5px; margin: 5px;">
+                    בימים ההם, גם מוצרי הקנאביס שכבר ניתן היה להשיג היו לרוב באיכות ירודה, ובגדול ניתן לומר שמצבה של קהילת צרכני הקנאביס במדינה, היה ממש בכי רע.
+                </div>
+                <div style="overflow: auto; padding: 5px; margin: 5px;">
+                    על הרקע הזה החליטה קבוצת המייסדים של הארגון, שבימים ההם היו סתם קבוצת סטלנים תל אביביים מוזרים לעשות מעשה, ויחד הם הקימו את מעבדת הגידול הראשונה שלנו, שהתפרשה על כמה דירות בבניין מתפורר בדרום תל אביב.
+                </div>
+                <div style="overflow: auto; padding: 5px; margin: 5px;">
+                    לא עבר זמן רב והשמועה על התוצרת האיכותית של מיזם החברים הקטן שלנו עשתה לה כנפיים, ועם הביקוש הגובר, נפתחו עוד ועוד מעבדות, נוצרו עוד ועוד שיתופי פעולה עם פעילים, מגדלים ומפיצים אחרים, והמערכת שלנו החלה לקרום עור וגידים.
+                </div>
+                <div style="overflow: auto; padding: 5px; margin: 5px;">
+                    במרוצת השנים, מלבד לאפשר רכישת קנאביס אחראית וכלכלית, אנחנו, מנהלי ועובדי הארגון, שמנו לפנינו מטרות נוספות בכדי לשרת את קהילת משתמשי הקנאביס בישראל: בנינו מוקד שירות לקוחות מהמתקדמים במדינה, השקענו משאבים רבים בקידום לגליזציה ונורמליזציה של שימוש במוצרי קנאביס, עודדנו שיח ופעילויות של הקהילה, עזרנו לאלפי חולים ונזקקים המשתמשים בקנאביס כתרופה וכמזור, וכמובן אנו ממשיכים מדי יום לקיים את מטרות הבסיס של הארגון, לאפשר רכישת קנאביס דיסקרטית, נוחה ומשתלמת, באחריות מלאה, לטובת ציבור הצרכנים בישראל.
+                </div>
+
+                <div class="btn_block">
+                    <a href="#" onclick="ControlButton();">חזרה</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="form_ft_top">
+            <div class="container">
+                <div class="s_right">
+                    <a href="main"><img src="images/ftlogo.png" alt="Hamachteret" /></a>
+                </div>
+                <div class="s_left">
+                    <ul>
+                        <li><a href="" target="_blank"><img src="images/instagram.png" alt="instagram" /></a></li>
+                        <li><a href="" target="_blank"><img src="images/facebook.png" alt="facebook" /></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
