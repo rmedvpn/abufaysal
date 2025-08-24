@@ -1,0 +1,135 @@
+﻿@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = null;
+
+    var context = HttpContextAccessor.HttpContext;
+    var culture = new System.Globalization.CultureInfo("he-IL");
+    var sessionId = "";
+    try { sessionId = context.Session.Id; } catch { sessionId = ""; }
+    if (string.IsNullOrWhiteSpace(sessionId)) sessionId = "";
+
+    var db = Database.Open("faysal");
+    var sqlSelect = "SELECT * FROM cart WHERE session_id=@0 order by ts";
+    var cart = db.Query(sqlSelect, sessionId);
+
+    int itemCounter = 0;
+    int quanOfPackages = 0;
+    decimal order_total = 0;
+    decimal order_total_including_shipping = 0;
+    decimal shipping_charge = 0;
+    decimal free_shipping_marker = 0;
+    decimal free_shipping_deficit = 0;
+
+    try { shipping_charge = Convert.ToInt32(AppFunctions.GetAppProperty("DefaultShippingCharge")); } catch { }
+    try { free_shipping_marker = Convert.ToInt32(AppFunctions.GetAppProperty("FreeShippingMarker")); } catch { }
+}
+
+<div class="A" style="color:#000;background-color:#ffffff;font-size:18px;min-height:100px;text-align:right;border-radius:5px;">
+    <h3>ההזמנה שלך</h3>
+
+    @if (!cart.Any())
+    {
+        <div class="A" style="color:#e3e3e3;"> עדיין לא התווספו פריטים להזמנה </div>
+    }
+    else
+    {
+        foreach (var item in cart)
+        {
+            itemCounter++;
+            decimal item_total = item.sale_price * item.quanOfPackages;
+            order_total += item_total;
+
+            <div class="A" style="text-align:right;">
+                <div class="B">
+                    <div class="A">
+                        @if (item.quanOfPackages > 1)
+                        {
+                            <span class="CartBtn" onclick="AjaxActions('CartAction', 'SUBONE', 'MainLoader', '@item.serial');">➖</span>
+                        }
+                        <span class="CartBtn" style="margin-left: 5px;" onclick="AjaxActions('CartAction', 'REMOVE','MainLoader', '@item.serial');">❌</span>
+                        <span class="CartBtn" style="margin-left: 5px;" onclick="AjaxActions('CartAction', 'ADDONE', 'MainLoader', '@item.serial');">➕</span>
+
+                        <span style="border-bottom:1px solid #57d600">@item.quan_title</span>
+                    </div>
+
+                    <div class="A">
+                        <div class="CartInfoItem">זן<div class="CartPrice"><b>@item.strain_title</b></div></div>
+                        <div class="CartInfoItem">מינון<div class="CartPrice"><b>@item.potency_title</b></div></div>
+                        <div class="CartInfoItem">נייר<div class="CartPrice"><b>@item.paper_title</b></div></div>
+                        <div class="CartInfoItem">פארש<div class="CartPrice"><b>@item.mixture_title</b></div></div>
+
+                        @if (item.quanOfPackages == 1)
+                        {
+                            <div class="CartInfoItem">
+                                מחיר
+                                <div class="CartPrice" style="background-color:#e3e3e3;border-radius:5px"><b>@item_total.ToString("C", culture)</b></div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="CartInfoItem">
+                                מחיר החפיסה
+                                <div class="CartPrice" style="background-color:#e3e3e3;border-radius:5px"><b>@item.sale_price.ToString("C", culture)</b></div>
+                            </div>
+                            <div class="CartInfoItem">
+                                כמות מבוקשת
+                                <div class="CartPrice" style="background-color:#e3e3e3;border-radius:5px"><b>@item.quanOfPackages יחידות</b></div>
+                            </div>
+                            <div class="CartInfoItem">
+                                מחיר סך הכל
+                                <div class="CartPrice" style="background-color:#e3e3e3;border-radius:5px"><b>@item_total.ToString("C", culture)</b></div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        if (order_total > free_shipping_marker)
+        {
+            shipping_charge = 0;
+        }
+        else
+        {
+            free_shipping_deficit = free_shipping_marker - order_total;
+        }
+        order_total_including_shipping = order_total + shipping_charge;
+
+        <div class="B" style="text-align:right">
+            <div class="OrderFormInfoItem">
+                <div class="A" style="font-size:11px;color:#b200ff">
+                    ❤️ משלוח חינם בהזמנה מעל <b>@free_shipping_marker.ToString("C", culture)</b>
+                </div>
+
+                @if (shipping_charge > 0)
+                {
+                    <div style="font-size:12px">
+                        סך הכל הזמנה
+                        <div class="OrderFormPrice" style="font-size:11px"><b>@order_total.ToString("C", culture)</b></div>
+                    </div>
+                    <div style="font-size:12px">
+                        עלות משלוח
+                        <div class="OrderFormPrice" style="font-size:11px"><b>@shipping_charge.ToString("C", culture)</b></div>
+                    </div>
+                }
+
+                <div style="font-size:12px">
+                    סך הכל לתשלום
+                    <div class="OrderFormPrice" style="font-size:11px;background-color:yellow"><b>@order_total_including_shipping.ToString("C", culture)</b></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="A" style="text-align:center;">
+            <button class="A" type="button" onclick="ControlButton();">ביטול</button>
+            <button class="A" type="button" onclick="AjaxActions('ClearCart', '', 'MainLoader', '');">איפוס הזמנה</button>
+            <button class="A" type="button" onclick="showElement('checkoutInfoDiv');">צקאאוט</button>
+        </div>
+    }
+</div>
+
+@{
+    db.Close();
+}

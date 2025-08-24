@@ -148,42 +148,40 @@
 
 @if (retTxtHtml != "")
 {
-
-    <div class="B">
-        <div class="B" style="float:left">
-            <button type="button" class="CartQuanAddBtn" style="background-color:#e3e3e3;color:#808080">הוספה לסל</button>
-        </div>
-        <div class="CartPriceLabel">
-            <div class="CartPriceSubLabel">לקבלת מחיר, נא לבחור את כל האפשרוית</div>
-
-        </div>
+    <div class="A" style="color:#000;background-color:#ffffcc;font-size:16px;min-height:100px;text-align:right;color:#ff0000;border-radius:5px;border: 2px dotted #808080;padding:10px;">
+        @Html.Raw(retTxtHtml)
     </div>
-        
-    
 }
 else
 {
-    <div class="B">
-        <div class="B" style="float:left">
-            <button type="button" class="CartQuanBtn" onclick="CartChangeQuan('+1');">+</button>
-            <div class="CartQuanLabel" id="quanOfPackagesLabel">
-                1
+    <div class="A" style="color:#000;background-color:#ffffff;font-size:18px;min-height:100px;text-align:right;border-radius:5px;">
+        <div class="B">
+            <div class="B">
+                <div class="OrderFormInfoItem">
+                    מחיר
+                    <div class="OrderFormPrice"><b>@sale_price.ToString("C", culture)</b></div>
                 </div>
-            <input type="hidden" name="quanOfPackages" id="quanOfPackages" value="1" />
+                <div class="OrderFormInfoItem">
+                    <div style="font-size:12px">
+                        מחיר יח
+                        <div class="OrderFormPrice" style="font-size:11px"><b>@unit_sale_price.ToString("C", culture)</b></div>
+                    </div>
+                </div>
+            </div>
 
-            <button type="button" class="CartQuanBtn" onclick="CartChangeQuan('-1');">-</button>
+            <div class="B" style="text-align:center;margin-top:10px;">
+                <select class="A" name="quanOfPackages">
+                    @for (int i = 1; i <= 10; i++)
+                    {
+                        <option value="@i">@i יחידות</option>
+                    }
+                </select>
 
+                <button type="button" style="padding:5px;font-size:18px;margin-top:5px"
+                        onclick="AjaxActions('AddToCart', '', 'MainLoader', 'CalcItemCostForm');">
+                    הוספה להזמנה
+                </button>
+            </div>
         </div>
     </div>
-    <div class="B">
-        <div class="B" style="float:left">
-            <button type="button" class="CartQuanAddBtn" onclick="AjaxActions('AddToCart', '', 'MainLoader', 'CalcItemCostForm');">הוספה לסל</button>
-        </div>
-        <div class="CartPriceLabel">
-            <div class="B">@sale_price.ToString("C", culture)</div>
-            <div class="CartPriceSubLabel">יוצא @unit_sale_price.ToString("C", culture) לפייסל</div>
-
-        </div>
-    </div>
-
 }

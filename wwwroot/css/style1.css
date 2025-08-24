@@ -1,5 +1,5 @@
-@font-face {
-    font-family: "Noyland"; /* Name you�ll use in CSS */
+﻿@font-face {
+    font-family: "Noyland"; /* Name you’ll use in CSS */
     src: url("/fonts/noyland-regular-aaa.otf") format("opentype");
     font-weight: normal;
     font-style: normal;
@@ -164,7 +164,7 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
 .wel_sec .caption {
     width: 100%;
     float: right;
-    margin: 0px auto 60px;
+    margin: 0;
     padding: 0;
 }
 
@@ -884,6 +884,14 @@ div.PropItem:hover {
     font-family: Noyland;
     float:right;
 }
+span.SelectedPropTitle {
+    float: left;
+    padding: 5px;
+    font-size: 18px;
+    margin: 10px;
+    margin-left: 20px;
+    color: #ede7d5
+}
 div.PropItemStrain {
     float: right;
     background-color: #fff;
@@ -913,6 +921,63 @@ div.PropItemStrainSubTitle {
     color: #ab6c00;
     font-size: 14px;
     font-family: Noyland;
+}
+
+button.CartQuanAddBtn {
+    padding: 10px;
+    margin: 10px;
+    font-size: 24px;
+    background-color: #ab6c00;
+    border: 0;
+    float: left;
+    font-family: Noyland;
+    color: #fff;
+    border-radius: 20px;
+    cursor: pointer;
+}
+button.CartQuanBtn {
+    padding: 5px;
+    margin: 5px;
+    font-size: 24px;
+    background: transparent;
+    border: 0;
+    float: left;
+    font-family: Noyland;
+    cursor: pointer;
+}
+
+div.OrderIntroMsg {
+    color: #ab6c00;
+    font-size: 24px;
+    font-family: Noyland;
+}
+div.CartQuanLabel {
+    background-color: #0d4133;
+    /*border: 2px solid #0d4133;*/
+    margin: 5px;
+    padding: 5px;
+    color: #fff;
+    font-size: 24px;
+    width:26px;
+    font-family: Noyland;
+    border-radius: 50%;
+    float: left;
+}
+div.CartPriceLabel {
+    /*border: 2px solid #0d4133;*/
+    margin: 5px;
+    padding: 5px;
+    color: #ab6c00;
+    font-size: 24px;
+    font-family: Noyland;
+    float: right;
+}
+div.CartPriceSubLabel {
+    /*border: 2px solid #0d4133;*/
+    color: #0d4133;
+    font-size: 16px;
+    font-family: Noyland;
+
 }
 
 div.PropItemStrainBtn {
@@ -1091,6 +1156,17 @@ div.SettingsRawActive {
         background-color: #dfffbd;
     }
 
+div .CartRow {
+    overflow: auto;
+    margin: 5px;
+    padding: 5px;
+    background-color:#fff;
+    border-radius:20px;
+    text-align:right;
+    font-family:Noyland;
+    font-size:24px;
+}
+
 div .SettingsRaw {
     overflow: auto;
     margin: 5px;
@@ -1104,18 +1180,118 @@ div .SettingsRaw {
     }
 
 span.CartBtn {
-    float: left;
-    font-size: 8px;
+    float: right;
+    text-align: center;
+    line-height: 25px;
+    font-size: 20px;
+    color: #0d4133;
+    width: 20px;
+    height:20px;
+    padding-top:1px;
     border-radius: 50%;
-    background-color: #e3e3e3;
-    margin-top: 5px;
-    cursor: pointer
+    background-color: #ede7d5;
+    margin-right: 20px;
+    cursor: pointer;
+    font-family: Noyland;
 }
 
     span.CartBtn:hover {
-        background-color: #ffffcc;
-        border: 1px solid #808080;
+        color: #ab6c00;
     }
+
+div.CartNotification {
+    position: relative;
+    float: right;
+    top: 0;
+    right: 20px;
+    background-color: #f00;
+    color: #fff;
+    font-size: 16px;
+    width: 18px; /* equal width & height → circle */
+    height: 18px;
+    text-align: center; /* centers text horizontally */
+    border-radius: 50%;
+    line-height: 20px;
+}
+div.CartIemPrice {
+    float: left;
+    font-size: 20px;
+    color: #0d4133;
+    font-family:Noyland;
+}
+
+div.CartItmChangeBtn {
+    float: right;
+    margin-right:10px;
+    border-radius:20px;
+    padding:5px;
+    font-size: 16px;
+    color: #fff;
+    background-color:#f00;
+    font-family: Noyland;
+}
+div.CartTotalContainer {
+    float: left;
+    padding: 5px;
+    font-size: 16px;
+    color: #0d4133;
+    line-height:16px;
+    font-family: Noyland;
+}
+div.CartTotal {
+    float: left;
+    margin-right: 10px;
+    border-radius: 20px;
+    padding: 5px;
+    font-size: 24px;
+    color: #fff;
+    background-color: #ab6c00;
+    font-family: Noyland;
+    text-align: left;
+}
+div.ShCartTotalContainer {
+    float: left;
+    padding: 5px;
+    font-size: 14px;
+    color: #0d4133;
+  text-align:right;
+    font-family: Noyland;
+}
+div.ShCartTotal {
+    float: left;
+    margin-right: 10px;
+    font-size: 14px;
+    color: #0d4133;
+    font-family: Noyland;
+    width: 100px;
+    text-align:left;
+}
+button.checkuotBtn {
+    margin-right: 10px;
+    border-radius: 20px;
+    padding: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 24px;
+    color: #fff;
+    background-color: #ab6c00;
+    font-family: Noyland;
+    text-align: left;
+    border: 0;
+}
+button.CartAddMoreBtn {
+    border-radius: 20px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 18px;
+    margin-top: 10px;
+    color: #fff;
+    background-color: #0d4133;
+    font-family: Noyland;
+    text-align: left;
+    border: 0;
+}
 
 @-webkit-keyframes sk-bouncedelay {
     0%, 80%, 100% {
@@ -1151,5 +1327,15 @@ span.CartBtn {
 @keyframes beat {
     to {
         transform: scale(1.4);
+    }
+}
+
+img.blinkingCart {
+    animation: blinker 1s step-start infinite;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0;
     }
 }

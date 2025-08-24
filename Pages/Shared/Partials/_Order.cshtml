@@ -1,5 +1,4 @@
-﻿@page
-@using System
+﻿@using System
 @using System.Data.SqlClient
 @using Dapper
 @using Microsoft.AspNetCore.Http
@@ -11,7 +10,7 @@
 @{
     // Disable layout for AJAX requests — preserves WebMatrix behavior
 
-    Layout = "/Pages/Shared/Layouts/_Main.cshtml";
+    Layout = null;
     var context = HttpContextAccessor.HttpContext;
     var culture = new System.Globalization.CultureInfo("he-IL");
     var sessionId = "";
@@ -66,7 +65,7 @@
                         <div class="OrderIntroMsg" style="text-align:right;vertical-align:bottom;">
                             מה מגלגלים לך היום?
                             <div class="B" style="float:left">
-                                @if (items_cnt>0)
+                                @if (items_cnt > 0)
                                 {
                                     <div class="B" onclick="PageLoad('CART');">
                                         <div class="CartNotification">@items_cnt</div>

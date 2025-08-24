@@ -131,9 +131,20 @@ function AjaxActions(field, value, loader_element, param1, param2, param3, param
 
                 case "AddToCart":
                 case "ClearCart":
+
+                    PageLoad("ORDERS");
+
+                    break;
+
                 case "CartAction":
                     if (!theRes.startsWith("!$!")) {
-                        AjaxUpdate('Cart', 'CartContainer', 'MainLoader', 'CalcItemCostForm');
+                        if (value == 'REMOVE') {
+                            PageLoad("ORDERS");
+                        }
+                        else {
+                            AjaxUpdate('Cart', 'MainBodyContent', 'MainLoader', 'CalcItemCostForm');
+                        }
+                        
 
                     }
 
@@ -187,7 +198,16 @@ function AjaxActions(field, value, loader_element, param1, param2, param3, param
 
 
 function CalcItemCost() {
-    AjaxUpdate('CalcItemCost', 'ItemCostReturnContainer', 'ItemCostLoader', 'CalcItemCostForm');
+    if (
+        document.getElementById('quan').value.trim() !== "" &&
+        document.getElementById('strain').value.trim() !== "" &&
+        document.getElementById('paper').value.trim() !== "" &&
+        document.getElementById('mixture').value.trim() !== "" &&
+        document.getElementById('MixturePotency').value.trim() !== ""
+    ) {
+        AjaxUpdate('CalcItemCost', 'ItemCostReturnContainer', 'MainLoader', 'CalcItemCostForm');
+    }
+
 }
 
 function AjaxUpdate(theAction, return_container, loaderElement, param1, param2, param3, param4) {
@@ -394,9 +414,15 @@ function PageLoad(thePage) {
     switch (thePage) {
         case "ORDER":
         case "ORDERS":
-            sbload('MainSb', 'order');
-
+            AjaxUpdate("Order","MainBodyContent","MainLoader");
             break;
+
+        case "CART":
+            AjaxUpdate("Cart","MainBodyContent","MainLoader");
+            break;
+
+
+
         case "ORDERENGLISH":
         case "ORDERSENGLISH":
             sbload('MainSb', 'orderEng');
@@ -425,5 +451,34 @@ function PageLoad(thePage) {
     }
 
 
+
+}
+
+function SelectItemProp(prop_type, prop_id) {
+    let selected_acc = "Acc_" + prop_type;
+    let selected_field_name = "selected_" + prop_type;
+    let selected_title_element_name = "title_for_" + prop_type + "_" + prop_id;
+    let selected_field = ""; selected_field = document.getElementById(selected_field_name);
+    let selected_data = ""; selected_data = document.getElementById(prop_type);
+    let selected_title = ""; selected_title = document.getElementById(selected_title_element_name).value;
+   
+    selected_field.innerHTML = selected_title;
+    selected_data.value = prop_id;
+    Accordionize(selected_acc);
+    CalcItemCost();
+}
+function CartChangeQuan(theAction) {
+    theAction = theAction || "+1";
+    let displayElement = document.getElementById("quanOfPackagesLabel");
+    let InputElement = document.getElementById("quanOfPackages");
+    let curQuan = parseInt(InputElement.value, 10);
+    console.log(InputElement.value)
+    console.log(theAction)
+    console.log(curQuan)
+    if (theAction == "+1") {InputElement.value = curQuan + 1;}
+    if (theAction == "-1") {
+        if (curQuan > 1) {InputElement.value = curQuan - 1;}
+    }
+    displayElement.innerHTML = InputElement.value;
 
 }
