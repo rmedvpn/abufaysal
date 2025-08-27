@@ -38,6 +38,9 @@
         case "":
             theHtmlOutput = "ERROR";
             break;
+        case "GOTMP":
+            theHtmlOutput = Faysal.GoTmp(context);
+            break;
 
         case "UpdateSettings":
             theHtmlOutput = Faysal.UpdateSettings(context);

@@ -16,6 +16,37 @@ namespace Faysal.Helpers
                     : "";
         }
 
+        public static string GoTmp(HttpContext context)
+        {
+            System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("he-IL");
+            string sessionId = context.Session.Id;
+            int member_id = 0;
+            DateTime local_time = AppFunctions.LocalTime();
+            string theHtmlOutput = "";
+            var db = Database.Open("faysal");
+            var old_faysal = Database.Open("old_faysal");
+            string sqlSelect = "SELECT * FROM StrainImages order by file_id";
+            var srcData = old_faysal.Query(sqlSelect);
+
+            db.Execute("DELETE FROM StrainImages");
+            db.Execute("SET IDENTITY_INSERT StrainImages ON");
+
+            foreach (var row in srcData)
+            {
+                sqlSelect = "INSERT INTO StrainImages(file_id,strain_id,full_path,fileName,timestamp,clerk_id,is_deleted,fileContent,MimeType,is_tn,ImageThumb,is_primary,is_show) ";
+                sqlSelect += "VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12)";
+                db.Execute(sqlSelect, row.file_id,row.strain_id, row.full_path, row.fileName, row.timestamp, row.clerk_id, row.is_deleted, row.fileContent, row.MimeType, row.is_tn, row.ImageThumb, row.is_primary, row.is_show);
+            }
+
+
+            db.Execute("SET IDENTITY_INSERT StrainImages OFF");
+            theHtmlOutput = "OK!";
+            db.Close();
+            old_faysal.Close();
+            return theHtmlOutput;
+        }
+
+
         public static int RoundUpAmount(decimal amount)
         {
             int rounded5 = (int)Math.Round(amount / 5m) * 5;
@@ -252,6 +283,7 @@ namespace Faysal.Helpers
             decimal sale_price = 0, unit_sale_price = 0, unit_price = 0;
             int potent_percent = 0, mixture_percent = 0;
 
+
             if (retTxtHtml == "")
             {
                 sqlSelect = "SELECT * FROM quanOptions WHERE id=@0";
@@ -396,6 +428,7 @@ namespace Faysal.Helpers
             db.Close();
             return theHtmlOutput;
         }
+
 
 
         public static string ReviewOrder(HttpContext context)

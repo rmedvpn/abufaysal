@@ -4,13 +4,20 @@
     font-weight: normal;
     font-style: normal;
 }
+:root {
+    --background: rgba(237, 231, 213, 1);
+    --green: rgba(13, 65, 51, 1);
+    --brown: rgba(171, 108, 0, 1);
+    --variable-collection-light-green: rgba(166, 160, 111, 1);
+    --variable-collection-whit: rgba(255, 255, 255, 1);
+    --variable-collection-dark-brown: rgba(56, 45, 26, 1);
+}
 
 body {
     padding: 0;
     margin: 0;
-    font-size: 14px;
-    color: #2B2A29;
-    font-family: 'Tahoma', sans-serif;
+    font-family: Noyland;
+    background-color: #ede7d5;
 }
 
 a, button {
@@ -59,28 +66,20 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
 }
 
 .container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 500px;
+    margin: 0 ;
     padding: 0;
 }
 
 /**index page**/
 .hero_sec {
-    width: 100%;
-    float: right;
-    margin: 0 auto;
+    margin: 0 ;
     padding: 0;
-    background: url('../images/mainbg.png');
-    background-repeat: repeat;
-    background-size: cover;
-    background-position: top center;
-    padding-bottom: 500px;
+    background-color: #ede7d5;
 }
 
 .logo {
     width: 100%;
-    float: right;
     margin: 50px auto 0;
     padding: 0;
     text-align: center;
@@ -142,7 +141,7 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
 
 
 /**welcome page**/
-.wel_sec {
+.wel_sec123 {
     width: 100%;
     float: right;
     margin: 0 auto;
@@ -152,13 +151,25 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
     position: relative;
     background-color:#fff;
 }
+.wel_sec {
+    margin: 10px auto 0;
+    display: table;
+    background-color: #ede7d5;
+    border-radius: 20px;
+}
 
-.center_wel {
+.center_wel1212 {
     max-width: 485px;
     margin: 10px auto 0;
     display: table;
     background-color: #ede7d5;
     border-radius: 20px;
+}
+
+.center_wel {
+    margin: 0;
+    display: table;
+    background-color: #ede7d5;
 }
 
 .wel_sec .caption {
@@ -321,7 +332,6 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
     float: right;
     margin: 0 auto;
     padding: 0px;
-    background: url('../images/form_bg.jpg');
     background-repeat: repeat;
     background-size: cover;
     background-position: top center;
@@ -402,7 +412,6 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
 
 /**content page**/
 .cont_sect {
-    background: url('../images/form_bg.jpg');
     padding: 0 0 90px;
 }
 
@@ -428,7 +437,6 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
 
 /**Form page**/
 .form_sec {
-    background: url('../images/form_bg.jpg');
     background-repeat: repeat;
     padding: 50px 0 80px;
 }
@@ -467,7 +475,6 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
                 content: '';
                 width: 100%;
                 height: 3px;
-                background: url('../images/line.png');
                 background-position: top;
                 background-size: 100%;
                 position: absolute;
@@ -479,7 +486,6 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
                 content: '';
                 width: 100%;
                 height: 3px;
-                background: url('../images/line.png');
                 background-position: top;
                 margin-top: 25px;
                 background-size: 100%;
@@ -1338,4 +1344,148 @@ img.blinkingCart {
     50% {
         opacity: 0;
     }
+}
+
+
+div.HomeSlogan {
+    font-family: Noyland;
+    font-weight: 700;
+    color: var(--brown);
+    font-size: 28px;
+    text-align: center;
+    direction: rtl;
+    margin: 50px auto 0;
+
+}
+img.group {
+    margin: 50px auto 0;
+    width: 150px;
+    height: 150px;
+}
+
+div .frame {
+    margin: 50px auto 0;
+}
+div .HomeBtn {
+    color: var(--variable-collection-whit);
+    font-family: Noyland;
+    font-weight: 700;
+    background-color: var(--brown);
+    font-size: 28px;
+    text-align: center;
+    width: 50%;
+    border-radius: 20px;
+    margin: 50px auto 0;
+}
+div .copyDisc {
+    color: #808080;
+    font-family: Noyland;
+    font-size: 14px;
+    text-align: center;
+    position:relative;
+    bottom:-20px;
+    clear:both;
+    
+
+}
+    /* DESIGNERS Styles
+---------------------------------*/
+
+
+
+    .MEGALGELIM-OPEN-ZAN {
+    background-color: #ede7d5;
+    display: grid;
+    justify-items: center;
+    align-items: start;
+    width: 100vw;
+}
+
+    .MEGALGELIM-OPEN-ZAN .div {
+        background-color: var(--background);
+        width: 390px;
+        height: 844px;
+        position: relative;
+    }
+
+    .MEGALGELIM-OPEN-ZAN .text-wrapper {
+        font-family: Noyland;
+        font-weight: 700;
+        color: var(--brown);
+        font-size: 28px;
+        text-align: center;
+        white-space: nowrap;
+        letter-spacing: 0;
+        line-height: normal;
+        direction: rtl;
+    }
+
+    .MEGALGELIM-OPEN-ZAN .logo {
+        position: absolute;
+        width: 286px;
+        height: 148px;
+        top: 186px;
+        left: 52px;
+    }
+
+    .MEGALGELIM-OPEN-ZAN .group {
+        position: absolute;
+        width: 136px;
+        height: 136px;
+        top: 442px;
+        left: 127px;
+    }
+
+    .MEGALGELIM-OPEN-ZAN .frame {
+        flex-direction: column;
+        width: 322px;
+        gap: 24px;
+        position: absolute;
+        top: 692px;
+        left: 34px;
+        display: flex;
+        align-items: center;
+    }
+
+    .MEGALGELIM-OPEN-ZAN .element {
+        position: relative;
+        width: fit-content;
+        margin-top: -1.00px;
+        font-family: Noyland;
+        font-weight: 400;
+        color: var(--green);
+        font-size: 24px;
+        text-align: center;
+        letter-spacing: 0;
+        line-height: normal;
+        direction: rtl;
+    }
+
+    .MEGALGELIM-OPEN-ZAN .div-wrapper {
+        height: 44px;
+        justify-content: center;
+        gap: 10px;
+        padding: 10px 32px;
+        position: relative;
+        align-self: stretch;
+        width: 100%;
+        background-color: var(--brown);
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+    }
+
+
+.MEGALGELIM-OPEN-ZAN .text-wrasddspper-2 {
+    position: relative;
+    width: fit-content;
+    font-family: Noyland;
+    font-weight: 400;
+    color: var(--variable-collection-whit);
+    font-size: 20px;
+    text-align: left;
+    white-space: nowrap;
+    letter-spacing: 0;
+    line-height: normal;
+    direction: rtl;
 }
