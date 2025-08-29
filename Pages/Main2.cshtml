@@ -3,7 +3,7 @@
 @inject IHttpContextAccessor HttpContextAccessor
 
 @{
-    Layout = "~/Pages/Shared/Layouts/_Main.cshtml";
+    // Layout = "~/Pages/Shared/Layouts/_Members.cshtml";
     string ref_id = "0"; try { ref_id = HttpContext.Session.GetString("ref_id"); } catch { }
     string aff_id = ""; try { aff_id = HttpContext.Session.GetString("aff_id"); } catch { }
     string go_to = ""; try { go_to = HttpContext.Session.GetString("go_to"); } catch { }
@@ -14,15 +14,47 @@
 <input type="hidden" name="starterpage" id="starter_page" value="@go_to" />
 <div style="display:none">SES: @ref_id aff: @aff_id goto: @go_to</div>
 
-<div class="MEGALGELIM-OPEN-ZAN" data-model-id="47:23813">
-      <div class="div">
-        <div class="text-wrapper">פייסלים למביני עניין</div>
-        <img class="logo" src="images/logo.png" />
-        <img class="group" src="images/group.png" />
-        <div class="frame">
-          <p class="element">מגלגלים אורזים ושולחים<br />עד הבית תוך 24 שעות</p>
-          <div class="div-wrapper"><div class="text-wrapper-2">הזמנות כאן</div></div>
+<section class="wel_sec">
+    <div class="container">
+        <div class="center_wel">
+            <img src="/images/elfaysal.png" />
+            <div class="fldLabel">
+                <div style="overflow:auto;height:30px;">&nbsp;</div>
+
+            </div>
+
+
+            <div class="menubtn">
+
+                <ul>
+                    <li><a href="#" onclick="sbload('MainSb','order?ref_id=@ref_id');">הזמנות</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','prpricing?ref_id=@ref_id');">מחירון</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','prsettings');">הגדרות</a></li>
+
+
+
+
+
+                </ul>
+            </div>
         </div>
-      </div>
+        <center>
+            <div style="overflow:auto;height:30px;">&nbsp;</div>
+
+        </center>
+
+
     </div>
+    <div class="ft_bot">
+        <div class="container">
+            <div style="text-align:center">
+            </div>
+
+        </div>
+        <div class="login-help">
+            <br />
+            <center><span style="color:white"><span onclick="sbload('MainSb','prorder?ref_id=@ref_id');">2025</span> &copy; מערכות ישראל</span></center>
+        </div>
+    </div>
+</section>
 

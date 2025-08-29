@@ -24,6 +24,7 @@
 
     try { shipping_charge = Convert.ToInt32(AppFunctions.GetAppProperty("DefaultShippingCharge")); } catch { }
     try { free_shipping_marker = Convert.ToInt32(AppFunctions.GetAppProperty("FreeShippingMarker")); } catch { }
+    ViewData["callingPage"] = "CART";
 }
 
 <section class="wel_sec">
@@ -39,7 +40,7 @@
             </div>
 
             <div class="A">
-                <form id="CalcItemCostForm">
+                <form id="CalcItemCostFsdfsdfsdform">
                     <input type="hidden" value="ver2" name="ver" />
                     <div class="A">
                         <div class="B" style="float:left">
@@ -58,142 +59,18 @@
 
 
                     <div class="A" >
-                        @if (!cart.Any())
-                        {
-                            <div class="A" style="color:#e3e3e3;"> עדיין לא התווספו פריטים להזמנה </div>
-                        }
-                        else
-                        {
-                            foreach (var item in cart)
-                            {
-                                itemCounter++;
-                                decimal item_total = item.sale_price * item.quanOfPackages;
-                                order_total += item_total;
-
-                                <div class="CartRow" >
-                                    <div class="B">
-                                        <div class="A">
-                                            <div class="B" style="display:none;">
-                                                @if (item.quanOfPackages > 1)
-                                                {
-                                                    <span class="CartBtn" onclick="AjaxActions('CartAction', 'SUBONE', 'MainLoader', '@item.serial');">➖</span>
-                                                }
-                                                <span class="CartBtn" style="margin-left: 5px;" onclick="AjaxActions('CartAction', 'REMOVE','MainLoader', '@item.serial');">❌</span>
-                                                <span class="CartBtn" style="margin-left: 5px;" onclick="AjaxActions('CartAction', 'ADDONE', 'MainLoader', '@item.serial');">➕</span>
-                                            </div>
-
-
-                                            <span style="border-bottom:1px solid #a6a06f">@item.quan_title</span>
-                                        </div>
-
-                                        <div class="A">
-                                            <div class="CartInfoItem">זן<div class="CartPrice"><b>@item.strain_title</b></div></div>
-                                            <div class="CartInfoItem">מינון<div class="CartPrice"><b>@item.potency_title</b></div></div>
-                                            <div class="CartInfoItem">נייר<div class="CartPrice"><b>@item.paper_title</b></div></div>
-                                            <div class="CartInfoItem">פארש<div class="CartPrice"><b>@item.mixture_title</b></div></div>
-
-                                          
-                                            @if (item.quanOfPackages > 1)
-                                            {
-                                                <div class="CartInfoItem">
-                                                    מחיר החפיסה
-                                                    <div class="CartPrice" style="background-color:#e3e3e3;border-radius:5px"><b>@item.sale_price.ToString("C", culture)</b></div>
-                                                </div>
-                                              
-                                            }
-                                        </div>
-                                    </div>
-
-                                    <div class="A">
-                                        <img src="images/trash.png" style="float:right;height:20px;max-width:20px;" onclick="AjaxActions('CartAction', 'REMOVE','MainLoader', '@item.serial');" />
-                                        @if (item.quanOfPackages > 1)
-                                        {
-                                            <span class="CartBtn" onclick="AjaxActions('CartAction', 'SUBONE', 'MainLoader', '@item.serial');">-</span>
-                                        }
-                                        <span class="CartBtn" onclick="AjaxActions('CartAction', 'ADDONE', 'MainLoader', '@item.serial');">+</span>
-                                        @if (item.quanOfPackages > 1)
-                                        {
-                                            <div class="CartIemPrice">@item.quanOfPackages יחידות - <b>@item_total.ToString("C", culture)</b></div>
-                                        }
-                                        else
-                                        {
-                                            <div class="CartIemPrice"><b>@item_total.ToString("C", culture)</b></div>
-                                        }
-                                        
-
-                                    </div>
-
-                                </div>
-                            }
-
-                            if (order_total > free_shipping_marker)
-                            {
-                                shipping_charge = 0;
-                            }
-                            else
-                            {
-                                free_shipping_deficit = free_shipping_marker - order_total;
-                            }
-                            order_total_including_shipping = order_total + shipping_charge;
-
-                            <div class="A" style="text-align:right">
-                                <div class="B">
-
-                                    <button class="CartAddMoreBtn" type="button" onclick="PageLoad('ORDERS');">חזרה</button>
-                                    <div class="B" style="float:left">
-                                        @if (shipping_charge > 0)
-                                        {
-                                            <div class="B" style="text-align:right">
-                                                <div class="ShCartTotalContainer" style="float:left">
-                                                    עלות משלוח
-                                                    <div class="ShCartTotal">
-                                                        @shipping_charge.ToString("C", culture)
-                                                    </div>
-                                                </div>
-
-                                                <div class="OrderFormPrice" style="font-size:11px;background-color:yellow;display:none"><b>@order_total_including_shipping.ToString("C", culture)</b></div>
-                                            </div>
-
-                                        }
-                                        else
-                                        {
-                                            <div class="B" style="text-align:right">
-                                                <div class="ShCartTotalContainer" style="float:left">
-                                                    עלות משלוח
-                                                    <div class="ShCartTotal">
-                                                        <b>חינם</b>
-                                                    </div>
-                                                </div>
-
-                                                <div class="OrderFormPrice" style="font-size:11px;background-color:yellow;display:none"><b>@order_total_including_shipping.ToString("C", culture)</b></div>
-                                            </div>
-
-                                        }
-                                        <div class="B">
-                                            <div class="CartTotalContainer" style="float:left">
-                                                סך הכל לתשלום
-                                                <div class="CartTotal">
-                                                    @order_total_including_shipping.ToString("C", culture)
-                                                </div>
-                                            </div>
-
-
-                                            <div class="OrderFormPrice" style="font-size:11px;background-color:yellow;display:none"><b>@order_total_including_shipping.ToString("C", culture)</b></div>
-                                        </div>
-                                    </div>
-                                 
-                                </div>
-                            </div>
-
-                            <div class="B" style="text-align:center;">
-
-                                <button class="checkuotBtn" type="button" onclick="AjaxActions('ClearCart', '', 'MainLoader', '');" style="background-color:#a6a06f">איפוס</button>
-                                <button class="checkuotBtn" type="button" onclick="sbload('SubMenu','prOrderReview','','CalcItemCostForm');">צקאאוט</button>
-                            </div>
-                        }
+                       <div class="B">
+                            @await Html.PartialAsync("Shared/Partials/_CheckoutItems")
+                        </div>
                     </div>
 
+                    <div class="B" style="text-align:center;">
 
+                        <button class="checkuotBtn" type="button" onclick="AjaxActions('ClearCart', '', 'MainLoader', '');" style="background-color:#a6a06f">איפוס</button>
+                        <button class="checkuotBtn" type="button" onclick="PageLoad('CHECKOUT');" style="display:none">צקאאוט</button>
+                        <button class="checkuotBtn" type="button" onclick="sbload('MainSb','Caller?p1=Checkout');">צקאאוט</button>
+
+                    </div>
 
 
 

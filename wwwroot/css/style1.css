@@ -636,8 +636,42 @@ input.PropSelector {
     font-size: 18px;
     width: 70%;
     font-weight: bold;
-    float: left
+    float: left;
+    border-radius:20px;
+        
 }
+
+
+input.Chkout_tb {
+    padding: 5px;
+    padding-right:10px;
+    margin: 5px;
+    font-size: 18px;
+    width: 65%;
+    font-weight: bold;
+    float: left;
+    border-radius: 20px;
+    border:0;
+}
+
+
+textarea.Chkout_tb {
+    padding: 5px;
+    padding-right: 10px;
+    margin: 5px;
+    font-size: 18px;
+    width: 65%;
+    font-weight: bold;
+    float: left;
+    border-radius: 20px;
+    border: 0;
+    field-sizing: content; /* ✨ */
+    min-block-size: 3lh; /* start at ~3 lines */
+    max-block-size: 400px; /* stop growing after this */
+    overflow: auto;
+    resize:none;
+}
+
 
 
 select.QuanSelector {
@@ -648,6 +682,14 @@ select.QuanSelector {
 }
 
 select.PropSelector {
+    padding: 5px;
+    margin-top: 5px;
+    font-size: 18px;
+    width: 70%;
+    font-weight: bold;
+    float: left
+}
+select.Chkout_tb {
     padding: 5px;
     margin-top: 5px;
     font-size: 18px;
@@ -843,6 +885,17 @@ div.fldLabel {
     font-weight: bold;
     background-color: #0d4133;
 
+}
+
+div.Chkout_TbRow {
+    overflow: auto;
+    color: black;
+    font-size: 18px;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 20px;
+    font-weight: bold;
+    
 }
 div.PropItemSelection {
     overflow: auto;
@@ -1068,7 +1121,21 @@ div.PropTitle {
     padding: 5px;
 }
 
+div.Chkout_TbRTite {
+    font-size: 24px;
+    font-weight: bold;
+    float: right;
+    padding: 5px;
+    color: #0d4133;
+}
+
 div.PropRow {
+    overflow: auto;
+    color: #f8f8f8;
+    font-family: "Noyland";
+    font-size:24px;
+}
+div.CkotPropRow {
     overflow: auto;
     color: #f8f8f8;
     font-family: "Noyland";
@@ -1299,6 +1366,60 @@ button.CartAddMoreBtn {
     border: 0;
 }
 
+
+div.Join_TbRow {
+    overflow: auto;
+    color: black;
+    font-size: 18px;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+div.JoinPropRow {
+    overflow: auto;
+    color: #f8f8f8;
+    font-family: "Noyland";
+    font-size: 24px;
+    border-bottom: 1px dashed #0d4133;
+}
+div.JoinPropTitle {
+    font-size: 24px;
+    font-weight: bold;
+    float: right;
+    padding-right:1px;
+    color: #0d4133;
+}
+div.JoinPropSubTitle {
+    overflow:auto;
+    font-size: 12px;
+    float: right;
+    padding: 1px;
+    color: rgba(171, 108, 0, 1);
+    font-weight:300;
+}
+input.Join_tb {
+    padding: 5px;
+    padding-right: 10px;
+    font-size: 18px;
+    width: 90%;
+    font-weight: bold;
+    float: left;
+    border-radius: 20px;
+    border: 0;
+    font-family: "Noyland";
+}
+select.Join_tb {
+    padding: 5px;
+    padding-right: 10px;
+    font-size: 18px;
+    width: 90%;
+    font-weight: bold;
+    float: left;
+    border-radius: 20px;
+    border: 0;
+    font-family: "Noyland";
+}
 @-webkit-keyframes sk-bouncedelay {
     0%, 80%, 100% {
         -webkit-transform: scale(0)
@@ -1388,12 +1509,72 @@ div .copyDisc {
     
 
 }
-    /* DESIGNERS Styles
+button.ThankYouBtn {
+    margin-top: 30px;
+    border-radius: 20px;
+    padding: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 24px;
+    color: #fff;
+    background-color: #ab6c00;
+    font-family: Noyland;
+    text-align: left;
+    border: 0;
+}
+
+div.ThankYouPageTitle {
+    text-align: center;
+    font-size: 50px;
+    margin-top: 30px;
+    font-weight: 700;
+    color: #0d4133;
+}
+
+div.ThankYouPageMainTxt {
+    text-align: center;
+    font-size: 18px;
+    color: #000;
+    margin-top: 30px;
+}
+
+div.ThankYouPageBotTxt {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 24px;
+    color: rgba(171, 108, 0, 1);
+}
+
+div.loginHeader {
+margin:5px;
+padding:5px;
+font-size:24px;
+color:rgba(171, 108, 0, 1);
+}
+
+button.RegBigBtn {
+    margin: 10px;
+    padding: 10px;
+    font-size: 24px;
+    background-color: rgba(13, 65, 51, 1);
+    color:#fff;
+    border: 0;
+    border-radius: 5px;
+    text-align: center;
+    font-family:Noyland;
+}
+div.regErrMsg2 {
+    overflow: auto;
+    color: red;
+    font-size: 18px;
+    padding: 5px;
+    margin: 5px;
+    text-align: center
+}
+
+/* DESIGNERS Styles
 ---------------------------------*/
-
-
-
-    .MEGALGELIM-OPEN-ZAN {
+.MEGALGELIM-OPEN-ZAN {
     background-color: #ede7d5;
     display: grid;
     justify-items: center;

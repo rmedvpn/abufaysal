@@ -21,9 +21,39 @@ namespace Faysal.Helpers
         /// </summary>
         public static void Configure(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            _connectionString = configuration.GetConnectionString("m_join");
+            _connectionString = configuration.GetConnectionString("faysal");
             _httpContextAccessor = httpContextAccessor;
         }
+        public static string Clean(string s)
+        {
+            s = (s ?? "").Trim();
+            // remove common zero-width marks (LRM/RLM)
+            return s.Replace("\u200E", "").Replace("\u200F", "");
+        }
+
+
+        public static void DoLogin(int u_id)
+        {
+            var db = Database.Open("faysal");
+            DateTime local_time = LocalTime();
+            var sqlSelect = "UPDATE users SET last_login=@0 WHERE u_id=@1";
+            db.Execute(sqlSelect, local_time, u_id);
+            db.Close();
+        }
+        public static void DoLogout(int u_id)
+        {
+            var db = Database.Open("faysal");
+            DateTime local_time = LocalTime();
+            var sqlSelect = "UPDATE users SET last_logout=@0 WHERE u_id=@1";
+            db.Execute(sqlSelect, local_time, u_id);
+            sqlSelect = "DELETE FROM cartsettings WHERE u_id=@0";
+            db.Execute(sqlSelect, u_id);
+            sqlSelect = "DELETE FROM MainCart WHERE u_id=@0";
+            db.Execute(sqlSelect, u_id);
+
+            db.Close();
+        }
+
 
         public static string GetAppProperty(string property)
         {

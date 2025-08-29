@@ -412,6 +412,10 @@ function PageLoad(thePage) {
     console.log("start");
     console.log(thePage);
     switch (thePage) {
+        case "CHECKOUT":
+            console.log('CLICK PAGELOAD');
+            AjaxUpdate("Checkout", "MainBodyContent", "MainLoader");
+            break;
         case "ORDER":
         case "ORDERS":
             AjaxUpdate("Order","MainBodyContent","MainLoader");
@@ -421,9 +425,7 @@ function PageLoad(thePage) {
             AjaxUpdate("Cart","MainBodyContent","MainLoader");
             break;
 
-
-
-        case "ORDERENGLISH":
+         case "ORDERENGLISH":
         case "ORDERSENGLISH":
             sbload('MainSb', 'orderEng');
 
