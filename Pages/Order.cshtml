@@ -1,0 +1,427 @@
+﻿@page
+@using System
+@using System.Data.SqlClient
+@using Dapper
+@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Configuration
+@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration Configuration
+
+@{
+    // Disable layout for AJAX requests — preserves WebMatrix behavior
+
+    Layout = "/Pages/Shared/Layouts/_Main.cshtml";
+    var context = HttpContextAccessor.HttpContext;
+    var culture = new System.Globalization.CultureInfo("he-IL");
+    var sessionId = "";
+    try { sessionId = context.Session.Id; } catch { sessionId = ""; }
+
+    int ref_id = 0; int.TryParse(context.Request.Query["ref_id"], out ref_id);
+    int aff_id = 0; int.TryParse(context.Request.Query["aff_id"], out aff_id);
+
+    var faysal = Database.Open("faysal");
+    var sqlSelect = "";
+
+    sqlSelect = "SELECT count(serial) as the_cnt FROM cart WHERE session_id=@0";
+    var cart = faysal.QuerySingle(sqlSelect, sessionId);
+    int items_cnt = 0;try { items_cnt = cart.the_cnt; } catch { }
+  
+    sqlSelect = "SELECT * FROM mixtureOptions WHERE is_active=1";
+    var mixtureOptions = faysal.Query(sqlSelect);
+
+    sqlSelect = "SELECT * FROM mixturePotencyOptions WHERE is_active=1";
+    var mixturePotencyOptions = faysal.Query(sqlSelect);
+
+    sqlSelect = "SELECT * FROM paperOptions WHERE is_active=1";
+    var paperOptions = faysal.Query(sqlSelect);
+
+    sqlSelect = "SELECT * FROM quanOptions WHERE is_active=1 ORDER BY quan";
+    var quanOptions = faysal.Query(sqlSelect);
+
+    sqlSelect = "SELECT * FROM strainOptions WHERE is_active=1";
+    var strainOptions = faysal.Query(sqlSelect);
+
+    int strainCnt = 0;
+
+}
+
+
+<section class="wel_sec">
+    <div class="container">
+        <div class="center_wel">
+            <div class="B">
+                <div class="A">
+                    <img style="" src="/images/logo.png" />
+                    <span style="z-index:9999;font-size:16px;color:white;float:left;padding-left:10px;direction:ltr;display:none" onclick="window.location.href = '/?go=orderenglish';"><span> 🌐 </span>For English, click here</span>
+                  
+                </div>
+                
+            </div>
+       
+            <div class="A" >
+                <form id="CalcItemCostForm">
+                    <input type="hidden" value="ver2" name="ver" />
+                    <div class="A">
+                        <div class="OrderIntroMsg" style="text-align:right;vertical-align:bottom;">
+                            מה מגלגלים לך היום?
+                            <div class="B" style="float:left">
+                                @if (items_cnt>0)
+                                {
+                                    <div class="B" onclick="PageLoad('CART');">
+                                        <div class="CartNotification">@items_cnt</div>
+                                        <img src="images/cart.png" style="float:left;height:40px;max-width:40px;margin:5px;" />
+                                    </div>
+
+                                }
+                                else
+                                {
+                                    <div class="B">
+                                        <img src="images/cart.png" style="float:left;height:40px;max-width:40px;margin:5px;" />
+                                    </div>
+                                }
+
+                            </div>
+                            <div class="B" style="float:left">
+                                <img src="images/call.png" style="float:left;height:40px;max-width:40px;margin:5px;" />
+                            </div>
+
+                        </div>
+                  
+                    </div>
+
+
+
+
+
+                    <div class="PropItemSelection" id="MenuSelectDiv">
+
+                        <div class="PropRow" onclick="Accordionize('Acc_quan');">
+                            <div class="PropTitle">כמות</div>
+                            <span style="float:left;padding:5px;font-size:30px;margin-left:10px;">+</span>
+                            <span id="selected_quan" class="SelectedPropTitle"></span>
+
+                        </div>
+
+                    </div>
+                    <div class="B" style="text-align:center">
+                        <div class="B" style="text-align:center">
+                            <center>
+                                <button class="accordion" id="Acc_quan" style="display:none"></button>
+
+                                <div class="panel" style="width:90%">
+                                    <div class="PropItemMenu">
+
+                                        @foreach (var item in quanOptions)
+                                        {
+                                            <div class="PropItem" onclick="SelectItemProp('quan', @item.id)">
+                                                @item.title
+                                            </div>
+                                            <div style="display:none"><input type="hidden" id="title_for_quan_@item.id" value="@item.title" /></div>
+
+                                        }
+
+                                        <input type="hidden" id="quan" name="quan" />
+                                     
+
+                                    </div>
+
+                                </div>
+
+                            </center>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="PropItemSelection">
+
+                        <div class="PropRow" onclick="Accordionize('Acc_strain');">
+                            <div class="PropTitle">
+                                זן</div>
+                            <span style="float:left;padding:5px;font-size:30px;margin-left:10px;" >+</span>
+                            <span id="selected_strain" class="SelectedPropTitle" ></span>
+
+                        </div>
+
+                    </div>
+                    <div class="B" style="text-align:center">
+                        <div class="B" style="text-align:center">
+                            <center>
+                                <button class="accordion" id="Acc_strain" style="display:none"></button>
+                                <div class="panel" style="width:90%">
+                                    <div class="PropItemMenu">
+
+                                        @foreach (var item in strainOptions)
+                                        {
+                                            strainCnt++;
+                                            string floatDir = "right";
+                                            if (strainCnt % 2 == 0) { floatDir = "left"; }
+                                            <div class="PropItemStrain" >
+                                                <div class="B" style="float:right">
+                                                    <div class="B" style="float:right;width:80px;text-align:center">
+                                                        <img style="height: 60px;max-width: 60px;border-radius: 10px;margin: 3px;padding: 3px;" src="pImgView?strain_id=@item.id" />
+                                                    </div>
+                                                    
+                                                    <div class="PropItemStrainTitle">
+                                                        <div class="B">@item.title</div>
+                                                        <div class="PropItemStrainSubTitle" style="font-size:16px;">@item.cat_title</div>
+                                                        </div>
+                                                    
+                                                </div>
+
+                                                <div style="display:none"><input type="hidden" id="title_for_strain_@item.id" value="@item.title" /></div>
+                                                <div class="PropItemStrainBtn" onclick="SelectItemProp('strain', @item.id)">+</div>
+                                            </div>
+                                        }
+                                        <input type="hidden" id="strain" name="strain" />
+
+                                   
+
+                                    </div>
+
+                                </div>
+
+                            </center>
+
+                        </div>
+
+                    </div>
+
+                    <div class="PropItemSelection">
+
+                        <div class="PropRow" onclick="Accordionize('Acc_paper');">
+                            <div class="PropTitle">נייר</div>
+                            <span style="float:left;padding:5px;font-size:30px;margin-left:10px;">+</span>
+                            <span id="selected_paper" class="SelectedPropTitle"></span>
+                        </div>
+                    
+
+                    </div>
+                    <div class="B" style="text-align:center">
+                        <div class="B" style="text-align:center">
+                            <center>
+                                <button class="accordion" id="Acc_paper" style="display:none"></button>
+
+                                <div class="panel" style="width:90%">
+                                    <div class="PropItemMenu">
+                                        @foreach (var item in paperOptions)
+                                        {
+                                            <div class="PropItem" onclick="SelectItemProp('paper', @item.id)">
+                                                @item.title
+                                            </div>
+                                            <div style="display:none"><input type="hidden" id="title_for_paper_@item.id" value="@item.title" /></div>
+
+                                        }
+
+
+                                        <input type="hidden" id="paper" name="paper" />
+
+                                   
+
+                                    </div>
+
+                                </div>
+
+
+                           
+                            </center>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="PropItemSelection">
+
+                        <div class="PropRow" onclick="Accordionize('Acc_MixturePotency');">
+                            <div class="PropTitle">מינון</div>
+                            <span style="float:left;padding:5px;font-size:30px;margin-left:10px;">+</span>
+                            <span id="selected_MixturePotency" class="SelectedPropTitle"></span>
+
+                        </div>
+
+                    </div>
+                    <div class="B" style="text-align:center">
+                        <div class="B" style="text-align:center">
+                            <center>
+                                <button class="accordion" id="Acc_MixturePotency" style="display:none"></button>
+
+                                <div class="panel" style="width:90%">
+                                    <div class="PropItemMenu">
+
+                                        @foreach (var item in mixturePotencyOptions)
+                                        {
+                                            <div class="PropItem" onclick="SelectItemProp('MixturePotency', @item.id)">
+                                                @item.title
+                                            </div>
+                                            <div style="display:none"><input type="hidden" id="title_for_MixturePotency_@item.id" value="@item.title" /></div>
+
+                                        }
+
+                                        <input type="hidden" id="MixturePotency" name="MixturePotency" />
+
+                                 
+
+                                    </div>
+
+                                </div>
+
+
+
+                            </center>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="PropItemSelection">
+
+
+                        <div class="PropRow" onclick="Accordionize('Acc_mixture');">
+                            <div class="PropTitle">פארש</div>
+                            <span style="float:left;padding:5px;font-size:30px;margin-left:10px;">+</span>
+                            <span id="selected_mixture" class="SelectedPropTitle"></span>
+
+                        </div>
+
+
+
+
+                    </div>
+                    <div class="B" style="text-align:center">
+                        <div class="B" style="text-align:center">
+                            <center>
+                                <button class="accordion" id="Acc_mixture" style="display:none"></button>
+
+                                <div class="panel" style="width:90%">
+                                    <div class="PropItemMenu">
+                                        @foreach (var item in mixtureOptions)
+                                        {
+                                            <div class="PropItem" onclick="SelectItemProp('mixture', @item.id)">
+                                                @item.title
+                                            </div>
+                                            <div style="display:none"><input type="hidden" id="title_for_mixture_@item.id" value="@item.title" /></div>
+
+                                        }
+
+                                        <input type="hidden" id="mixture" name="mixture" />
+
+
+                                    </div>
+
+                                </div>
+
+
+
+                            </center>
+
+                        </div>
+
+                    </div>
+                    <center>
+                        <div class="spinner" style="font-size: 20px;display:none;" id="ItemCostLoader">
+                            <div class="bounce1"></div>
+                            <div class="bounce2"></div>
+                            <div class="bounce3"></div>
+                        </div>
+                        <div style="overflow:auto;padding:5px;" id="ItemCostReturnContainer">
+                            @await Html.PartialAsync("Shared/Partials/_CalcItemCost")
+
+                        </div>
+
+                        <div style="overflow:auto;display:none" id="CartContainer">
+                            @await Html.PartialAsync("Shared/Partials/_Cart")
+
+                        </div>
+
+                        <div class="B" style="margin-top:10px;display:none" id="checkoutInfoDiv">
+                            <!-- Checkout Section -->
+                            <section id="checkout">
+                                <!-- Billing Details -->
+                                <div class="B">
+                                    <h3>פרטי משלוח</h3>
+
+                                    <div class="fldLabel" style="margin-top:10px;">
+
+                                        <div class="PropRow">
+                                            <div class="PropTitle">שם מלא</div>
+
+                                            <input type="text" class="PropSelector" id="full_name" name="full_name">
+
+                                        </div>
+                                    </div>
+                                    <div class="fldLabel">
+
+                                        <div class="PropRow">
+                                            <div class="PropTitle">#ווטסאפ</div>
+
+                                            <input type="text" class="PropSelector" id="wanum" name="wanum">
+
+                                        </div>
+                                    </div>
+
+                                    <div class="fldLabel">
+
+                                        <div class="PropRow">
+                                            <div class="PropTitle">כתובת</div>
+
+                                            <input type="text" class="PropSelector" id="address" name="address">
+
+                                        </div>
+                                    </div>
+                                    <div class="fldLabel">
+
+                                        <div class="PropRow">
+                                            <div class="PropTitle">עיר</div>
+
+                                            <input type="text" class="PropSelector" id="city" name="city">
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+
+                                <div class="A" style="text-align:center;">
+                                    <button class="A" type="button" onclick="ControlButton();">ביטול</button>
+
+                                    <button class="A" type="button" onclick="AjaxActions('ReviewOrder', '', 'MainLoader', 'CalcItemCostForm');">המשך>></button>
+                                    <button class="A" type="button" style="display:none" onclick="sbload('SubMenu','prOrderReview','','CalcItemCostForm');">ביצוע הזמנה</button>
+                                </div>
+
+
+                            </section>
+
+                        </div>
+
+                    </center>
+
+
+
+                    <div style="overflow:auto;display:none" id="prospectJoinActions">
+
+
+                        <div class="b_d">
+                            <button type="button" value="Reset" class="re" onclick="ControlButton();">ביטול</button>
+                        </div>
+
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@functions {
+    public void OnPost()
+    {
+        // This prevents 400s if POST is received
+    }
+}

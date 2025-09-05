@@ -1,0 +1,50 @@
+﻿@page
+@using System
+@using System.Data.SqlClient
+@using Dapper
+@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Configuration
+@using Faysal.Helpers
+@attribute [IgnoreAntiforgeryToken]
+@inject IConfiguration Configuration
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = null;
+    string theHtmlOutput = "";
+    var context = HttpContextAccessor.HttpContext;
+    var Request = context.Request;
+    var Response = context.Response;
+    Response.ContentType = "text/plain; charset=utf-8";
+    DateTime local_time = AppFunctions.LocalTime();
+
+    if (WebSecurity.IsAuthenticated)
+    {
+
+        int u_id = WebSecurity.CurrentUserId;
+        var db = Database.Open("faysal");
+        var sqlSelect = "";
+        sqlSelect = "UPDATE UserProfile SET last_online=@0 where userId=@1";
+        db.Execute(sqlSelect, local_time, u_id);
+        sqlSelect = "SELECT force_logout FROM UserProfile WHERE userId=@0";
+        var user = db.QuerySingle(sqlSelect, u_id);
+        bool force_logout = false;
+        try { force_logout = user.force_logout; } catch { }
+        if (force_logout)
+        {
+            WebSecurity.Logout();
+            AppFunctions.DoLogout(u_id);
+            sqlSelect = "UPDATE UserProfile SET force_logout=0 where userId=@0";
+            db.Execute(sqlSelect, u_id);
+            await Response.WriteAsync("!!!");
+        }
+        db.Close();
+    }
+    else
+    {
+        await Response.WriteAsync("!!!");
+    }
+
+
+    return;
+}

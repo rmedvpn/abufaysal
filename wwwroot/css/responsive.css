@@ -1,0 +1,61 @@
+@media (max-width:1580px) {
+}
+
+@media (max-width:1279px) {
+	.form_ft_top{margin:40px auto 0; left:0; right:0; top:inherit; position:relative;}
+}
+
+/************ Main **************/
+@media (max-width: 991px) {
+}
+
+@media (max-width: 767px) {
+html { -webkit-text-size-adjust:none;}
+.cont_sect{background:url('../images/cont_bg.png'); background-repeat:no-repeat;}
+.form_sec{background:url('../images/regbg.png'); background-repeat:no-repeat;}
+.reg_sec{background:url('../images/regbg.png'); background-repeat:no-repeat; background-size:cover; background-position:top center; position:relative;}
+.wel_sec{background:url('../images/welcome.png'); background-repeat:no-repeat; background-size:cover; background-position:top center; position:relative; padding:0 0 17px;}
+.ft_bot .container{max-width:100%;}
+}
+
+/************ iphone **************/
+@media (max-width:600px) {
+html { -webkit-text-size-adjust:none;}
+.caption h1,.wel_sec .caption h1,.form_wel .caption h1{font-size:55px; line-height:70px; letter-spacing:0.9px;}
+.caption h1 strong,.wel_sec .caption h1 strong,.form_wel .caption h1 strong{font-size:70px; line-height:75px; letter-spacing:1.5px;}
+.wel_sec .caption{margin:0 auto 50px;}
+.ft_bot{top:0px; margin:20px 0;}
+.ft_bot img{max-width:80%;}
+.center_wel{margin:50px auto 0;}
+.iner_cont{max-width:90%; padding:20px;}
+.tx_block p{font-size: 20px; line-height: 30px; width:100%; margin:0 auto 15px;}
+.btn_block a{font-size: 28px; line-height: 40px; letter-spacing:inherit; width:45%;}
+.iner_cont h1{font-size:30px; line-height:30px; margin: 0 auto 20px; letter-spacing:inherit;}
+.cont_sect{padding:0 0 60px;}
+.cont_sect .iner_cont{max-width:90%; padding:20px 20px 80px;}
+}
+@media (max-width:500px) {
+	.btn_block a{font-size: 20px; line-height: 30px; margin-left: 0%; width: 46%; letter-spacing:inherit;}
+}
+@media (max-width:450px) {
+.caption h1,.wel_sec .caption h1,.form_wel .caption h1{font-size:50px; line-height:70px; letter-spacing:1px;}
+.caption h1 strong,.wel_sec .caption h1 strong,.form_wel .caption h1 strong{font-size:70px; line-height:75px; letter-spacing:1.5px;}
+.btn_block{max-width:100%;}
+.f_details form{width:100%;}
+.f_details form input{width:90%;}
+select{width:100%;}
+.b_d .sub{margin-right:5%; width:44.3%; background-size:cover;}
+.b_d .re{margin-left:5%; width:44.3%; background-size:cover;}
+
+}
+@media (max-width:380px) {
+.wel_sec .caption h1{padding:5px 0 22px;}
+.caption h1,.wel_sec .caption h1,.form_wel .caption h1{font-size:43px; line-height:65px; letter-spacing:0.9px;}
+.caption h1 strong,.wel_sec .caption h1 strong,.form_wel .caption h1 strong{font-size:60px; line-height:65px; letter-spacing:1.2px;}
+.caption a{font-size:30px; line-height:60px; letter-spacing:inherit; width:290px; max-width:290px;}
+.menubtn ul li a{font-size:30px; line-height:80px; letter-spacing:inherit;}
+.iner_cont h1{font-size:25px; line-height:35px; max-width: 198px; margin: 0 auto 20px; letter-spacing:inherit;}
+.cont_sect .iner_cont h1{max-width:100%; margin:0 auto 20px;}
+.b_d .sub{width:44%;}
+.b_d .re{width:44%;}
+}

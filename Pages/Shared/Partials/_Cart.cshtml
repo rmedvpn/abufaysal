@@ -1,0 +1,96 @@
+﻿@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = null;
+
+    var context = HttpContextAccessor.HttpContext;
+    var culture = new System.Globalization.CultureInfo("he-IL");
+    var sessionId = "";
+    try { sessionId = context.Session.Id; } catch { sessionId = ""; }
+    if (string.IsNullOrWhiteSpace(sessionId)) sessionId = "";
+
+    var db = Database.Open("faysal");
+    var sqlSelect = "SELECT * FROM cart WHERE session_id=@0 order by ts";
+    var cart = db.Query(sqlSelect, sessionId);
+
+    int itemCounter = 0;
+    int quanOfPackages = 0;
+    decimal order_total = 0;
+    decimal order_total_including_shipping = 0;
+    decimal shipping_charge = 0;
+    decimal free_shipping_marker = 0;
+    decimal free_shipping_deficit = 0;
+
+    try { shipping_charge = Convert.ToInt32(AppFunctions.GetAppProperty("DefaultShippingCharge")); } catch { }
+    try { free_shipping_marker = Convert.ToInt32(AppFunctions.GetAppProperty("FreeShippingMarker")); } catch { }
+    ViewData["callingPage"] = "CART";
+}
+
+<section class="wel_sec">
+    <div class="container">
+        <div class="center_wel">
+            <div class="B">
+                <div class="A">
+                    <img style="" src="/images/logo.png" />
+                    <span style="z-index:9999;font-size:16px;color:white;float:left;padding-left:10px;direction:ltr;display:none" onclick="window.location.href = '/?go=orderenglish';"><span> 🌐 </span>For English, click here</span>
+
+                </div>
+
+            </div>
+
+            <div class="A">
+                <form id="CalcItemCostFsdfsdfsdform">
+                    <input type="hidden" value="ver2" name="ver" />
+                    <div class="A">
+                        <div class="B" style="float:left">
+                            <img src="images/call.png" style="float:left;height:40px;max-width:40px;margin:5px;" />
+                        </div>
+                        <div class="OrderIntroMsg" style="text-align:right;vertical-align:bottom;">
+                            ההזמנה שלך
+                            <div class="B" style="font-size:14px;">
+                                ❤️ משלוח חינם בהזמנה מעל <b>@free_shipping_marker.ToString("C", culture)</b>
+                            </div>
+                            
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="A" >
+                       <div class="B">
+                            @await Html.PartialAsync("Shared/Partials/_CheckoutItems")
+                        </div>
+                    </div>
+
+                    <div class="B" style="text-align:center;">
+
+                        <button class="checkuotBtn" type="button" onclick="AjaxActions('ClearCart', '', 'MainLoader', '');" style="background-color:#a6a06f">איפוס</button>
+                        <button class="checkuotBtn" type="button" onclick="PageLoad('CHECKOUT');" style="display:none">צקאאוט</button>
+                        <button class="checkuotBtn" type="button" onclick="sbload('MainSb','Caller?p1=Checkout');">צקאאוט</button>
+
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+@{
+    db.Close();
+}

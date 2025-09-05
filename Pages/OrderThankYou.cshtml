@@ -1,0 +1,140 @@
+﻿@page
+@attribute [IgnoreAntiforgeryToken]
+@using System.Data.SqlClient
+@using Dapper
+@using Faysal.Helpers
+
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration Configuration
+
+@{
+    Layout = "~/Pages/Shared/Layouts/_Main.cshtml";
+    var lang = HttpContextAccessor.HttpContext!.Session.GetString("lang");
+
+    // grab the HttpRequest
+    var req = HttpContextAccessor.HttpContext!.Request;
+
+    // mimic WebMatrix Request["key"]
+    string Param(string key) =>
+        req.HasFormContentType && req.Form.ContainsKey(key)
+            ? req.Form[key].ToString()
+            : req.Query.ContainsKey(key)
+                ? req.Query[key].ToString()
+                : "";
+
+
+    int o_id = 0; int.TryParse(Param("o_id"), out o_id);
+
+
+
+    <section class="wel_sec">
+        <div class="container">
+            <div class="center_wel">
+                @if (lang == "en")
+                {
+                <div class="B">
+                    <div class="B" style="margin-top:25px;">
+                        <div class="welsc caption">
+                            <h1><strong>Thank You!</strong></h1>
+                        </div>
+                    </div>
+
+                    <div class="f_details">
+                        <div class="infLabel" style="text-align:center;background-color:#ffffff">
+                            Your order was received, Thank you! <br />
+
+                            Our customer service agents will contact you shortly<br />
+
+                            Much Love 💚
+
+                        </div>
+                    </div>
+
+                    <div class="b_d">
+                        <button type="button" value="Reset" class="sub" style="float:right" onclick="ControlButton();">Close</button>
+                    </div>
+
+
+                </div>
+                    <div class="B">
+                        <div class="A">
+                            <img style="" src="/images/logo.png" />
+                        </div>
+
+                    </div>
+
+            }
+                else
+                {
+
+                    <div class="B" style="text-align:center">
+                        <div class="A" style="margin-top:0;">
+                            <div class="ThankYouPageTitle">תודה<br />רבה!</div>
+                        </div>
+                        <div class="ThankYouPageMainTxt" style="text-align:center;">
+                        <center>
+                        <div style="width:200px">
+                                    <div class="B">
+                                        הזמנתך נקלטה במערכת!
+                                    </div>
+                                    <div class="B">
+                                        בדקות הקרובות תשלח אליך הודעת אישור ממוקד ההזמנות שלנו
+                                    </div>
+                        </div>
+                                
+                        </center>
+                        
+                        
+                            
+
+
+
+                        </div>
+
+
+                        <div class="ThankYouPageBotTxt">
+                          מהגלגול הזה ועד הגלגול הבא,<br />
+                        אוהבים אותך בלב ♥
+                        </div>
+
+                      
+
+
+                    </div>
+                  
+                    <div class="B">
+                        <div class="A" style="text-align:center">
+                            <img class="ThankYouPageImg" style="height:150px;" src="/images/thankyoudude.png" />
+                        </div>
+
+                        
+
+                    </div>
+                    <div class="A" style="text-align:center">
+                        <button type="button" class="ThankYouBtn" onclick="window.location.href='/';">חזרה לדף הבית</button>
+                    </div>
+                    <div class="B">
+                        <div class="A" style="text-align:center">
+                            <img class="ThankYouPageImg" style="height:50px;" src="/images/logoChkout.png" />
+                        </div>
+
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+   
+
+    <!-- Hero Section -->
+}
+
+
+
+
+@functions {
+    public void OnPost()
+    {
+        // This prevents 400s if POST is received
+    }
+}

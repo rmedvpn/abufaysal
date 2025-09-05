@@ -1,0 +1,104 @@
+﻿@page
+@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    Layout = "~/Pages/Shared/Layouts/_Mini.cshtml";
+
+    var context = HttpContextAccessor.HttpContext!;
+    var request = context.Request;
+    var response = context.Response;
+
+    var errors = new List<string>();
+    string userName = "", password = "";
+
+ 
+
+    // ✅ Handle POST login
+    // ✅ Handle POST login
+    if (request.Method == "POST")
+    {
+        userName = request.Form["UserName"];
+        password = request.Form["Password"];
+        bool rememberMe = request.Form.ContainsKey("rememberMe"); // <-- checked => true
+
+        if (string.IsNullOrWhiteSpace(userName))
+            errors.Add("שם משתמש הוא שדה חובה");
+        if (string.IsNullOrWhiteSpace(password))
+            errors.Add("חובה להזין סיסמא");
+
+        if (!errors.Any())
+        {
+            if (WebSecurity.Login(userName, password, rememberMe))
+            {
+                AppFunctions.DoLogin(WebSecurity.CurrentUserId); // <-- pass rememberMe
+                response.Redirect("/");
+                return;
+            }
+            else
+            {
+                errors.Add("התחברות נכשלה");
+            }
+        }
+    }
+}
+
+<section class="wel_sec" style="text-align:center">
+    <div class="B" style="width:400px;min-height: 844px;">
+        <center>
+            <img class="logo" src="images/logoLogin.png" style="max-height:150px;" />
+            <div class="B" style="text-align:center;margin-top:25px;">
+
+                <div class="loginHeader">
+                    התחברות
+                </div>
+                <div class="tx_block" style="font-size:20px;color:#fff;">
+
+                    <form method="post">
+
+
+
+                        <input type="text" class="Login_tb" name="UserName" placeholder="משתמש" autocomplete="username" value="@userName" />
+                        <input type="password" class="Login_tb" name="Password" placeholder="סיסמא" autocomplete="current-password"  />
+                        @if (errors.Any())
+                        {
+                            <div class="regErrMsg2">
+                                @foreach (var e in errors)
+                                {
+                                    <div>@e</div>
+                                }
+                            </div>
+                        }
+
+                        <div class="loginHeader" style="text-align:right;">
+                            <input type="checkbox" name="rememberMe" checked style="padding:5px;margin:5px;height:20px;width:20px;" />
+                            <span style="margin:5px;padding:5px;">לזכור אותך?</span>
+                        </div>
+
+
+                        <button type="submit" class="RegBigBtn" style="width:90%;" onclick="document.forms[0].submit();">התחברות</button>
+                        <button type="button" class="RegBigBtn" style="width:90%;" onclick="window.location.href='ForgotPassword';">שכחת סיסמא?</button>
+                        <button type="button" class="RegBigBtn" style="width:90%;" onclick="window.location.href='Register';">הרשמה</button>
+
+
+                        <div class="B" style="height:150px;">&nbsp;</div>
+
+                    </form>
+
+
+                </div>
+                <br />
+
+
+            </div>
+
+        </center>
+    </div>
+
+</section>
+
+
+<div style="position:fixed;bottom:20px;font-size:14px;color:white;text-align:center;width:100%;z-index:0">
+    <center><span style="color:rgba(13, 65, 51, 1);">&copy; מערכות ישראל 2025</span></center>
+</div>
+
+

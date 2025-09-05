@@ -1,0 +1,108 @@
+﻿@page 
+@attribute [IgnoreAntiforgeryToken]
+
+@using System
+@using System.Data.SqlClient
+@using Dapper
+@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Configuration
+@using Faysal.Helpers
+@inject IConfiguration Configuration
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    // Shared layout for members
+    Layout = null;
+    DateTime defDate = Convert.ToDateTime("1/1/1900");
+    // Helper to read form or query values
+    string Param(string key) =>
+        HttpContextAccessor.HttpContext.Request.HasFormContentType && HttpContextAccessor.HttpContext.Request.Form.ContainsKey(key)
+            ? HttpContextAccessor.HttpContext.Request.Form[key].ToString()
+            : HttpContextAccessor.HttpContext.Request.Query[key].ToString();
+
+    // Read inputs
+    var sessionId = HttpContextAccessor.HttpContext.Session.Id;
+    ViewData["SessionId"] = sessionId;
+
+    var lang = Param("lang");
+    string wanum = ""; wanum = Param("wanum");
+    string full_name = ""; full_name = Param("full_name");
+    string address = ""; address = Param("address");
+    string city = ""; city = Param("city");
+
+}
+
+<section class="hero_sec">
+    <div class="container">
+        <div class="form_wel">
+            <div class="welsc caption">
+                <img src="/images/elfaysal.png" />
+            </div>
+
+            <div class="A" style="background-color:white;color:#000000">
+                <form id="ReviewOrderForm">
+
+                    <center>
+
+                        <div class="fldLabel">
+
+                            <h2>אישור הזמנה</h2>
+                        </div>
+
+
+                        <div class="spinner" style="font-size: 20px;display:none;" id="ItemCostLoader">
+                            <div class="bounce1"></div>
+                            <div class="bounce2"></div>
+                            <div class="bounce3"></div>
+                        </div>
+
+                        <div style="overflow:auto;">
+                            @await Html.PartialAsync("Shared/Partials/_CheckoutItems")
+
+                            
+                        </div>
+
+
+                        <div class="A">
+                            <div class="B" style="text-align:right">
+                                <h3>פרטי משלוח</h3>
+
+                            </div>
+                            <div class="A">
+                                <div class="B" style="text-align:right">
+                                    @full_name
+                                </div>
+                                <div class="B" style="text-align:right">
+                                    @wanum
+                                </div>
+                                <div class="B" style="text-align:right">
+                                    @address
+                                </div>
+                                <div class="B" style="text-align:right">
+                                    @city
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <div class="A" style="text-align:center;">
+                            <button class="A" type="button" onclick="ControlButton();">ביטול</button>
+                            <button class="A" type="button" onclick="AjaxActions('PlaceOrder', '@sessionId','MainLoader', 'ReviewOrderForm');">ביצוע הזמנה</button>
+                        </div>
+
+
+                    </center>
+
+
+
+                    <input type="hidden" name="full_name" value="@full_name" />
+                    <input type="hidden" name="wanum" value="@wanum" />
+                    <input type="hidden" name="address" value="@address" />
+                    <input type="hidden" name="city" value="@city" />
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

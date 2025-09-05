@@ -1,0 +1,202 @@
+﻿@page
+@attribute [IgnoreAntiforgeryToken]
+@using System.Data.SqlClient
+@using Dapper
+@using Faysal.Helpers
+
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration Configuration
+
+@{
+    Layout = null;
+
+    // grab the HttpRequest
+    var req = HttpContextAccessor.HttpContext!.Request;
+
+    // mimic WebMatrix Request["key"]
+    string Param(string key) =>
+        req.HasFormContentType && req.Form.ContainsKey(key)
+            ? req.Form[key].ToString()
+            : req.Query.ContainsKey(key)
+                ? req.Query[key].ToString()
+                : "";
+
+
+    int o_id = 0; int.TryParse(Param("o_id"), out o_id);
+    string lang = Param("lang");
+
+
+}
+
+@{
+    int ref_id = 0; try { ref_id = Convert.ToInt32(Param("ref_id")); } catch { };
+    int aff_id = 0; try { aff_id = Convert.ToInt32(Param("aff_id")); } catch { };
+    var m_join = Database.Open("m_join");
+    var sqlSelect = "SELECT * FROM ContactActions WHERE is_active=1 ORDER BY sort_order";
+    var conActions = m_join.Query(sqlSelect);
+    m_join.Close();
+}
+
+<section class="wel_sec">
+    <div class="container">
+        <div class="form_wel" style="margin-top:25px;">
+            <div class="welsc caption">
+                <h1>יצירת<strong>קשר</strong></h1>
+            </div>
+            <div class="f_details">
+                <form id="ContactForm">
+                    <input type="hidden" id="lang" name="lang" value="he" />
+
+                    <div class="fldLabel">
+                        <div style="overflow: auto;">
+                            כינוי מזהה
+                            <span style="float: left;" onclick="Accordionize('NickNameToolTip');">💡</span>
+                        </div>
+                        <div style="overflow: auto;">
+                            <button class="accordion" id="NickNameToolTip" style="display: none;"></button>
+                            <div class="panel" style=" padding: 0; margin: 0;">
+                                <div class="tooltip">
+                                    אם אין ברשותך כינוי, לא חייב כרגע..
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="overflow:auto">
+                            <input type="text" id="nick_name" name="nick_name" />
+                        </div>
+                    </div>
+
+                    <div class="fldLabel">
+                        <div style="overflow: auto;">
+                            מספר ווטסאפ
+                            <span style="float: left;" onclick="Accordionize('WAToolTip');">💡</span>
+                        </div>
+                        <div style="overflow: auto;">
+                            <button class="accordion" id="WAToolTip" style="display: none;"></button>
+                            <div class="panel" style=" padding: 0; margin: 0;">
+                                <div class="tooltip">
+                                    יש להזין את מספר הווטסאפ המזוהה בשירות
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="overflow:auto">
+                            <input type="text" id="wanum" name="wanum" />
+                        </div>
+                    </div>
+
+                    <div class="fldLabel">
+                        <div style="overflow: auto;">
+                            נושא הפניה: <span class="reqField">*</span>
+                        </div>
+
+                        <div style="overflow:auto">
+                            <select id="c_a" name="c_a" onchange="if (this.value == 'OTHER') { showElement('c_a_other'); } else { hideElement('c_a_other'); document.getElementById('c_a_other').value = ''; }">
+                                <option value="">נא לבחור..</option>
+                                @foreach (var ca in conActions)
+                                {
+                                    <option value="@ca.ContactActionCode">@ca.ca_title_h</option>
+                                }
+
+                                <option value="OTHER">אחר..</option>
+
+                            </select>
+                        </div>
+
+                        <div style="overflow:auto">
+                            <input type="text" id="c_a_other" name="c_a_other" placeholder="נא לפרט.." style="display:none;font-size:18px;" />
+                        </div>
+                    </div>
+
+
+                    <div class="fldLabel">
+                        <div style="overflow: auto;">
+                            גוף הפניה: <span class="reqField">*</span>
+                            <span style="float: left;" onclick="Accordionize('OrderBodyInfoTip');">💡</span>
+
+                        </div>
+                        <div style="overflow: auto;">
+                            <button class="accordion" id="OrderBodyInfoTip" style="display: none;"></button>
+                            <div class="panel" style=" padding: 0; margin: 0;">
+                                <div class="tooltip">
+                                    אפשר לרשום בגוף ההודעה מה שרוצים
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="overflow:auto">
+                            <textarea id="contact_body" name="contact_body" rows="3" style="font-size:18px;"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="fldLabel">
+                        <hr style=" margin-top: 5px; margin-bottom: 5px;" />
+
+                        <div style="overflow: auto;">
+                            לשלוח הודעת תזכורת?
+                        </div>
+                        <div style="overflow: auto;">
+                            <div class="tooltip">
+                                אפשר לבחור באפשרות זו אם ברצונך שנשלח לך הודעה המרכזת את כל המידע הרלוונטי לתקשורת ביננו, כמו הכינוי שלך, פרטי הקשר איתנו וכו'
+                            </div>
+                        </div>
+
+                        <div style="overflow:auto">
+                            <input type="checkbox" name="cus_refresh" id="cus_refresh" /> כן, אשמח שתשלחו לי
+                        </div>
+                        <hr style=" margin-top: 5px; margin-bottom: 5px;" />
+
+                    </div>
+
+
+
+
+
+                    <div style="overflow:auto;" id="prospectJoinActions">
+
+                        <div class="errBox" id="prospectJoinValidationError">xvcbxcbv</div>
+                        <div class="b_d">
+                            <button type="button" value="Reset" class="re" onclick="ControlButton();">ביטול</button>
+                            <button type="button" value="submit" class="sub" onclick="hideElement('prospectJoinActions'); showElement('prospectJoinLoader'); AjaxActions('ContactForm', '', '', 'ContactForm');">אישור</button>
+                        </div>
+
+                    </div>
+                    <center>
+                        <div class="spinner" style="font-size: 20px;display:none;" id="prospectJoinLoader">
+                            <div class="bounce1"></div>
+                            <div class="bounce2"></div>
+                            <div class="bounce3"></div>
+                        </div>
+                    </center>
+
+
+                </form>
+            </div>
+        </div>
+        <div class="form_ft_top">
+            <div class="container">
+                <div class="s_right">
+                    <a href="main"><img src="images/ftlogo.png" alt="Hamachteret" /></a>
+                </div>
+                <div class="s_left" style="display:none;">
+                    <ul>
+                        <li><a href="" target="_blank"><img src="images/instagram.png" alt="instagram" /></a></li>
+                        <li><a href="" target="_blank"><img src="images/facebook.png" alt="facebook" /></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+<!-- Hero Section -->
+@functions {
+    public void OnPost()
+    {
+        // This prevents 400s if POST is received
+    }
+}

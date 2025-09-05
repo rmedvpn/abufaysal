@@ -1,0 +1,42 @@
+﻿@page
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    if (!WebSecurity.IsAuthenticated) { Response.Redirect("/Login"); }
+    string username = WebSecurity.CurrentUserName;
+
+    Layout = "~/Pages/Shared/Layouts/_Main.cshtml";
+    string ref_id = "0"; try { ref_id = HttpContext.Session.GetString("ref_id"); } catch { }
+    string aff_id = ""; try { aff_id = HttpContext.Session.GetString("aff_id"); } catch { }
+    string go_to = ""; try { go_to = HttpContext.Session.GetString("go_to"); } catch { }
+    HttpContextAccessor.HttpContext!.Session.SetString("lang", "he");
+
+}
+
+<input type="hidden" name="starterpage" id="starter_page" value="@go_to" />
+
+<section class="wel_sec" style="text-align:center">
+    <div class="B" style="width:400px;min-height: 844px;">
+        <center>
+            <img class="logo" src="images/logo.png" style="max-height:150px;" />
+            <div class="HomeSlogan">פייסלים למביני עניין</div>
+            <img class="group" src="images/group.png" />
+            <div class="frame">
+                <p class="element">מגלגלים אורזים ושולחים<br />עד הבית תוך 24 שעות</p>
+
+            </div>
+
+            <div class="HomeBtn" onclick="PageLoad('ORDERS');">הזמנות כאן</div>
+            @username
+
+        </center>
+    </div>
+
+</section>
+
+<center>
+    <div class="copyDisc">
+        <center>2025 &copy; מערכות ישראל</center>
+    </div>
+</center>

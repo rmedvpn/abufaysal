@@ -1,0 +1,211 @@
+﻿@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = null;
+
+    var context = HttpContextAccessor.HttpContext;
+    var culture = new System.Globalization.CultureInfo("he-IL");
+    var sessionId = "";
+    try { sessionId = context.Session.Id; } catch { sessionId = ""; }
+    if (string.IsNullOrWhiteSpace(sessionId)) sessionId = "";
+
+    var db = Database.Open("faysal");
+    var sqlSelect = "SELECT * FROM cart WHERE session_id=@0 order by ts";
+    var cart = db.Query(sqlSelect, sessionId);
+
+    int itemCounter = 0;
+    int quanOfPackages = 0;
+    decimal order_total = 0;
+    decimal order_total_including_shipping = 0;
+    decimal shipping_charge = 0;
+    decimal free_shipping_marker = 0;
+    decimal free_shipping_deficit = 0;
+
+    try { shipping_charge = Convert.ToInt32(AppFunctions.GetAppProperty("DefaultShippingCharge")); } catch { }
+    try { free_shipping_marker = Convert.ToInt32(AppFunctions.GetAppProperty("FreeShippingMarker")); } catch { }
+}
+
+<section class="wel_sec">
+    <div class="container">
+        <div class="center_wel">
+            <div class="B">
+                <div class="A">
+                    <img style="" src="/images/logo.png" />
+                    <span style="z-index:9999;font-size:16px;color:white;float:left;padding-left:10px;direction:ltr;display:none" onclick="window.location.href = '/?go=orderenglish';"><span> 🌐 </span>For English, click here</span>
+
+                </div>
+
+            </div>
+
+            <div class="A">
+                <form id="CalcItemCostFsdfsdfsdform">
+                    <input type="hidden" value="ver2" name="ver" />
+                    <div class="A">
+                        <div class="B" style="float:left">
+                            <img src="images/call.png" style="float:left;height:40px;max-width:40px;margin:5px;" />
+                        </div>
+                        <div class="OrderIntroMsg" style="text-align:right;vertical-align:bottom;">
+                            ההזמנה שלך
+                            <div class="B" style="font-size:14px;">
+                                ❤️ משלוח חינם בהזמנה מעל <b>@free_shipping_marker.ToString("C", culture)</b>
+                            </div>
+                            
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="A" >
+                        @if (!cart.Any())
+                        {
+                            <div class="A" style="color:#e3e3e3;"> עדיין לא התווספו פריטים להזמנה </div>
+                        }
+                        else
+                        {
+                            foreach (var item in cart)
+                            {
+                                itemCounter++;
+                                decimal item_total = item.sale_price * item.quanOfPackages;
+                                order_total += item_total;
+
+                                <div class="CartRow" >
+                                    <div class="B">
+                                        <div class="A">
+                                            <span style="border-bottom:1px solid #a6a06f">@item.quan_title</span>
+                                        </div>
+
+                                        <div class="A">
+                                            <div class="CartInfoItem">זן<div class="CartPrice"><b>@item.strain_title</b></div></div>
+                                            <div class="CartInfoItem">מינון<div class="CartPrice"><b>@item.potency_title</b></div></div>
+                                            <div class="CartInfoItem">נייר<div class="CartPrice"><b>@item.paper_title</b></div></div>
+                                            <div class="CartInfoItem">פארש<div class="CartPrice"><b>@item.mixture_title</b></div></div>
+
+                                          
+                                            @if (item.quanOfPackages > 1)
+                                            {
+                                                <div class="CartInfoItem">
+                                                    מחיר החפיסה
+                                                    <div class="CartPrice" style="background-color:#e3e3e3;border-radius:5px"><b>@item.sale_price.ToString("C", culture)</b></div>
+                                                </div>
+                                              
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="A">
+                                        <img src="images/trash.png" style="float:right;height:20px;max-width:20px;" onclick="AjaxActions('CartAction', 'REMOVE','MainLoader', '@item.serial');" />
+                                        @if (item.quanOfPackages > 1)
+                                        {
+                                            <span class="CartBtn" onclick="AjaxActions('CartAction', 'SUBONE', 'MainLoader', '@item.serial');">-</span>
+                                        }
+                                        <span class="CartBtn" onclick="AjaxActions('CartAction', 'ADDONE', 'MainLoader', '@item.serial');">+</span>
+                                        @if (item.quanOfPackages > 1)
+                                        {
+                                            <div class="CartIemPrice">@item.quanOfPackages יחידות - <b>@item_total.ToString("C", culture)</b></div>
+                                        }
+                                        else
+                                        {
+                                            <div class="CartIemPrice"><b>@item_total.ToString("C", culture)</b></div>
+                                        }
+                                        
+
+                                    </div>
+
+                                </div>
+                            }
+
+                            if (order_total > free_shipping_marker)
+                            {
+                                shipping_charge = 0;
+                            }
+                            else
+                            {
+                                free_shipping_deficit = free_shipping_marker - order_total;
+                            }
+                            order_total_including_shipping = order_total + shipping_charge;
+
+                            <div class="A" style="text-align:right">
+                                <div class="B">
+
+                                    <button class="CartAddMoreBtn" type="button" onclick="PageLoad('ORDERS');">חזרה</button>
+                                    <div class="B" style="float:left">
+                                        @if (shipping_charge > 0)
+                                        {
+                                            <div class="B" style="text-align:right">
+                                                <div class="ShCartTotalContainer" style="float:left">
+                                                    עלות משלוח
+                                                    <div class="ShCartTotal">
+                                                        @shipping_charge.ToString("C", culture)
+                                                    </div>
+                                                </div>
+
+                                                <div class="OrderFormPrice" style="font-size:11px;background-color:yellow;display:none"><b>@order_total_including_shipping.ToString("C", culture)</b></div>
+                                            </div>
+
+                                        }
+                                        else
+                                        {
+                                            <div class="B" style="text-align:right">
+                                                <div class="ShCartTotalContainer" style="float:left">
+                                                    עלות משלוח
+                                                    <div class="ShCartTotal">
+                                                        <b>חינם</b>
+                                                    </div>
+                                                </div>
+
+                                                <div class="OrderFormPrice" style="font-size:11px;background-color:yellow;display:none"><b>@order_total_including_shipping.ToString("C", culture)</b></div>
+                                            </div>
+
+                                        }
+                                        <div class="B">
+                                            <div class="CartTotalContainer" style="float:left">
+                                                סך הכל לתשלום
+                                                <div class="CartTotal">
+                                                    @order_total_including_shipping.ToString("C", culture)
+                                                </div>
+                                            </div>
+
+
+                                            <div class="OrderFormPrice" style="font-size:11px;background-color:yellow;display:none"><b>@order_total_including_shipping.ToString("C", culture)</b></div>
+                                        </div>
+                                    </div>
+                                 
+                                </div>
+                            </div>
+
+                            <div class="B" style="text-align:center;">
+
+                                <button class="checkuotBtn" type="button" onclick="AjaxActions('ClearCart', '', 'MainLoader', '');" style="background-color:#a6a06f">איפוס</button>
+                                <button class="checkuotBtn" type="button" onclick="PageLoad('CHECKOUT');" style="display:none" >צקאאוט</button>
+                                <button class="checkuotBtn" type="button" onclick="sbload('MainSb','Caller?p1=Checkout');">צקאאוט</button>
+
+                            </div>
+                        }
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+@{
+    db.Close();
+}

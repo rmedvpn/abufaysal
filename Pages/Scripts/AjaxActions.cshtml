@@ -1,0 +1,82 @@
+﻿@page
+@using System
+@using System.Data.SqlClient
+@using Dapper
+@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Configuration
+@using Faysal.Helpers
+@attribute [IgnoreAntiforgeryToken]
+@inject IConfiguration Configuration
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = null;
+    var context = HttpContextAccessor.HttpContext;
+    var Request = context.Request;
+    var Response = context.Response;
+    Response.ContentType = "text/plain; charset=utf-8";
+
+    // Helper to mimic WebMatrix Request["key"]
+    string Param(string key) =>
+        Request.HasFormContentType && Request.Form.ContainsKey(key)
+            ? Request.Form[key].ToString()
+            : Request.Query.ContainsKey(key)
+        ? Request.Query[key].ToString()
+                : "";
+
+    DateTime local_time = AppFunctions.LocalTime();
+    var culture = new System.Globalization.CultureInfo("he-IL");
+
+    string theAction = Param("theAction");
+    string theValue = Param("value");
+    string theHtmlOutput = "";
+    string logMsg = "";
+    string sqlSelect = "";
+
+    switch (theAction)
+    {
+        case "":
+            theHtmlOutput = "ERROR";
+            break;
+        case "GOTMP":
+            theHtmlOutput = Faysal.GoTmp(context);
+            break;
+        case "RegisterProspect":
+            theHtmlOutput = Faysal.RegisterProspect(context);
+            break;
+        case "CheckRegistrationCode":
+            theHtmlOutput = Faysal.CheckRegistrationCode(context);
+            break;
+        case "UserSignUp":
+            theHtmlOutput = Faysal.UserSignUp(context);
+            break;
+        case "UpdateSettings":
+            theHtmlOutput = Faysal.UpdateSettings(context);
+            break;
+
+        case "AddToCart":
+            theHtmlOutput = Faysal.AddToCart(context);
+            break;
+        case "CartAction":
+            theHtmlOutput = Faysal.CartAction(context);
+            break;
+
+        case "ClearCart":
+            theHtmlOutput = Faysal.ClearCart(context);
+            break;
+
+        case "ReviewOrder":
+            theHtmlOutput = Faysal.ReviewOrder(context);
+            break;
+
+        case "PlaceOrder":
+            theHtmlOutput = Faysal.PlaceOrder(context);
+            break;
+
+
+    }
+
+    // finally, write out the result
+    await Response.WriteAsync(theHtmlOutput);
+    return;
+}

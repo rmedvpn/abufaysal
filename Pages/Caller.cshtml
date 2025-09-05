@@ -1,0 +1,134 @@
+﻿@page
+@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+@attribute [IgnoreAntiforgeryToken]
+
+@{
+    DateTime local_time = AppFunctions.LocalTime();
+
+    var context = HttpContextAccessor.HttpContext;
+    var Request = context.Request;
+    var Response = context.Response;
+
+    string Param(string key) =>
+        Request.HasFormContentType && Request.Form.ContainsKey(key)
+            ? Request.Form[key].ToString()
+            : Request.Query.ContainsKey(key)
+                ? Request.Query[key].ToString()
+                : "";
+
+    string thePage = "";
+    int param2 = 0;
+    int param3 = 0;
+    thePage = Param("p1");
+    try { param2 = Convert.ToInt32(Param("p2")); } catch { }
+    try { param3 = Convert.ToInt32(Param("p3")); } catch { }
+
+
+    switch (thePage)
+    {
+
+        case "Join":
+            if (true)
+            {
+                Layout = "~/Pages/Shared/Layouts/_Mini.cshtml";
+
+                <div style="overflow:auto;padding:0;margin:0">
+                    @await Html.PartialAsync("Partials/_Join")
+                </div>
+            }
+            break;
+        case "RegCodeSignup":
+            if (true)
+            {
+                Layout = "~/Pages/Shared/Layouts/_Mini.cshtml";
+                ViewData["pa_code"] = Param("code");
+                <div style="overflow:auto;padding:0;margin:0">
+                    @await Html.PartialAsync("Partials/_Signup")
+                </div>
+            }
+            break;
+        case "RegStatementHeb":
+            if (true)
+            {
+                Layout = "~/Pages/Shared/Layouts/_Mini.cshtml";
+                <div style="overflow:auto;padding:0;margin:0;">
+                    @await Html.PartialAsync("Partials/_RegStatementHeb")
+                </div>
+            }
+            break;
+        case "TermsHeb":
+            if (true)
+            {
+                Layout = "~/Pages/Shared/Layouts/_Mini.cshtml";
+                <div style="overflow:auto;padding:0;margin:0;">
+                    @await Html.PartialAsync("Partials/_TermsHeb")
+                </div>
+            }
+            break;
+        case "Checkout":
+            if (true)
+            {
+                Layout = null;
+
+                <div style="overflow:auto;padding:0;margin:0;">
+                    @await Html.PartialAsync("Shared/Partials/_Checkout")
+                </div>
+            }
+            break;
+
+        case "OrderReview":
+            if (true)
+            {
+                Layout = null;
+
+                <div style="overflow:auto;padding:0;margin:0;">
+                    @await Html.PartialAsync("Shared/Partials/_OrderReview")
+                </div>
+            }
+            break;
+
+
+
+            /*
+
+        case "RoundMenuItem":
+            if (true)
+            {
+                Layout = "~/Shared/Layouts/_MiniLayout.cshtml";
+                int item_id = 0; try { item_id = Convert.ToInt32(Request["p2"]); } catch { }
+                int round_id = 0; try { round_id = Convert.ToInt32(Request["p3"]); } catch { }
+                <div>@ClientPages.RoundMenuItem(item_id)</div>
+            }
+            break;
+        case "Cart":
+            if (true)
+            {
+                Layout = "~/Shared/Layouts/_MiniLayout.cshtml";
+                int round_id = 0; try { round_id = Convert.ToInt32(Request["p2"]); } catch { }
+                <div>@ClientPages.Cart(round_id)</div>
+            }
+            break;
+        case "OrderReview":
+            if (true)
+            {
+                Layout = "~/Shared/Layouts/_MiniLayout.cshtml";
+                int round_id = 0; try { round_id = Convert.ToInt32(Request["p2"]); } catch { }
+                <div>@ClientPages.OrderReview(round_id)</div>
+            }
+            break;
+        case "OrderInfo":
+            if (true)
+            {
+                Layout = "~/Shared/Layouts/_MiniLayout.cshtml";
+                int order_id = 0; try { order_id = Convert.ToInt32(Request["p2"]); } catch { }
+                <div>@ClientPages.OrderInfo(order_id)</div>
+            }
+            break;
+            */
+
+    }
+
+
+}
+

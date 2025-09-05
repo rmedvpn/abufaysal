@@ -1,0 +1,287 @@
+﻿@page
+@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = "~/Pages/Shared/Layouts/_Mini.cshtml";
+
+    var context = HttpContextAccessor.HttpContext!;
+    var request = context.Request;
+    var response = context.Response;
+
+    var errors = new List<string>();
+    string userName = "", password = "", email = "", phone = "", req_type = "", pa_code = "", password_confirm = ""; ;
+    int member_id = 0;
+    int PreApprovalId = 0;
+
+    string PaCodeDisplayState = "none;";
+    string PaCodeRegDisplayState = "none;";
+    string RegTypeDisplayState = "block;";
+    int ref_id = 0; try { ref_id = Convert.ToInt32(request.Form["ref_id"]); } catch { }
+
+    int aff_id = 0; try { aff_id = Convert.ToInt32(request.Form["aff_id"]); } catch { }
+
+
+    DateTime local_time = AppFunctions.LocalTime();
+
+    if (WebSecurity.IsAuthenticated)
+    {
+        //    response.Redirect("/Main");
+        //   return;
+        WebSecurity.Logout();
+    }
+
+    if (request.Method == "POST")
+    {
+        userName = request.Form["UserName"];
+        password = request.Form["Password"];
+        password_confirm = request.Form["password_confirm"];
+        email = request.Form["Email"];
+        phone = request.Form["Phone"];
+        req_type = request.Form["req_type"];
+        pa_code = request.Form["pa_code"];
+
+        if (req_type == "pa_code")
+        {
+            var db = Database.Open("zion");
+            var sqlSelect = "SELECT * FROM UserPreApprovals WHERE pa_code=@0 AND is_registered=0"; 
+            var preapproval = db.QuerySingle(sqlSelect, pa_code);
+            db.Close();
+            bool is_validated = false;
+            if (preapproval != null)
+            {
+                is_validated = true;
+                PaCodeDisplayState = "none;";
+                PaCodeRegDisplayState = "block;";
+                RegTypeDisplayState = "none;";
+                userName = preapproval.member_nick;
+                email = preapproval.email;
+                phone = preapproval.wanum;
+                member_id = preapproval.member_id;
+                PreApprovalId = preapproval.serial;
+                AppFunctions.WriteDebugLine("PreApprovalId: " + PreApprovalId + " member_id " + member_id);
+            }
+            else
+            {
+                errors.Add("הקוד לא תקין - נא לפנות למוקד!");
+                PaCodeDisplayState = "block;";
+                PaCodeRegDisplayState = "none;";
+                RegTypeDisplayState = "none;";
+
+            }
+
+
+
+        }
+        else
+        {
+            PaCodeDisplayState = "none;";
+            PaCodeRegDisplayState = "block;";
+            RegTypeDisplayState = "none;";
+
+            if (string.IsNullOrWhiteSpace(userName)) errors.Add("חובה להזין שם משתמש!");
+            if (string.IsNullOrWhiteSpace(password)) errors.Add("חובה להזין סיסמא!");
+            if (string.IsNullOrWhiteSpace(email)) errors.Add("חובה להזין כתובת מייל!");
+            if (string.IsNullOrWhiteSpace(phone)) errors.Add("חובה להזין מספר טלפון!");
+
+
+            if (!errors.Any())
+            {
+            if(password_confirm!=password)
+                {
+                    errors.Add("הסיסמאות לא תואמות!");
+                }
+            }
+        
+            if (!errors.Any())
+            {
+                var db = Database.Open("zion");
+
+
+
+                // Check if username already exists
+                var exists = db.QueryValue("SELECT COUNT(*) FROM UserProfile WHERE UserName=@0", userName);
+                if ((int)exists > 0)
+                {
+                    errors.Add("שם המשתמש כבר קיים");
+                }
+
+                string wanum = "";
+                wanum = AppFunctions.Wanumize(phone);
+
+
+                exists = db.QueryValue("SELECT COUNT(*) FROM RegWanum WHERE wanum=@0", wanum);
+                if ((int)exists > 0)
+                {
+                    errors.Add("מספר הטלפון שהוזן כבר רשום במערכת!");
+                }
+
+
+                if (!errors.Any())
+                {
+                    // Insert user
+                    db.Execute("INSERT INTO UserProfile (UserName,ts) VALUES (@0, @1)", userName, local_time);
+                    int userId = db.QueryValue<int>("SELECT UserId FROM UserProfile WHERE UserName=@0", userName);
+                    db.Execute("INSERT INTO webpages_Membership (UserId, Password) VALUES (@0, @1)", userId, password);
+
+                    db.Execute("INSERT INTO users (User_Name, email, wanum,ts,u_id,member_id,last_login,last_online) VALUES (@0, @1, @2,@3,@4,@5,@6,@7)", userName, email, wanum, local_time, userId, member_id,local_time,local_time);
+
+                    var sqlSelect = "UPDATE UserPreApprovals SET is_registered=1,register_ts=@0,is_update=1 WHERE serial=@1";
+                    db.Execute(sqlSelect, local_time, PreApprovalId);
+                    AppFunctions.WriteDebugLine("PreApprovalIdAAA: " + PreApprovalId + " member_id AAAA " + member_id);
+
+                    db.Execute("INSERT INTO members (UserName, email, wanum,phone,create_ts,u_id) VALUES (@0, @1, @2,@2,@3,@4)", userName, email, phone, local_time, userId);
+                    int memberId = db.QueryValue<int>("SELECT member_id FROM users WHERE User_Name=@0 AND ts=@1", userName, local_time);
+                    db.Execute("UPDATE UserProfile SET member_id=@0 WHERE userId=@1", memberId, userId);
+                    // Insert password into membership table
+                 
+
+
+                    // Optionally login
+                    WebSecurity.Login(userName, password);
+                    //    AppFunctions.DoLogin(userId);
+                    response.Redirect("/Main");
+                    return;
+                }
+            }
+
+        }
+
+    }
+
+
+<div class="B" style="background-color:#808080;direction:rtl">
+
+
+    <center>
+            <section class="wel_sec" style="text-align:center">
+                <div class="B" style="width:400px;min-height: 844px;">
+                    <div class="B" style="margin-top:25px;text-align:center">
+                        <div class="B">
+                            <a href="main"><img src="images/logologin.png"  /></a>
+                        </div>
+                        <div class="loginHeader" >
+                            <b>הרשמה</b>
+                        </div>
+            </div>
+                <div class="B" id="MainRegistrationDiv">
+                    <div class="B" style="text-align:center">
+                      
+                        <div class="B" id="RegTypeSelectDiv" style="display:@RegTypeDisplayState">
+                                <button type="button" style="width:90%" class="RegBigBtn" onclick="hideElement('RegTypeSelectDiv');showElement('PreApprovalCodeDiv');">יש לי קוד הרשמה</button>
+
+                                <button type="button" style="width:90%" class="RegBigBtn" onclick="sbload('MainSb', 'Caller?p1=Join');">אני רוצה להרשם</button>
+                                <div class="loginHeader">-- או --</div>
+                            <button type="button" style="width:90%" class="RegBigBtn" onclick="window.location.assign('/Login')">חזרה לדף הכניסה</button>
+                        </div>
+                        
+
+                    </div>
+
+                        <div class="B" id="PreApprovalCodeDiv" style="display:@PaCodeDisplayState">
+                        <form id="RegCodeForm">
+                        <input type="hidden" name="req_type" value="pa_code" />
+                                <div class="Join_TbRow" style="text-align:center;background-color:#0d4133;padding:10px;border-radius:20px;">
+                                    <div class="B" style="color:#fff;font-weight:normal;">
+                                        נא להזין את קוד ההרשמה
+                                    </div>
+                                    <div class="B">
+                                        <input class="Login_tb" type="text" style="text-align:center;width:50%;" name="pa_code" id="pa_code_tb" placeholder="######" maxlength="6" />
+                                    </div>
+                                    <div class="A" style="text-align:center">
+                                        <div class="regErrMsg2" id="PreApprovalErrorDiv"></div>
+                                    </div>
+                                </div>
+
+
+                            <div class="B" style="text-align:center;margin-top:10px;">
+                                    <button type="button" class="RegBigBtn" onclick="hideElement('PreApprovalCodeDiv');showElement('RegTypeSelectDiv');">ביטול</button>
+
+                                    <button type="button" value="המשך" class="RegBigBtn" onclick="AjaxActions('CheckRegistrationCode', ' ', 'MainLoader', 'RegCodeForm');">המשך</button>
+                                    
+                            </div>
+                            
+                        </form>
+                    </div>
+
+                        <div class="B" id="PreApproveRegDiv" style="display:@PaCodeRegDisplayState">
+                        <form method="post">
+                        <input type="hidden" name="pa_code" value="@pa_code" />
+                                <div class="fldLabel">
+                                    <div class="B">
+                                        טלפון
+                                    </div>
+                                    <div style="overflow:auto">
+                                        <input type="text" name="Phone" value="@phone" /><br />
+                                    </div>
+                                </div>
+                                <div class="fldLabel">
+                                    <div class="B">
+                                        כתובת מייל
+                                    </div>
+                                    <div style="overflow:auto">
+                                        <input type="text" name="Email" value="@email" /><br />
+                                    </div>
+                                </div>
+
+                            <div class="fldLabel">
+                                <div class="B">
+                                    נא לבחור שם משתמש 
+                                </div>
+                                <div style="overflow:auto">
+                                    <input type="text" name="UserName" value="@userName" />
+                                </div>
+                            </div>
+                            <div class="fldLabel">
+                                <div class="B">
+                                    נא לבחור סיסמא
+                                </div>
+                                <div style="overflow:auto">
+                                    <input name="Password" type="password" />
+                                </div>
+                            </div>
+                            <div class="fldLabel">
+                                <div class="B">
+                                    נא לאשר את הסיסמא
+                                </div>
+                                <div style="overflow:auto">
+                                        <input name="password_confirm" type="password" />
+                                </div>
+                            </div>
+
+                            <div class="B" style="text-align:center">
+                                @if (errors.Any())
+                                {
+                                    <div style="color:red;background-color:#ffffcc;font-size:16px;padding:5px;margin:5px;border-radius:5px;">
+                                        @foreach (var e in errors)
+                                        {
+                                            <div>@e</div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="B" style="text-align:center;margin-top:10px;">
+                                <input  type="submit" value="הרשמה" style="font-size:24px;padding:10px;background-color:#57d600;border-radius:5px;border:2px solid #fff;color:#fff" />
+                            </div>
+                            
+                        </form>
+                    </div>
+
+
+                
+                
+                
+                </div>
+            </div>
+        </section>
+            <div style="position:fixed;bottom:20px;font-size:14px;color:white;text-align:center;width:100%;z-index:0">
+                <center><span style="color:#e3e3e3">&copy; מערכות ישראל 2025</span></center>
+            </div>
+    </center>
+    <div class="B" style="height:150px;">&nbsp;</div>
+    
+
+
+</div>
+}

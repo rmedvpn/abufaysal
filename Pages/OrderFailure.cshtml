@@ -1,0 +1,64 @@
+﻿@page
+@attribute [IgnoreAntiforgeryToken]
+@using System.Data.SqlClient
+@using Dapper
+@using Faysal.Helpers
+
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration Configuration
+
+@{
+    Layout = null;
+
+    // grab the HttpRequest
+    var req = HttpContextAccessor.HttpContext!.Request;
+
+    // mimic WebMatrix Request["key"]
+    string Param(string key) =>
+        req.HasFormContentType && req.Form.ContainsKey(key)
+            ? req.Form[key].ToString()
+            : req.Query.ContainsKey(key)
+                ? req.Query[key].ToString()
+                : "";
+
+
+    int o_id = 0; int.TryParse(Param("o_id"), out o_id);
+    string lang = Param("lang");
+
+
+}
+
+<section class="hero_sec">
+    <div class="container">
+        <div class="form_wel" style="margin-top:25px;">
+            <div class="welsc caption">
+                <h1><strong>יש בעיה!</strong></h1>
+            </div>
+        </div>
+
+        <div class="f_details">
+            <div class="fldLabel" style="text-align:center">
+                ⚠️ ההזמנה לא בוצעה <br />
+                משום מה הזמנתך לא נקלטה כמו שצריך, ניתן לפנות למוקד לקבלת סיוע
+            </div>
+        </div>
+        <div class="b_d">
+            <button type="button" value="Reset" class="sub" onclick="ControlButton();">סגירה</button>
+        </div>
+
+        <div class="form_ft_top">
+            <div class="container">
+                <div style="text-align:center">
+                    <a href="main"><img src="images/ftlogo.png" alt="Hamachteret" /></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Hero Section -->
+@functions {
+    public void OnPost()
+    {
+        // This prevents 400s if POST is received
+    }
+}

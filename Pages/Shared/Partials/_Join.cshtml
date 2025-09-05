@@ -1,0 +1,228 @@
+﻿@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    <section class="wel_sec" style="text-align:center">
+        <div class="B" style="width:400px;min-height: 844px;">
+            <div class="B" style="text-align:center">
+                <div class="B">
+                    <img src="images/logoLogin.png" />
+                </div>
+                <div class="loginHeader">
+                    <b>הרשמה</b>
+                </div>
+                <div id="NewRegDiv" >
+                    <form id="NewUserRegForm">
+                     
+                        <div class="Join_TbRow">
+                            <div class="JoinPropRow">
+                                <div class="JoinPropTitle" style="float:right">
+                                    שם מלא <span class="reqField">*</span>
+                                </div>
+                                <div style="overflow:auto">
+                                    <input type="text" class="Join_tb" id="prospect_name" name="prospect_name" onblur="if(IsAccordion('ProspectNameToolTip')){Accordionize('ProspectNameToolTip');}" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="Join_TbRow">
+                            <div class="JoinPropRow">
+                                <div class="JoinPropTitle" style="float:right">
+                                    עיר מגורים <span class="reqField">*</span>
+                                </div>
+                                <div style="overflow:auto">
+                                    <input type="text" class="Join_tb" id="city" name="city" onblur="if(IsAccordion('CityToolTip')){Accordionize('CityToolTip');}" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="Join_TbRow">
+                            <div class="JoinPropRow">
+                                <div class="JoinPropTitle" style="float:right">
+                                    אני
+                                </div>
+                                <div style="overflow:auto">
+                                    <select class="Join_tb" id="gender" name="gender" onblur="if(IsAccordion('GenderToolTip')){Accordionize('GenderToolTip');}">
+                                        <option value="0">נא לבחור..</option>
+                                        <option value="1">זכר</option>
+                                        <option value="2">נקבה</option>
+                                        <option value="-1">אחר.ת</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="Join_TbRow">
+                            <div class="JoinPropRow">
+                                <div class="JoinPropTitle" style="float:right;text-align:right;">
+                                    <div class="B">
+                                        תאריך לידה
+                                    </div>
+                                    <div class="JoinPropSubTitle">
+                                        ההצטרפות מגיל 18 בלבד!
+                                    </div>
+
+                                </div>
+                                <div style="overflow:auto">
+                                    <input class="Join_tb" type="date" id="birth_date" name="birth_date" onblur="if(IsAccordion('BirthDateToolTip')){Accordionize('BirthDateToolTip');}" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="Join_TbRow">
+                            <div class="JoinPropRow">
+                                <div class="JoinPropTitle" style="float:right">
+                                    #ווטסאפ <span class="reqField">*</span> 
+                                </div>
+                                <div style="overflow:auto">
+                                    <input class="Join_tb" type="text" name="wanum"  />
+                                </div>
+                            </div>
+                            </div>
+                     
+
+                        <div class="Join_TbRow">
+                            <div class="JoinPropRow">
+                                <div class="JoinPropTitle" style="float:right">
+                                    יוזר טלגרם
+                                </div>
+                                <div style="overflow:auto">
+                                    <input class="Join_tb" type="text" name="tlg_nick" />
+                                </div>
+                            </div>
+                            </div>
+
+                        <div class="Join_TbRow">
+                            <div class="JoinPropRow">
+                                <div class="JoinPropTitle" style="float:right">
+                                    <div class="B">
+                                        כתובת מייל<span class="reqField">*</span>
+                                    </div>
+                                    <div class="JoinPropSubTitle">
+                                        לשימוש בחירום בלבד!
+                                    </div>
+
+                                </div>
+                          
+                                <div style="overflow:auto">
+                                    <input type="text" class="Join_tb" name="email" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="Join_TbRow">
+                            <div class="JoinPropRow">
+                                <div class="JoinPropTitle" style="float:right">
+                                    <div class="B">
+                                        פייסבוק
+                                    </div>
+                                    <div class="JoinPropSubTitle">
+                                        לאימות בלבד
+                                    </div>
+                                </div>
+                                <div style="overflow:auto">
+                                    <input class="Join_tb" type="text" id="fb" name="fb" />
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="Join_TbRow">
+                            <div class="JoinPropRow">
+                                <div class="JoinPropTitle" style="float:right">
+                                    <div class="B">
+                                        אינסטגרם
+                                    </div>
+                                    <div class="JoinPropSubTitle">
+                                        לאימות בלבד
+                                    </div>
+                                    
+                                </div>
+                                <div style="overflow:auto">
+                                    <input class="Join_tb" type="text" id="instagram" name="instagram" />
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="Join_TbRow">
+                            <div class="JoinPropRow">
+                                <div class="JoinPropTitle" style="float:right">
+                                    איך הגעת אלינו? <span class="reqField">*</span>
+                                </div>
+                                <div style="overflow:auto">
+                                    <select class="Join_tb" id="ref_source" name="ref_source" onchange="hideElement('ref_source_other');hideElement('ref_source_desc');if(this.value=='ref'){showElement('ref_source_desc');} if(this.value=='other'){showElement('ref_source_other');}" onblur="if(IsAccordion('RefSourceToolTip')){Accordionize('RefSourceToolTip');}">
+                                        <option value="">נא לבחור..</option>
+                                        <option value="google">גוגל</option>
+                                        <option value="instagram">אינסטגרם</option>
+                                        <option value="fb">פייסבוק</option>
+                                        <option value="barcode">סרקתי ברקוד</option>
+                                        <option value="ref">דרך חבר.ה</option>
+                                        <option value="other">בדרך אחרת</option>
+                                    </select>
+
+                                    
+                                </div>
+                                <div class="A" style="text-align:center">
+                                    <center>
+                                            <div style="overflow: auto; ">
+                                                <input type="text" class="Join_tb" id="ref_source_desc" name="ref_source_desc" maxlength="100" style="display:none;float:none;width:95%;" placeholder="# ווטסאפ של הממליצ.ה" />
+                                            </div>
+                                            <div style="overflow: auto;">
+                                                <input type="text" class="Join_tb" id="ref_source_other" name="ref_source_other" maxlength="100" style="display:none;float:none;width:95%;" placeholder="נא לפרט.." />
+                                            </div>
+                                    </center>
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="Join_TbRow" style="margin-top:20px">
+                            <div class="JoinPropRow" style="border:0">
+                                <div class="JoinPropTitle" style="float:right;color: rgba(171, 108, 0, 1);">
+                                    <input type="checkbox" name="is_terms" style="height:20px;width:20px;" />
+                                    <span>קראתי והסכמתי <span onclick="sbload('Menu1','Caller?p1=RegStatementHeb');"><b><u><span style="cursor:pointer;">לתנאי השימוש</span></u></b></span><span class="reqField">*</span></span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div style="overflow:auto;" id="prospectJoinActions">
+                            <div class="regErrMsg2" id="prospectJoinValidationError"></div>
+                            <div class="b_d">
+                                <button type="button" class="checkuotBtn" style="background-color:#a6a06f" onclick="controller.close('MainSb');">ביטול</button>
+                                <button type="button" class="checkuotBtn" onclick="AjaxActions('RegisterProspect', '', 'MainLoader', 'NewUserRegForm');">שליחה</button>
+
+                            </div>
+
+                        </div>
+                        <center>
+                            <div class="spinner" style="font-size: 20px;display:none;" id="prospectJoinLoader">
+                                <div class="bounce1"></div>
+                                <div class="bounce2"></div>
+                                <div class="bounce3"></div>
+                            </div>
+                        </center>
+
+
+                    </form>
+                    <div class="B" style="height:150px">&nbsp;</div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+}

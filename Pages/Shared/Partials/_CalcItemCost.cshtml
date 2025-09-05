@@ -1,0 +1,189 @@
+﻿@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = null;
+    var context = HttpContextAccessor.HttpContext;
+    var Request = context.Request;
+    var culture = new System.Globalization.CultureInfo("he-IL");
+
+    string Param(string key) =>
+        Request.HasFormContentType && Request.Form.ContainsKey(key)
+            ? Request.Form[key].ToString()
+            : Request.Query.ContainsKey(key)
+                ? Request.Query[key].ToString()
+                : "";
+
+    var db = Database.Open("faysal");
+    var sqlSelect = "";
+
+    int quan = 0; try { quan = Convert.ToInt32(Param("quan")); } catch { }
+    int strain = 0; try { strain = Convert.ToInt32(Param("strain")); } catch { }
+    int paper = 0; try { paper = Convert.ToInt32(Param("paper")); } catch { }
+    int MixturePotency = 0; try { MixturePotency = Convert.ToInt32(Param("MixturePotency")); } catch { }
+    int Mixture = 0; try { Mixture = Convert.ToInt32(Param("mixture")); } catch { }
+
+    string retTxtHtml = "";
+
+    if (quan == 0) { retTxtHtml += "נא לבחור כמות מבוקשת!<br>"; }
+    if (strain == 0) { retTxtHtml += "נא לבחור את הזן המבוקש!<br>"; }
+    if (paper == 0) { retTxtHtml += "נא לבחור את סוג הנייר הרצוי!<br>"; }
+    if (MixturePotency == 0) { retTxtHtml += "נא לבחור את המינון המבוקש!<br>"; }
+    if (Mixture == 0) { retTxtHtml += "נא לבחור את התערובת המבוקשת!<br>"; }
+
+    int requested_quan = 0;
+    decimal quan_labor_charge = 0;
+    decimal quan_labor_cost = 0;
+    decimal quan_multiplier = 0;
+    string quan_option_title = "";
+    string paper_option_title = "";
+    string paper_nick = "";
+    string paper_nick_e = "";
+    string strain_option_title = "";
+    string mixture_potency_option_title = "";
+    string mixture_potency_option_nick = "";
+    string mixture_option_title = "";
+
+    string quan_option_title_e = "";
+    string paper_option_title_e = "";
+    string strain_option_title_e = "";
+    string mixture_potency_option_title_e = "";
+    string mixture_potency_option_nick_e = "";
+    string mixture_option_title_e = "";
+
+    decimal gram_in_unit = 0;
+    decimal unit_cost = 0;
+    decimal gram_charge = 0;
+    decimal strain_gram_cost = 0;
+    decimal strain_multiplier = 0;
+    decimal potency = 0;
+    decimal mixture_gram_charge = 0;
+    decimal mixture_gram_cost = 0;
+    decimal mixture_multiplier = 0;
+
+    decimal total_potent_gram = 0;
+    decimal total_gram = 0;
+    decimal mixture_price = 0;
+    decimal potent_price = 0;
+    decimal total_price = 0;
+    decimal sale_price = 0;
+    decimal unit_sale_price = 0;
+
+    int potent_percent = 0;
+    int mixture_percent = 0;
+
+    if (retTxtHtml == "")
+    {
+        sqlSelect = "SELECT * FROM quanOptions WHERE id=@0";
+        var quanOptions = db.QuerySingle(sqlSelect, quan);
+        if (quanOptions != null)
+        {
+            quan_labor_cost = quanOptions.labor_cost;
+            quan_multiplier = quanOptions.multiplier;
+            quan_labor_charge = quan_labor_cost * quan_multiplier;
+            requested_quan = quanOptions.quan;
+            quan_option_title = quanOptions.title;
+            quan_option_title_e = quanOptions.title_e;
+        }
+
+        sqlSelect = "SELECT * FROM paperOptions WHERE id=@0";
+        var paperOptions = db.QuerySingle(sqlSelect, paper);
+        if (paperOptions != null)
+        {
+            gram_in_unit = paperOptions.gram_in_unit;
+            unit_cost = paperOptions.unit_cost;
+            paper_nick = paperOptions.nick;
+            paper_nick_e = paperOptions.nick_e;
+            paper_option_title = paperOptions.title;
+            paper_option_title_e = paperOptions.title_e;
+        }
+
+        sqlSelect = "SELECT * FROM strainOptions WHERE id=@0";
+        var strainOptions = db.QuerySingle(sqlSelect, strain);
+        if (strainOptions != null)
+        {
+            strain_gram_cost = strainOptions.gram_cost;
+            strain_multiplier = strainOptions.multiplier;
+            gram_charge = strain_gram_cost * strain_multiplier;
+            strain_option_title = strainOptions.title;
+            strain_option_title_e = strainOptions.title_e;
+        }
+
+        sqlSelect = "SELECT * FROM mixturePotencyOptions WHERE id=@0";
+        var mixturePotencyOptions = db.QuerySingle(sqlSelect, MixturePotency);
+        if (mixturePotencyOptions != null)
+        {
+            potency = mixturePotencyOptions.potency;
+            mixture_potency_option_title = mixturePotencyOptions.title;
+            mixture_potency_option_title_e = mixturePotencyOptions.title_e;
+            mixture_potency_option_nick = mixturePotencyOptions.nick;
+            mixture_potency_option_nick_e = mixturePotencyOptions.nick_e;
+        }
+
+        sqlSelect = "SELECT * FROM mixtureOptions WHERE id=@0";
+        var mixtureOptions = db.QuerySingle(sqlSelect, Mixture);
+        if (mixtureOptions != null)
+        {
+            mixture_gram_cost = mixtureOptions.gram_cost;
+            mixture_multiplier = mixtureOptions.multiplier;
+            mixture_gram_charge = mixture_gram_cost * mixture_multiplier;
+            mixture_option_title = mixtureOptions.title;
+            mixture_option_title_e = mixtureOptions.title_e;
+        }
+
+        total_gram = requested_quan * gram_in_unit;
+        total_potent_gram = total_gram * potency;
+        mixture_price = (total_gram - total_potent_gram) * mixture_gram_charge;
+        potent_price = total_potent_gram * gram_charge;
+        total_price = potent_price + mixture_price + quan_labor_charge;
+
+        potent_percent = Convert.ToInt32(potency * 100);
+        mixture_percent = 100 - potent_percent;
+        sale_price = Faysal.RoundUpAmount(total_price);
+        unit_sale_price = sale_price / requested_quan;
+    }
+
+    db.Close();
+}
+
+@if (retTxtHtml != "")
+{
+
+    <div class="B">
+        <div class="B" style="float:left">
+            <button type="button" class="CartQuanAddBtn" style="background-color:#e3e3e3;color:#808080">הוספה לסל</button>
+        </div>
+        <div class="CartPriceLabel">
+            <div class="CartPriceSubLabel">לקבלת מחיר, נא לבחור את כל האפשרוית</div>
+
+        </div>
+    </div>
+        
+    
+}
+else
+{
+    <div class="B">
+        <div class="B" style="float:left">
+            <button type="button" class="CartQuanBtn" onclick="CartChangeQuan('+1');">+</button>
+            <div class="CartQuanLabel" id="quanOfPackagesLabel">
+                1
+                </div>
+            <input type="hidden" name="quanOfPackages" id="quanOfPackages" value="1" />
+
+            <button type="button" class="CartQuanBtn" onclick="CartChangeQuan('-1');">-</button>
+
+        </div>
+    </div>
+    <div class="B">
+        <div class="B" style="float:left">
+            <button type="button" class="CartQuanAddBtn" onclick="AjaxActions('AddToCart', '', 'MainLoader', 'CalcItemCostForm');">הוספה לסל</button>
+        </div>
+        <div class="CartPriceLabel">
+            <div class="B">@sale_price.ToString("C", culture)</div>
+            <div class="CartPriceSubLabel">יוצא @unit_sale_price.ToString("C", culture) לפייסל</div>
+
+        </div>
+    </div>
+
+}

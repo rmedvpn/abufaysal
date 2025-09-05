@@ -1,0 +1,144 @@
+﻿@page
+@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = "~/Pages/Shared/Layouts/_Mini.cshtml";
+
+    var context = HttpContextAccessor.HttpContext!;
+    var request = context.Request;
+    var response = context.Response;
+
+    var errors = new List<string>();
+    string userName = "", password = "", email = "", phone = "", lang = "he";
+    DateTime local_time = AppFunctions.LocalTime();
+
+    if (WebSecurity.IsAuthenticated)
+    {
+        response.Redirect("/");
+        return;
+    }
+
+    if (request.Method == "POST")
+    {
+        userName = request.Form["UserName"];
+        password = request.Form["Password"];
+        email = request.Form["Email"];
+        phone = request.Form["Phone"];
+        lang = request.Form["lang"];
+
+    }
+}
+
+<html>
+
+<body>
+    <style>
+    </style>
+
+    <section class="wel_sec">
+        <div class="container">
+            <div class="center_wel">
+                @if (lang == "en")
+                {
+                    <div class="B">
+                        <div class="B" style="margin-top:25px;">
+                            <div class="welsc caption">
+                                <h1><strong>Thank You!</strong></h1>
+                            </div>
+                        </div>
+
+                        <div class="f_details">
+                            <div class="infLabel" style="text-align:center;background-color:#ffffff">
+                                Your order was received, Thank you! <br />
+
+                                Our customer service agents will contact you shortly<br />
+
+                                Much Love 💚
+
+                            </div>
+                        </div>
+
+                        <div class="b_d">
+                            <button type="button" value="Reset" class="sub" style="float:right" onclick="ControlButton();">Close</button>
+                        </div>
+
+
+                    </div>
+                    <div class="B">
+                        <div class="A">
+                            <img style="" src="/images/logo.png" />
+                        </div>
+
+                    </div>
+
+                }
+                else
+                {
+
+                    <div class="B" style="text-align:center">
+                        <div class="A" style="margin-top:0;">
+                            <div class="ThankYouPageTitle">תודה<br />רבה!</div>
+                        </div>
+                        <div class="ThankYouPageMainTxt" style="text-align:center;">
+                            <center>
+                                <div style="width:200px">
+                                    <div class="B" style="margin-bottom:20px">
+                                        בקשתך נקלטה במערכת!
+                                    </div>
+                                    <div style="width:200px">
+                                        תהליך האימות עשוי לקחת עד 24 שעות, אך לרוב הרבה פחות
+                                    </div>
+
+                                    <div class="B">
+                                        עם סיום התהליך נשלח לך הודעת הצטרפות עם פרטי ההתחברות
+                                    </div>
+
+
+                                </div>
+
+                            </center>
+
+
+
+
+
+
+                        </div>
+
+
+                        <div class="ThankYouPageBotTxt">
+                            מהגלגול הזה ועד הגלגול הבא,<br />
+                            אוהבים אותך בלב ♥
+                        </div>
+
+
+
+
+                    </div>
+
+                    <div class="B">
+                        <div class="A" style="text-align:center">
+                            <img class="ThankYouPageImg" style="height:150px;" src="/images/thankyoudude.png" />
+                        </div>
+
+
+
+                    </div>
+                    <div class="A" style="text-align:center">
+                        <button type="button" class="ThankYouBtn" onclick="window.location.href='/';">חזרה לדף הבית</button>
+                    </div>
+                    <div class="B">
+                        <div class="A" style="text-align:center">
+                            <img class="ThankYouPageImg" style="height:50px;" src="/images/logoChkout.png" />
+                        </div>
+
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- <div id="error"><img src="https://dl.dropboxusercontent.com/u/23299152/Delete-icon.png" /> Your caps-lock is on.</div> -->
+</body>
+</html>

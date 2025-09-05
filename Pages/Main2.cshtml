@@ -1,0 +1,60 @@
+@page "/Main2"
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    // Layout = "~/Pages/Shared/Layouts/_Members.cshtml";
+    string ref_id = "0"; try { ref_id = HttpContext.Session.GetString("ref_id"); } catch { }
+    string aff_id = ""; try { aff_id = HttpContext.Session.GetString("aff_id"); } catch { }
+    string go_to = ""; try { go_to = HttpContext.Session.GetString("go_to"); } catch { }
+    HttpContextAccessor.HttpContext!.Session.SetString("lang", "he");
+
+}
+
+<input type="hidden" name="starterpage" id="starter_page" value="@go_to" />
+<div style="display:none">SES: @ref_id aff: @aff_id goto: @go_to</div>
+
+<section class="wel_sec">
+    <div class="container">
+        <div class="center_wel">
+            <img src="/images/elfaysal.png" />
+            <div class="fldLabel">
+                <div style="overflow:auto;height:30px;">&nbsp;</div>
+
+            </div>
+
+
+            <div class="menubtn">
+
+                <ul>
+                    <li><a href="#" onclick="sbload('MainSb','order?ref_id=@ref_id');">הזמנות</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','prpricing?ref_id=@ref_id');">מחירון</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','prsettings');">הגדרות</a></li>
+
+
+
+
+
+                </ul>
+            </div>
+        </div>
+        <center>
+            <div style="overflow:auto;height:30px;">&nbsp;</div>
+
+        </center>
+
+
+    </div>
+    <div class="ft_bot">
+        <div class="container">
+            <div style="text-align:center">
+            </div>
+
+        </div>
+        <div class="login-help">
+            <br />
+            <center><span style="color:white"><span onclick="sbload('MainSb','prorder?ref_id=@ref_id');">2025</span> &copy; מערכות ישראל</span></center>
+        </div>
+    </div>
+</section>
+

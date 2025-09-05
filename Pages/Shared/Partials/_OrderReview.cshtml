@@ -1,0 +1,205 @@
+﻿
+
+@using System
+@using System.Data.SqlClient
+@using Dapper
+@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Configuration
+@using Faysal.Helpers
+@inject IConfiguration Configuration
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    // Shared layout for members
+    Layout = null;
+    var context = HttpContextAccessor.HttpContext;
+    var Request = context.Request;
+    var Response = context.Response;
+    var culture = new System.Globalization.CultureInfo("he-IL");
+
+    DateTime defDate = Convert.ToDateTime("1/1/1900");
+    // Helper to read form or query values
+    string Param(string key) =>
+        HttpContextAccessor.HttpContext.Request.HasFormContentType && HttpContextAccessor.HttpContext.Request.Form.ContainsKey(key)
+            ? HttpContextAccessor.HttpContext.Request.Form[key].ToString()
+            : HttpContextAccessor.HttpContext.Request.Query[key].ToString();
+
+    // Read inputs
+    var sessionId = HttpContextAccessor.HttpContext.Session.Id;
+    ViewData["SessionId"] = sessionId;
+    var lang = Param("lang");
+    string wanum = ""; wanum = Param("wanum");
+    string full_name = ""; full_name = Param("full_name");
+    string address = ""; address = Param("address");
+    string city = ""; city = Param("city");
+    string address_id = Param("address_id");
+    string ship_phone = Param("ship_phone");
+    string ship_name = Param("ship_name");
+    string ship_notes = Param("ship_notes");
+    string order_notes = Param("order_notes");
+    string address_nick = Param("address_nick");
+    string member_nick = Param("member_nick");
+    bool address_remember = !string.IsNullOrEmpty(Param("Address_remember"));
+    bool send_to_other = !string.IsNullOrEmpty(Param("send_to_other"));
+
+    decimal order_total = 0;
+    decimal order_total_including_shipping = 0;
+    decimal shipping_charge = 0;
+    decimal free_shipping_marker = 0;
+    decimal free_shipping_deficit = 0;
+
+
+    try { shipping_charge = Convert.ToInt32(AppFunctions.GetAppProperty("DefaultShippingCharge")); } catch { }
+    try { free_shipping_marker = Convert.ToInt32(AppFunctions.GetAppProperty("FreeShippingMarker")); } catch { }
+    ViewData["callingPage"] = "ORDERREVIEW";
+
+    var errMsg = "";
+
+    if (address_id == "")
+    {
+        errMsg = errMsg + " בבקשה לבחור כתובת!<br>";
+    }
+    if (address_id == "-1")
+    {
+        if (address == "")
+        {
+            errMsg = errMsg + " בבקשה להזין כתובת!<br>";
+        }
+        if (city == "")
+        {
+            errMsg = errMsg + " בבקשה להזין עיר!<br>";
+        }
+
+        if (address_remember && address_nick.Length < 2)
+        {
+            errMsg = errMsg + "אי אפשר לשמור כתובת בלי כינוי!<br>";
+        }
+
+    }
+
+    if(send_to_other){
+
+
+        if (string.IsNullOrEmpty(Param("ship_phone"))){
+            errMsg += "בבקשה להזין את הטלפון של מקבל.ת המשלוח!<br>";
+
+        }
+        if (string.IsNullOrEmpty(Param("ship_name"))){
+            errMsg += "בבקשה להזין את שם מקבל.ת המשלוח!<br>";
+
+        }
+    }
+    else{
+        ship_name = member_nick;
+        ship_phone = wanum;
+    }
+
+    if (string.IsNullOrEmpty(errMsg))
+    {
+        <section class="wel_sec">
+            <div class="container">
+                <div class="B">
+                    <div class="B">
+                        <img src="/images/logo.png" />
+                    </div>
+                    <div class="A">
+                        <div class="B" style="float:left">
+                            <img src="images/call.png" style="float:left;height:40px;max-width:40px;margin:5px;" />
+                        </div>
+                        <div class="OrderIntroMsg" style="text-align:right;vertical-align:bottom;">
+                            ההזמנה שלך
+                            <div class="B" style="font-size:14px;">
+                                ❤️ משלוח חינם בהזמנה מעל <b>@free_shipping_marker.ToString("C", culture)</b>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                    <div class="A">
+                        <form id="ReviewOrderForm">
+
+                            <center>
+
+                                <div class="B">
+                                    @await Html.PartialAsync("Shared/Partials/_CheckoutItems")
+                                </div>
+                                <div class="A">
+                                    <div class="B" style="text-align:right">
+                                        <h3>פרטי משלוח</h3>
+
+                                    </div>
+                                    <div class="A">
+                                        <div class="B" style="text-align:right">
+                                            @ship_name
+                                        </div>
+                                        <div class="B" style="text-align:right">
+                                            @ship_phone
+                                        </div>
+                                        <div class="B" style="text-align:right">
+                                            @address
+                                        </div>
+                                        <div class="B" style="text-align:right">
+                                            @city
+                                        </div>
+
+                                        @if(address_remember){
+                                            <div class="B" style="text-align:right">
+                                               הכתובת תשמר בכינוי '@address_nick' 
+                                            </div>
+                                        }
+
+                                    </div>
+                                </div>
+
+                                <div class="B" style="text-align:center;">
+
+                                    <button class="checkuotBtn" type="button" onclick="controller.open('MainSb');" style="background-color:#a6a06f">חזרה</button>
+                                    <button class="checkuotBtn" type="button" onclick="AjaxActions('PlaceOrder', '@sessionId','MainLoader', 'ReviewOrderForm');">ביצוע הזמנה</button>
+
+                                </div>
+                                <div class="A" style="text-align:center;display:none">
+                                    <button class="A" type="button" onclick="ControlButton();">ביטול</button>
+                                    <button class="A" type="button" onclick="AjaxActions('PlaceOrder', '@sessionId','MainLoader', 'ReviewOrderForm');">ביצוע הזמנה</button>
+                                </div>
+
+
+                            </center>
+
+
+
+                            <input type="hidden" name="full_name" value="@full_name" />
+                            <input type="hidden" name="wanum" value="@wanum" />
+                            <input type="hidden" name="address" value="@address" />
+                            <input type="hidden" name="city" value="@city" />
+
+                            <input type="hidden" name="address_id" value="@address_id" />
+                            <input type="hidden" name="ship_phone" value="@ship_phone" />
+                            <input type="hidden" name="ship_name" value="@ship_name" />
+                            <input type="hidden" name="ship_notes" value="@ship_notes" />
+                            <input type="hidden" name="order_notes" value="@order_notes" />
+
+                            <input type="hidden" name="address_nick" value="@address_nick" />
+                            <input type="hidden" name="member_nick" value="@member_nick" />
+                            @if (address_remember)
+                            {
+                                <input type="hidden" name="address_remember" value="true" />
+                            }
+                            @if (send_to_other)
+                            {
+                                <input type="hidden" name="send_to_other" value="true" />
+                            }
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    }
+    else
+    {
+        await Response.WriteAsync("!$!" + errMsg);
+
+    }
+}

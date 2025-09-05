@@ -1,0 +1,47 @@
+﻿@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = null;
+    var context = HttpContextAccessor.HttpContext;
+    var Request = context.Request;
+    var culture = new System.Globalization.CultureInfo("he-IL");
+
+    string Param(string key) =>
+        Request.HasFormContentType && Request.Form.ContainsKey(key)
+            ? Request.Form[key].ToString()
+            : Request.Query.ContainsKey(key)
+                ? Request.Query[key].ToString()
+                : "";
+    int address_id = 0; try { address_id = Convert.ToInt32(ViewData["address_id"]); } catch { }
+    int u_id = 0; try { u_id = Convert.ToInt32(ViewData["u_id"]); } catch { }
+    if (u_id == 0)
+    {
+        u_id = WebSecurity.CurrentUserId;
+    }
+    /////////////////////////////
+    var db = Database.Open("Faysal");
+    var sqlSelect = "";
+    sqlSelect = "SELECT * FROM Addresses where id=@0 AND u_id=@1";
+    var MemberAddress = db.QuerySingle(sqlSelect, address_id, u_id);
+    if (MemberAddress != null)
+    {
+        <div class="B" style="font-size:18px;">
+            <div class="B">
+                @MemberAddress.address @MemberAddress.city
+
+            </div>
+            <div class="B">
+                @MemberAddress.address_notes
+            </div>
+        </div>
+        
+    }
+    else
+    {
+        <div style="overflow: auto;text-align: right">
+        <span class="RedMiniTag">הכתובת לא נמצאה</span>
+        </div>
+    }
+    db.Close();
+}

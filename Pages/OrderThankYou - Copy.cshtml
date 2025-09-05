@@ -1,0 +1,121 @@
+﻿@page
+@attribute [IgnoreAntiforgeryToken]
+@using System.Data.SqlClient
+@using Dapper
+@using Faysal.Helpers
+
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration Configuration
+
+@{
+    Layout = "~/Pages/Shared/Layouts/_Main.cshtml";
+    var lang = HttpContextAccessor.HttpContext!.Session.GetString("lang");
+
+    // grab the HttpRequest
+    var req = HttpContextAccessor.HttpContext!.Request;
+
+    // mimic WebMatrix Request["key"]
+    string Param(string key) =>
+        req.HasFormContentType && req.Form.ContainsKey(key)
+            ? req.Form[key].ToString()
+            : req.Query.ContainsKey(key)
+                ? req.Query[key].ToString()
+                : "";
+
+
+    int o_id = 0; int.TryParse(Param("o_id"), out o_id);
+
+
+
+    <section class="wel_sec">
+        <div class="container">
+            <div class="center_wel">
+                <div class="B">
+                    <div class="A">
+                        <img style="" src="/images/logo.png" />
+                        <span style="z-index:9999;font-size:16px;color:white;float:left;padding-left:10px;direction:ltr;display:none" onclick="window.location.href = '/?go=orderenglish';"><span> 🌐 </span>For English, click here</span>
+
+                    </div>
+
+                </div>
+                @if (lang == "en")
+                {
+                <div class="B">
+                    <div class="B" style="margin-top:25px;">
+                        <div class="welsc caption">
+                            <h1><strong>Thank You!</strong></h1>
+                        </div>
+                    </div>
+
+                    <div class="f_details">
+                        <div class="infLabel" style="text-align:center;background-color:#ffffff">
+                            Your order was received, Thank you! <br />
+
+                            Our customer service agents will contact you shortly<br />
+
+                            Much Love 💚
+
+                        </div>
+                    </div>
+
+                    <div class="b_d">
+                        <button type="button" value="Reset" class="sub" style="float:right" onclick="ControlButton();">Close</button>
+                    </div>
+
+
+                </div>
+                }
+                else
+                {
+
+                    <div class="B">
+                        <div class="A" style="margin-top:25px;">
+                            <div class="B">
+                                <h1><strong>תודה רבה!</strong></h1>
+                            </div>
+                        </div>
+
+                        <div class="f_details">
+                            <div class="infLabel" style="text-align:center;background-color:#ffffff">
+                                הזמנתך נקלטה במערכת, תודה רבה! <br />
+
+                                בדקות הקרובות תשלח אליך הודעת אישור ממוקד ההזמנות שלנו<br />
+
+                                אוהבים אותך בלב 💚
+
+                            </div>
+                        </div>
+
+                        <div class="b_d">
+                            <button type="button" value="Reset" class="sub" onclick="ControlButton();">סגירה</button>
+                        </div>
+
+
+                        <div class="form_ft_top">
+                            <div class="container">
+                                <div style="text-align:center">
+                                    <a href="main"><img src="images/ftlogo.png" alt="Hamachteret" /></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </section>
+
+   
+
+    <!-- Hero Section -->
+}
+
+
+
+
+@functions {
+    public void OnPost()
+    {
+        // This prevents 400s if POST is received
+    }
+}

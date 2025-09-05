@@ -1,0 +1,62 @@
+@page ""
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+   // Layout = "~/Pages/Shared/Layouts/_Members.cshtml";
+    string ref_id = "0"; try { ref_id = HttpContext.Session.GetString("ref_id"); } catch { }
+    string aff_id = ""; try { aff_id = HttpContext.Session.GetString("aff_id"); } catch { }
+    string go_to = ""; try { go_to = HttpContext.Session.GetString("go_to"); } catch { }
+    HttpContextAccessor.HttpContext!.Session.SetString("lang", "en");
+
+}
+
+<input type="hidden" name="starterpage" id="starter_page" value="@go_to" />
+<div style="display:none">SES: @ref_id aff: @aff_id goto: @go_to</div>
+
+<section class="wel_sec">
+    <div class="container">
+        <div class="center_wel" style="direction:ltr"> 
+            <img src="/images/israel.png" />
+
+            <div class="welsc caption">
+                <h1>Hamachteret<strong>Welcome</strong></h1>
+                <span style="z-index:9999;font-size:16px;color:white;float:right;padding-left:10px;direction:rtl;cursor:pointer;" onclick="window.location.href = 'Main';"><span> 🌐 </span>לגרסא בעברית</span>
+                <span style="z-index:9999;font-size:16px;color:white;float:left;padding-right:10px;direction:ltr;cursor:pointer;" onclick="sbload('MainSb','Contact_Eng?ref_id=@ref_id');"><span> 📞 </span> Contact Us</span>
+            </div>
+            <div class="menubtn">
+                <ul>
+                    <li><a href="#" onclick="controller.open('MahWorld'); currentlyOpenSidebar = 'MahWorld'; ">Menu</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','orderEng?ref_id=@ref_id');">Place an order</a></li>
+                    <li><a href="#" onclick="controller.open('ordTrack'); currentlyOpenSidebar = 'ordTrack'; ">Order Tracking</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','orderFeedbackEng?ref_id=@ref_id');">Order Feedback</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','newsLetterPrefEng?ref_id=@ref_id');">Broadcast Lists</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','updatePersonalInfoEng?ref_id=@ref_id');">Update Information</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','JobAppEng?ref_id=@ref_id');">Work With Us!</a></li>
+                    <li><a href="#" onclick="controller.open('comKop'); currentlyOpenSidebar = 'comKop'; ">Community Fund</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','About_Eng');">About Us</a></li>
+                    <li><a href="#" onclick="sbload('MainSb','Imposters_Eng');">Imposters Lookout!</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="ft_bot">
+        <div class="container">
+            <div class="s_right">
+                <a href="index.html"><img src="images/ftlogo.png" alt="Hamachteret" /></a>
+            </div>
+            <div class="s_left">
+                <ul>
+                    <li><a href="" target="_blank"><img src="images/instagram.png" alt="instagram" /></a></li>
+                    <li><a href="" target="_blank"><img src="images/facebook.png" alt="facebook" /></a></li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="login-help">
+            <br />
+            <center><span style="color:white">2025 &copy; Israel's Systems</span></center>
+        </div>
+
+    </div>
+</section>

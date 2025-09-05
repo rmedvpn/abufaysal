@@ -1,0 +1,82 @@
+﻿@page
+@using System
+@using System.Data.SqlClient
+@using Dapper
+@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Configuration
+@using Faysal.Helpers
+@attribute [IgnoreAntiforgeryToken]
+@inject IConfiguration Configuration
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = null;
+    var context = HttpContextAccessor.HttpContext;
+    var Request = context.Request;
+    var Response = context.Response;
+    Response.ContentType = "text/plain; charset=utf-8";
+
+    // Helper to mimic WebMatrix Request["key"]
+    string Param(string key) =>
+        Request.HasFormContentType && Request.Form.ContainsKey(key)
+            ? Request.Form[key].ToString()
+            : Request.Query.ContainsKey(key)
+                ? Request.Query[key].ToString()
+                : "";
+
+    DateTime local_time = AppFunctions.LocalTime();
+    var culture = new System.Globalization.CultureInfo("he-IL");
+
+    string theAction = Param("theAction");
+    string theValue = Param("value");
+    string theHtmlOutput = "";
+    string logMsg = "";
+    string sqlSelect = "";
+
+    switch (theAction)
+    {
+
+
+        case "CalcItemCost":
+            if (true)
+            {
+                <div>
+                    @await Html.PartialAsync("Shared/Partials/_CalcItemCost")
+                </div>
+            }
+            break;
+
+        case "Cart":
+            if (true)
+            {
+                <div>
+                    @await Html.PartialAsync("Shared/Partials/_Cart")
+                </div>
+            }
+            break;
+        case "Checkout":
+            if (true)
+            {
+                <div>
+                    @await Html.PartialAsync("Shared/Partials/_Checkout")
+                </div>
+            }
+            break;
+
+        case "Order":
+            if (true)
+            {
+                <div>
+                    @await Html.PartialAsync("Shared/Partials/_Order")
+                </div>
+            }
+            break;
+
+
+        default:
+            break;
+    }
+
+    // finally, write out the result
+    return;
+}
