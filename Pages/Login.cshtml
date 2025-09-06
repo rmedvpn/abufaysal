@@ -43,9 +43,10 @@
 }
 
 <section class="wel_sec" style="text-align:center">
-    <div class="B" style="width:400px;min-height: 844px;">
+    <div class="container" >
         <center>
-            <img class="logo" src="images/logoLogin.png" style="max-height:150px;" />
+            <div class="top_spacer"></div>
+            <img class="logo" src="images/newlogo.png"  />
             <div class="B" style="text-align:center;margin-top:25px;">
 
                 <div class="loginHeader">
@@ -69,15 +70,15 @@
                             </div>
                         }
 
-                        <div class="loginHeader" style="text-align:right;">
-                            <input type="checkbox" name="rememberMe" checked style="padding:5px;margin:5px;height:20px;width:20px;" />
-                            <span style="margin:5px;padding:5px;">לזכור אותך?</span>
+                        <div class="loginQuestion" >
+                            <input type="checkbox" name="rememberMe" checked style="padding:5px;margin-left:5px;height:20px;width:20px;" />
+                            לזכור אותך?
                         </div>
 
 
-                        <button type="submit" class="RegBigBtn" style="width:90%;" onclick="document.forms[0].submit();">התחברות</button>
-                        <button type="button" class="RegBigBtn" style="width:90%;" onclick="window.location.href='ForgotPassword';">שכחת סיסמא?</button>
-                        <button type="button" class="RegBigBtn" style="width:90%;" onclick="window.location.href='Register';">הרשמה</button>
+                        <button type="submit" class="LoginBigBtn" " onclick="document.forms[0].submit();">התחברות</button>
+                        <button type="button" class="LoginBigBtn" " onclick="window.location.href='ForgotPassword';">שכחת סיסמא?</button>
+                        <button type="button" class="LoginBigBtn" " onclick="window.location.href='Register';">הרשמה</button>
 
 
                         <div class="B" style="height:150px;">&nbsp;</div>
@@ -97,8 +98,9 @@
 </section>
 
 
-<div style="position:fixed;bottom:20px;font-size:14px;color:white;text-align:center;width:100%;z-index:0">
-    <center><span style="color:rgba(13, 65, 51, 1);">&copy; מערכות ישראל 2025</span></center>
-</div>
 
-
+<center>
+    <div class="copyDisc">
+        <center>2025 &copy; מערכות ישראל</center>
+    </div>
+</center>

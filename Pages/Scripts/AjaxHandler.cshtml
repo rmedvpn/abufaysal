@@ -40,6 +40,9 @@
         case "CalcItemCost":
             if (true)
             {
+                int items_cnt = 0; try { items_cnt = Convert.ToInt32(Param("param2")); }catch{}
+                ViewData["items_cnt"] = items_cnt;
+
                 <div>
                     @await Html.PartialAsync("Shared/Partials/_CalcItemCost")
                 </div>

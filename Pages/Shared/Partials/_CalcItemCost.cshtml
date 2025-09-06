@@ -22,14 +22,16 @@
     int paper = 0; try { paper = Convert.ToInt32(Param("paper")); } catch { }
     int MixturePotency = 0; try { MixturePotency = Convert.ToInt32(Param("MixturePotency")); } catch { }
     int Mixture = 0; try { Mixture = Convert.ToInt32(Param("mixture")); } catch { }
+    int items_cnt = 0; try { items_cnt = Convert.ToInt32(ViewData["items_cnt"]); } catch { }
 
     string retTxtHtml = "";
-
     if (quan == 0) { retTxtHtml += "נא לבחור כמות מבוקשת!<br>"; }
     if (strain == 0) { retTxtHtml += "נא לבחור את הזן המבוקש!<br>"; }
     if (paper == 0) { retTxtHtml += "נא לבחור את סוג הנייר הרצוי!<br>"; }
     if (MixturePotency == 0) { retTxtHtml += "נא לבחור את המינון המבוקש!<br>"; }
     if (Mixture == 0) { retTxtHtml += "נא לבחור את התערובת המבוקשת!<br>"; }
+
+
 
     int requested_quan = 0;
     decimal quan_labor_charge = 0;
@@ -140,26 +142,37 @@
         potent_percent = Convert.ToInt32(potency * 100);
         mixture_percent = 100 - potent_percent;
         sale_price = Faysal.RoundUpAmount(total_price);
-        unit_sale_price = sale_price / requested_quan;
+        try { unit_sale_price = sale_price / requested_quan; } catch { }
+        
     }
 
     db.Close();
 }
+
+<div class="Spacer20"></div>
 
 @if (retTxtHtml != "")
 {
 
     <div class="B">
         <div class="B" style="float:left">
-            <button type="button" class="CartQuanAddBtn" style="background-color:#e3e3e3;color:#808080">הוספה לסל</button>
+            <button type="button" class="CartQuanAddBtn" style="opacity:0.3;">הוספה לסל</button>
         </div>
-        <div class="CartPriceLabel">
-            <div class="CartPriceSubLabel">לקבלת מחיר, נא לבחור את כל האפשרוית</div>
-
-        </div>
+        @if (items_cnt > 0)
+        {
+            <div class="B" style="float:right">
+                <button type="button" class="CartQuanAddBtn" style="font-weight:normal;">צ'קאאוט</button>
+            </div>
+        }
     </div>
-        
-    
+
+ 
+
+    <div class="B" style="text-align:center;">
+        <div class="Spacer100"></div>
+        <div class="CartInstructions">לקבלת מחיר, נא לבחור את כל האפשרוית</div>
+
+    </div>
 }
 else
 {
@@ -174,7 +187,16 @@ else
             <button type="button" class="CartQuanBtn" onclick="CartChangeQuan('-1');">-</button>
 
         </div>
+        @if (items_cnt > 0)
+        {
+            <div class="B" style="float:right">
+                <button type="button" class="CartQuanAddBtn" style="font-weight:normal;background-color:rgba(166, 160, 111, 1);">צ'קאאוט</button>
+            </div>
+        }
+     
     </div>
+    <div class="Spacer50"></div>
+
     <div class="B">
         <div class="B" style="float:left">
             <button type="button" class="CartQuanAddBtn" onclick="AjaxActions('AddToCart', '', 'MainLoader', 'CalcItemCostForm');">הוספה לסל</button>

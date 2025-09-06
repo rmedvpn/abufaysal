@@ -25,7 +25,9 @@
     sqlSelect = "SELECT count(serial) as the_cnt FROM cart WHERE session_id=@0";
     var cart = faysal.QuerySingle(sqlSelect, sessionId);
     int items_cnt = 0;try { items_cnt = cart.the_cnt; } catch { }
-  
+
+    ViewData["items_cnt"] = items_cnt;
+
     sqlSelect = "SELECT * FROM mixtureOptions WHERE is_active=1";
     var mixtureOptions = faysal.Query(sqlSelect);
 
@@ -48,12 +50,32 @@
 
 <section class="wel_sec">
     <div class="container">
+
         <div class="B">
             <div class="B">
                 <div class="A">
-                    <img style="" src="/images/logo.png" />
+                    <img class="ordersLogo"  src="/images/s_logo.png" />
                     <span style="z-index:9999;font-size:16px;color:white;float:left;padding-left:10px;direction:ltr;display:none" onclick="window.location.href = '/?go=orderenglish';"><span> 🌐 </span>For English, click here</span>
-                  
+                    <div class="B" style="float:left">
+                        @if (items_cnt > 0)
+                        {
+                            <div class="ordersSmallButtons" onclick="PageLoad('CART');">
+                                <div class="CartNotification">@items_cnt</div>
+                                <img src="images/cart.png" style="float:left;height:40px;max-width:40px;margin:5px;" />
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div class="ordersSmallButtons">
+                                <img src="images/cart.png" class="ordersSmallButtons" />
+                            </div>
+                        }
+                        <div class="ordersSmallButtons" style="float:left">
+                            <img src="images/call.png" class="ordersSmallButtons" />
+                        </div>
+                    </div>
+
                 </div>
                 
             </div>
@@ -61,29 +83,11 @@
             <div class="A" >
                 <form id="CalcItemCostForm">
                     <input type="hidden" value="ver2" name="ver" />
-                    <div class="A">
-                        <div class="OrderIntroMsg" style="text-align:right;vertical-align:bottom;">
+                    <input type="hidden" value="@items_cnt" id="cartItemsCnt" />
+                    <div class="A" style="text-align:center">
+                        <div class="OrderIntroMsg" >
                             מה מגלגלים לך היום?
-                            <div class="B" style="float:left">
-                                @if (items_cnt > 0)
-                                {
-                                    <div class="B" onclick="PageLoad('CART');">
-                                        <div class="CartNotification">@items_cnt</div>
-                                        <img src="images/cart.png" style="float:left;height:40px;max-width:40px;margin:5px;" />
-                                    </div>
-
-                                }
-                                else
-                                {
-                                    <div class="B">
-                                        <img src="images/cart.png" style="float:left;height:40px;max-width:40px;margin:5px;" />
-                                    </div>
-                                }
-
-                            </div>
-                            <div class="B" style="float:left">
-                                <img src="images/call.png" style="float:left;height:40px;max-width:40px;margin:5px;" />
-                            </div>
+                      
 
                         </div>
                   
@@ -97,7 +101,7 @@
 
                         <div class="PropRow" onclick="Accordionize('Acc_quan');">
                             <div class="PropTitle">כמות</div>
-                            <span style="float:left;padding:5px;font-size:30px;margin-left:10px;">+</span>
+                            <span class="ExpandMenuOption">+</span>
                             <span id="selected_quan" class="SelectedPropTitle"></span>
 
                         </div>
@@ -133,14 +137,15 @@
 
                     </div>
 
+                    <div class="OrderMakerSpacer"></div>
 
                     <div class="PropItemSelection">
 
                         <div class="PropRow" onclick="Accordionize('Acc_strain');">
                             <div class="PropTitle">
                                 זן</div>
-                            <span style="float:left;padding:5px;font-size:30px;margin-left:10px;" >+</span>
-                            <span id="selected_strain" class="SelectedPropTitle" ></span>
+                            <span class="ExpandMenuOption">+</span>
+                            <span id="selected_strain" class="SelectedPropTitle"></span>
 
                         </div>
 
@@ -187,12 +192,12 @@
                         </div>
 
                     </div>
-
+                    <div class="OrderMakerSpacer"></div>
                     <div class="PropItemSelection">
 
                         <div class="PropRow" onclick="Accordionize('Acc_paper');">
                             <div class="PropTitle">נייר</div>
-                            <span style="float:left;padding:5px;font-size:30px;margin-left:10px;">+</span>
+                            <span class="ExpandMenuOption">+</span>
                             <span id="selected_paper" class="SelectedPropTitle"></span>
                         </div>
                     
@@ -230,13 +235,13 @@
                         </div>
 
                     </div>
-
+                    <div class="OrderMakerSpacer"></div>
 
                     <div class="PropItemSelection">
 
                         <div class="PropRow" onclick="Accordionize('Acc_MixturePotency');">
                             <div class="PropTitle">מינון</div>
-                            <span style="float:left;padding:5px;font-size:30px;margin-left:10px;">+</span>
+                            <span class="ExpandMenuOption">+</span>
                             <span id="selected_MixturePotency" class="SelectedPropTitle"></span>
 
                         </div>
@@ -274,7 +279,7 @@
                         </div>
 
                     </div>
-
+                    <div class="OrderMakerSpacer"></div>
 
 
                     <div class="PropItemSelection">
@@ -282,7 +287,7 @@
 
                         <div class="PropRow" onclick="Accordionize('Acc_mixture');">
                             <div class="PropTitle">פארש</div>
-                            <span style="float:left;padding:5px;font-size:30px;margin-left:10px;">+</span>
+                            <span class="ExpandMenuOption">+</span>
                             <span id="selected_mixture" class="SelectedPropTitle"></span>
 
                         </div>
@@ -328,88 +333,22 @@
                             <div class="bounce3"></div>
                         </div>
                         <div style="overflow:auto;padding:5px;" id="ItemCostReturnContainer">
+
                             @await Html.PartialAsync("Shared/Partials/_CalcItemCost")
 
                         </div>
 
                         <div style="overflow:auto;display:none" id="CartContainer">
+                            
                             @await Html.PartialAsync("Shared/Partials/_Cart")
 
                         </div>
 
-                        <div class="B" style="margin-top:10px;display:none" id="checkoutInfoDiv">
-                            <!-- Checkout Section -->
-                            <section id="checkout">
-                                <!-- Billing Details -->
-                                <div class="B">
-                                    <h3>פרטי משלוח</h3>
 
-                                    <div class="fldLabel" style="margin-top:10px;">
-
-                                        <div class="PropRow">
-                                            <div class="PropTitle">שם מלא</div>
-
-                                            <input type="text" class="PropSelector" id="full_name" name="full_name">
-
-                                        </div>
-                                    </div>
-                                    <div class="fldLabel">
-
-                                        <div class="PropRow">
-                                            <div class="PropTitle">#ווטסאפ</div>
-
-                                            <input type="text" class="PropSelector" id="wanum" name="wanum">
-
-                                        </div>
-                                    </div>
-
-                                    <div class="fldLabel">
-
-                                        <div class="PropRow">
-                                            <div class="PropTitle">כתובת</div>
-
-                                            <input type="text" class="PropSelector" id="address" name="address">
-
-                                        </div>
-                                    </div>
-                                    <div class="fldLabel">
-
-                                        <div class="PropRow">
-                                            <div class="PropTitle">עיר</div>
-
-                                            <input type="text" class="PropSelector" id="city" name="city">
-
-                                        </div>
-                                    </div>
-
-
-                                </div>
-
-
-                                <div class="A" style="text-align:center;">
-                                    <button class="A" type="button" onclick="ControlButton();">ביטול</button>
-
-                                    <button class="A" type="button" onclick="AjaxActions('ReviewOrder', '', 'MainLoader', 'CalcItemCostForm');">המשך>></button>
-                                    <button class="A" type="button" style="display:none" onclick="sbload('SubMenu','prOrderReview','','CalcItemCostForm');">ביצוע הזמנה</button>
-                                </div>
-
-
-                            </section>
-
-                        </div>
 
                     </center>
 
 
-
-                    <div style="overflow:auto;display:none" id="prospectJoinActions">
-
-
-                        <div class="b_d">
-                            <button type="button" value="Reset" class="re" onclick="ControlButton();">ביטול</button>
-                        </div>
-
-                    </div>
 
 
                 </form>

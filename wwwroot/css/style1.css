@@ -71,6 +71,11 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
     padding: 0;
 }
 
+.top_spacer {
+    overflow:auto;
+    height:50px;
+}
+
 /**index page**/
 .hero_sec {
     margin: 0 ;
@@ -79,10 +84,39 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
 }
 
 .logo {
-    width: 100%;
-    margin: 50px auto 0;
+    max-height: 250px;
+    width: 250px;
     padding: 0;
     text-align: center;
+}
+
+.ordersLogo {
+    max-height: 100px;
+    width: 100px;
+    margin:10px;
+    text-align: center;
+    float:right;
+}
+
+.ordersSmallButtons {
+   overflow:auto;
+   float:left;
+   margin-right:5px;
+
+}
+
+img.ordersSmallButtons {
+    float: left;
+    height: 40px;
+    max-width: 40px;
+    margin: 1px;
+}
+.mainGreet {
+    font-family: Noyland;
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--green);
+    margin:5px;
 }
 
 .caption {
@@ -141,29 +175,14 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
 
 
 /**welcome page**/
-.wel_sec123 {
-    width: 100%;
-    float: right;
-    margin: 0 auto;
-    padding: 0 0 10px;
-    background-size: cover;
-    background-position: top center;
-    position: relative;
-    background-color:#fff;
-}
-.wel_sec {
-    margin: 10px auto 0;
-    display: table;
-    background-color: #ede7d5;
-    border-radius: 20px;
-}
 
-.center_wel1212 {
-    max-width: 485px;
-    margin: 10px auto 0;
-    display: table;
+.wel_sec {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: #ede7d5;
     border-radius: 20px;
+    text-align: center;
 }
 
 .center_wel {
@@ -172,53 +191,6 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
     background-color: #ede7d5;
 }
 
-.wel_sec .caption {
-    width: 100%;
-    float: right;
-    margin: 0;
-    padding: 0;
-}
-
-    .wel_sec .caption h1 {
-        color: #dfffbd;
-        margin: 0px;
-        padding: 5px 0 28px;
-        font-size: 68px;
-        line-height: 90px;
-        letter-spacing: 1.36px;
-        position: relative;
-    }
-
-        .wel_sec .caption h1 strong {
-            color: #dfffbd;
-            font-size: 102px;
-            line-height: 90px;
-            letter-spacing: 2.04px;
-        }
-
-        .wel_sec .caption h1:before {
-            content: '';
-            width: 100%;
-            height: 3px;
-            background: url('../images/line.png');
-            background-position: top;
-            background-size: 100%;
-            position: absolute;
-            top: 0;
-            right: 0;
-        }
-
-        .wel_sec .caption h1:after {
-            content: '';
-            width: 100%;
-            height: 3px;
-            background: url('../images/line.png');
-            background-position: top;
-            background-size: 100%;
-            position: absolute;
-            bottom: 0;
-            right: 0;
-        }
 
 .menubtn {
     width: 100%;
@@ -911,14 +883,50 @@ div.PropItemSelection {
     overflow: auto;
     color: black;
     font-size: 18px;
-    padding: 5px;
+    padding-right: 5px;
+    padding-left: 5px;
+    padding: 1px;
     margin:5px;
     margin-bottom:0;
     border-radius:20px;
-    font-weight: bold;
-    background-color: #0d4133;
+    background-color: var(--green);
 
 }
+div.OrderMakerSpacer {
+    overflow: auto;
+    height:10px;
+
+}
+div.Spacer10 {
+    overflow: auto;
+    height:10px;
+
+}
+
+div.Spacer20 {
+    overflow: auto;
+    height:20px;
+
+}
+
+div.Spacer5 {
+    overflow: auto;
+    height:5px;
+
+}
+
+div.Spacer50 {
+    overflow: auto;
+    height:50px;
+
+}
+
+div.Spacer100 {
+    overflow: auto;
+    height:100px;
+
+}
+
 div.PropItemMenu {
     overflow: auto;
     background-color: #fff;
@@ -955,11 +963,12 @@ div.PropItem:hover {
 }
 span.SelectedPropTitle {
     float: left;
-    padding: 5px;
-    font-size: 18px;
-    margin: 10px;
+    padding-top: 10px;
+    font-size: 16px;
+    margin: 0px;
     margin-left: 20px;
-    color: #ede7d5
+    color: #ede7d5;
+    font-weight:400;
 }
 div.PropItemStrain {
     float: right;
@@ -993,16 +1002,21 @@ div.PropItemStrainSubTitle {
 }
 
 button.CartQuanAddBtn {
-    padding: 10px;
-    margin: 10px;
-    font-size: 24px;
-    background-color: #ab6c00;
+    padding-right:10px;
+    padding-left:10px;
+    padding: 5px;
+    
+    margin: 0;
+    font-weight:600;
+    font-size: 22px;
+    background-color: var(--brown);
     border: 0;
     float: left;
     font-family: Noyland;
     color: #fff;
     border-radius: 20px;
     cursor: pointer;
+    width:150px;
 }
 button.CartQuanBtn {
     padding: 5px;
@@ -1017,8 +1031,17 @@ button.CartQuanBtn {
 
 div.OrderIntroMsg {
     color: #ab6c00;
-    font-size: 24px;
+    font-size: 22px;
+    font-weight:bold;
     font-family: Noyland;
+    margin-bottom:15px;
+}
+span.ExpandMenuOption {
+    float: left;
+    padding: 5px;
+    font-size: 24px;
+    margin-left: 10px;
+
 }
 div.CartQuanLabel {
     background-color: #0d4133;
@@ -1034,20 +1057,48 @@ div.CartQuanLabel {
 }
 div.CartPriceLabel {
     /*border: 2px solid #0d4133;*/
-    margin: 5px;
-    padding: 5px;
+    text-align:right;
     color: #ab6c00;
-    font-size: 24px;
+    font-size: 30px;
+    font-weight:bold;
     font-family: Noyland;
     float: right;
+}
+div.CartInstructions {
+    /*border: 2px solid #0d4133;*/
+   
+    color: var(--green);
+    font-size: 20px;
+    font-weight:bold;
+    font-family: Noyland;
+
+    
 }
 div.CartPriceSubLabel {
     /*border: 2px solid #0d4133;*/
     color: #0d4133;
     font-size: 16px;
     font-family: Noyland;
-
+    font-weight: normal;
 }
+
+button.CartCheckoutBtn {
+    padding-right: 10px;
+    padding-left: 10px;
+    padding: 5px;
+    margin: 0;
+    font-weight: 600;
+    font-size: 22px;
+    background-color: var(--brown);
+    border: 0;
+    float: left;
+    font-family: Noyland;
+    color: #fff;
+    border-radius: 20px;
+    cursor: pointer;
+    width: 150px;
+}
+
 
 div.PropItemStrainBtn {
     float: left;
@@ -1056,7 +1107,7 @@ div.PropItemStrainBtn {
     color: #ab6c00;
     font-size: 24px;
     font-family: Noyland;
-    cursor:pointer;
+    cursor: pointer;
 }
     div.PropItemStraiqwn:hover {
         background-color: #0d4133;
@@ -1125,8 +1176,8 @@ div.B {
 }
 
 div.PropTitle {
-    font-size: 24px;
-    font-weight: bold;
+    margin-right:10px;
+    font-size: 22px;
     float: right;
     padding: 5px;
 }
@@ -1513,6 +1564,32 @@ div.HomeSlogan {
     margin: 50px auto 0;
 
 }
+div.HomeSubSlogan {
+    font-family: Noyland;
+    color: var(--brown);
+    font-size: 18px;
+    text-align: center;
+    direction: rtl;
+    font-weight:normal;
+}
+
+.HomeSlogan2 {
+    font-family: Noyland;
+    font-weight: 700;
+    color: var(--green);
+    font-size: 28px;
+    text-align: center;
+    direction: rtl;
+    margin: 50px auto 0;
+}
+
+.HomeSubSlogan2 {
+    font-family: Noyland;
+    color: var(--green);
+    font-size: 18px;
+    text-align: center;
+}
+
 img.group {
     margin: 50px auto 0;
     width: 150px;
@@ -1520,7 +1597,7 @@ img.group {
 }
 
 div .frame {
-    margin: 50px auto 0;
+    margin: 50px;
 }
 div .HomeBtn {
     color: var(--variable-collection-whit);
@@ -1529,21 +1606,22 @@ div .HomeBtn {
     background-color: var(--brown);
     font-size: 28px;
     text-align: center;
-    width: 50%;
     border-radius: 20px;
-    margin: 50px auto 0;
+    padding:5px;
+    margin: 25px auto 0;
+
 }
-div .copyDisc {
-    color: #808080;
+.copyDisc {
+    position: fixed;
+    bottom: 20px;
+    left: 50%; /* push to middle */
+    transform: translateX(-50%); /* pull back half width */
+    color: var(--green);
     font-family: Noyland;
     font-size: 14px;
     text-align: center;
-    position:relative;
-    bottom:-20px;
-    clear:both;
-    
-
 }
+
 button.ThankYouBtn {
     margin-top: 30px;
     border-radius: 20px;
@@ -1585,8 +1663,16 @@ margin:5px;
 padding:5px;
 font-size:24px;
 color:rgba(171, 108, 0, 1);
+font-weight:bold;
 }
-
+div.loginQuestion {
+    margin: 5px;
+    padding: 5px;
+    font-size: 22px;
+    color: rgba(171, 108, 0, 1);
+    text-align:right;
+    line-height:40px;
+}
 button.RegBigBtn {
     margin: 10px;
     padding: 10px;
@@ -1598,6 +1684,20 @@ button.RegBigBtn {
     text-align: center;
     font-family:Noyland;
 }
+button.LoginBigBtn {
+    margin: 10px;
+    padding: 10px;
+    font-size: 24px;
+    background-color: rgba(13, 65, 51, 1);
+    color: #fff;
+    border: 0;
+    border-radius: 5px;
+    text-align: center;
+    font-family: Noyland;
+    border-radius:20px;
+    width:90%;
+}
+
 div.regErrMsg2 {
     overflow: auto;
     color: red;

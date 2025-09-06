@@ -5,38 +5,38 @@
 @{
     if (!WebSecurity.IsAuthenticated) { Response.Redirect("/Login"); }
     string username = WebSecurity.CurrentUserName;
-
+    int u_id = WebSecurity.CurrentUserId;
+    var db = Database.Open("faysal");
+    var user = db.QuerySingle("SELECT member_nick FROM Users WHERE u_id=@0", u_id);
+    string member_nick = ""; try{ member_nick = user.member_nick; }catch{ member_nick = username; }
     Layout = "~/Pages/Shared/Layouts/_Main.cshtml";
-    string ref_id = "0"; try { ref_id = HttpContext.Session.GetString("ref_id"); } catch { }
-    string aff_id = ""; try { aff_id = HttpContext.Session.GetString("aff_id"); } catch { }
-    string go_to = ""; try { go_to = HttpContext.Session.GetString("go_to"); } catch { }
+
     HttpContextAccessor.HttpContext!.Session.SetString("lang", "he");
+    HttpContextAccessor.HttpContext!.Session.SetString("member_nick", member_nick);
 
 }
 
-<input type="hidden" name="starterpage" id="starter_page" value="@go_to" />
+<input type="hidden" name="starterpage" id="starter_page" value="go_to" />
 
 <section class="wel_sec" style="text-align:center">
-    <div class="B" style="width:400px;min-height: 844px;">
+    <div class="container" >
         <center>
-            <img class="logo" src="images/logo.png" style="max-height:150px;" />
-            <div class="HomeSlogan">פייסלים למביני עניין</div>
+            <div class="top_spacer"></div>
+            <div class="mainGreet">שלום @member_nick</div>
+            <img class="logo" style="margin:5px;" src="images/newlogo.png" />
+            <div class="HomeSlogan">פייסלים פרימיום
+                <div class="HomeSubSlogan">בהתאמה אישית</div>
+            </div>
             <img class="group" src="images/group.png" />
-            <div class="frame">
-                <p class="element">מגלגלים אורזים ושולחים<br />עד הבית תוך 24 שעות</p>
-
+            <div class="HomeSlogan2">
+                מגלגלים אורזים ושולחים
+                <div class="HomeSubSlogan2">מזמינים היום מקבלים מחר
             </div>
 
             <div class="HomeBtn" onclick="PageLoad('ORDERS');">הזמנות כאן</div>
-            @username
+            
 
         </center>
     </div>
 
 </section>
-
-<center>
-    <div class="copyDisc">
-        <center>2025 &copy; מערכות ישראל</center>
-    </div>
-</center>

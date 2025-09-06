@@ -273,6 +273,11 @@ function AjaxActions(field, value, loader_element, param1, param2, param3, param
 
 
 function CalcItemCost() {
+    let cartItemsCnt = 0;
+    if (document.getElementById('cartItemsCnt')) {
+        cartItemsCnt = document.getElementById('cartItemsCnt').value;
+        console.log('cartItemsCnt' + cartItemsCnt);
+}
     if (
         document.getElementById('quan').value.trim() !== "" &&
         document.getElementById('strain').value.trim() !== "" &&
@@ -280,7 +285,7 @@ function CalcItemCost() {
         document.getElementById('mixture').value.trim() !== "" &&
         document.getElementById('MixturePotency').value.trim() !== ""
     ) {
-        AjaxUpdate('CalcItemCost', 'ItemCostReturnContainer', 'MainLoader', 'CalcItemCostForm');
+        AjaxUpdate('CalcItemCost', 'ItemCostReturnContainer', 'MainLoader', 'CalcItemCostForm', cartItemsCnt);
     }
 
 }
