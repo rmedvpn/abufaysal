@@ -111,49 +111,39 @@
 
                     @if (is_actions)
                     {
-                        <button class="CartAddMoreBtn" type="button" onclick="PageLoad('ORDERS');">חזרה</button>
+                        <button class="CartAddMoreBtn" type="button" onclick="PageLoad('ORDERS');" style="display:none;">&lt; חזרה</button>
                     }
                     
                     
                     <div class="B" style="float:left">
-                        @if (shipping_charge > 0)
-                        {
-                            <div class="B" style="text-align:right">
-                                <div class="ShCartTotalContainer" style="float:left">
-                                    עלות משלוח
+                        <div class="B" style="text-align:right">
+                            <div class="ShCartTotalContainer" style="float:left">
+                                @if (shipping_charge > 0)
+                                {
                                     <div class="ShCartTotal">
-                                        @shipping_charge.ToString("C", culture)
+                                        עלות משלוח @shipping_charge.ToString("C", culture)
                                     </div>
-                                </div>
 
-                                <div class="OrderFormPrice" style="font-size:11px;background-color:yellow;display:none"><b>@order_total_including_shipping.ToString("C", culture)</b></div>
+                                }
+                                else
+                                {
+                                    <div class="ShCartTotal">
+                                        <b>משלוח חינם</b>
+                                    </div>
+                                }
+
                             </div>
 
-                        }
-                        else
-                        {
-                            <div class="B" style="text-align:right">
-                                <div class="ShCartTotalContainer" style="float:left">
-                                    עלות משלוח
-                                    <div class="ShCartTotal">
-                                        <b>חינם</b>
-                                    </div>
-                                </div>
-
-                                <div class="OrderFormPrice" style="font-size:11px;background-color:yellow;display:none"><b>@order_total_including_shipping.ToString("C", culture)</b></div>
-                            </div>
-
-                        }
-                        <div class="B">
+                        </div>
+                        <div class="B" style="width:100%;">
                             <div class="CartTotalContainer" style="float:left">
-                                סך הכל לתשלום
-                                <div class="CartTotal">
+                                <span class="CartTotalMsg">סך הכל לתשלום</span>
+                                <button class="CartTotal">
                                     @order_total_including_shipping.ToString("C", culture)
-                                </div>
+                                </button>
                             </div>
 
 
-                            <div class="OrderFormPrice" style="font-size:11px;background-color:yellow;display:none"><b>@order_total_including_shipping.ToString("C", culture)</b></div>
                         </div>
                     </div>
 

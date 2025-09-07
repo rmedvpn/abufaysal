@@ -4,6 +4,18 @@
     font-weight: normal;
     font-style: normal;
 }
+@font-face {
+    font-family: "NoylandBold"; /* Name you’ll use in CSS */
+    src: url("/fonts/noyland-bold-aaa.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "NoylandStencil"; /* Name you’ll use in CSS */
+    src: url("/fonts/noyland-stencil-aaa.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+}
 :root {
     --background: rgba(237, 231, 213, 1);
     --green: rgba(13, 65, 51, 1);
@@ -617,15 +629,17 @@ input.PropSelector {
 
 input.Chkout_tb {
     padding: 5px;
-    padding-right:10px;
+    padding-right: 10px;
     margin: 5px;
     font-size: 18px;
     width: 65%;
-    font-weight: bold;
     float: left;
     border-radius: 20px;
-    border:0;
-    font-family:Noyland;
+    border: 0;
+    font-family: Noyland;
+    background-color: var(--background);
+    color: var(--brown);
+    font-weight: normal;
 }
 
     input.Chkout_tb::placeholder {
@@ -640,7 +654,8 @@ textarea.Chkout_tb {
     margin: 5px;
     font-size: 18px;
     width: 65%;
-    font-weight: bold;
+    color: var(--brown);
+    font-weight: normal;
     float: left;
     border-radius: 20px;
     border: 0;
@@ -650,6 +665,26 @@ textarea.Chkout_tb {
     overflow: auto;
     resize: none;
     font-family: Noyland;
+    background-color: var(--background);
+}
+
+textarea.Chkout_tb2 {
+    padding: 5px;
+    font-size: 18px;
+    color: var(--brown);
+    font-weight: normal;
+    border-radius: 20px;
+    border: 0;
+    width: 95%;
+    max-width: 95%;
+    min-width: 95%;
+    field-sizing: content; /* ✨ */
+    min-block-size: 3lh; /* start at ~3 lines */
+    max-block-size: 400px; /* stop growing after this */
+    overflow: auto;
+    resize: none;
+    font-family: Noyland;
+    background-color: var(--background);
 }
 
 
@@ -674,11 +709,13 @@ select.Chkout_tb {
     padding-right: 10px;
     font-size: 18px;
     width: 70%;
-    font-weight: bold;
+    color: var(--brown);
+    font-weight: normal;
     float: left;
     border-radius: 20px;
     border: 0;
     font-family: "Noyland";
+    color: var(--brown);
 }
 
     select.PropSelector::-ms-expand {
@@ -697,105 +734,13 @@ select.A {
 
 
 
-.b_d {
-    width: 100%;
-    margin: 15px 0 0;
-    clear: both;
+div.shippingInfoReview {
+    margin: 5px;
+    padding: 5px;
+    color: var(--green);
 }
-
-    .b_d .re {
-        font-size: 23px;
-        line-height: 40px;
-        color: #ffffff;
-        letter-spacing: 0.46px;
-        margin: 0;
-        width: 150px;
-        background: url('../images/p_btn.jpg');
-        background-repeat: no-repeat;
-        background-size: 100%;
-        border-radius: 5px;
-        box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 1);
-        border: 1px solid #a2202a;
-        font-family: 'Tahoma', sans-serif;
-        font-weight: bold;
-        cursor: pointer;
-        text-shadow: 1px 1px 0px rgba(81, 133, 14, 1);
-        float: right;
-    }
-
-    .b_d .sub {
-        font-size: 23px;
-        line-height: 40px;
-        color: #ffffff;
-        letter-spacing: 0.46px;
-        margin: 0;
-        width: 150px;
-        background: url('../images/g_btn.jpg');
-        background-repeat: no-repeat;
-        background-size: 100%;
-        border-radius: 5px;
-        box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 1);
-        border: 1px solid #3a9a00;
-        font-family: 'Tahoma', sans-serif;
-        font-weight: bold;
-        cursor: pointer;
-        text-shadow: 1px 1px 0px rgba(81, 133, 14, 1);
-        float: left;
-    }
-
-.re:hover, .sub:hover {
-    background: #dfffbd;
-    color: #231f20;
-    border: 1px solid #231f20;
-    text-shadow: none;
-}
-
-.form_ft_top {
-    position: absolute;
-    width: 272px;
-    margin: 0 auto;
-    top: 29px;
-    left: 90px;
-}
-
-    .form_ft_top .container {
-        display: table;
-        width: 100%;
-    }
-
-    .form_ft_top .s_right {
-        float: left;
-        text-align: left;
-    }
-
-        .form_ft_top .s_right img {
-            max-width: 90px;
-        }
-
-    .form_ft_top .s_left {
-        margin: 30px auto 0;
-        float: right;
-        text-align: right;
-    }
-
-        .form_ft_top .s_left li {
-            margin: 0 0 0 29px;
-        }
-
-            .form_ft_top .s_left li:last-child {
-                margin-right: 0px;
-            }
-
-        .form_ft_top .s_left img {
-            height: 45px;
-            width: auto;
-        }
-
-
 /* General Styles
 ---------------------------------*/
-
-
 .spinner {
     width: 70px;
     text-align: center;
@@ -874,11 +819,20 @@ div.Chkout_TbRow {
     overflow: auto;
     color: black;
     font-size: 18px;
-    padding: 5px;
-    margin: 5px;
-    border-radius: 20px;
-    font-weight: bold;
+    padding: 0;
+    margin: 0;
     
+}
+
+div.Chkout_question {
+    float: right;
+    color: rgba(171, 108, 0, 1);
+    font-weight: normal;
+    padding:5px;
+}
+
+span.Chkout_question_pad {
+    padding-right: 15px;
 }
 div.PropItemSelection {
     overflow: auto;
@@ -1192,11 +1146,12 @@ div.PropTitle {
 }
 
 div.Chkout_TbRTite {
-    font-size: 24px;
+    font-size: 16px;
     font-weight: bold;
     float: right;
     padding: 5px;
-    color: #0d4133;
+    margin-top:5px;
+    color: var(--green);
 }
 
 div.PropRow {
@@ -1209,7 +1164,6 @@ div.CkotPropRow {
     overflow: auto;
     color: #f8f8f8;
     font-family: "Noyland";
-    font-size:24px;
 }
 
 div.OrderFormItem {
@@ -1398,23 +1352,37 @@ div.CartItmChangeBtn {
     font-family: Noyland;
 }
 div.CartTotalContainer {
+    overflow:auto;
     float: left;
     padding: 5px;
     font-size: 16px;
     color: #0d4133;
-    line-height:16px;
     font-family: Noyland;
+
 }
-div.CartTotal {
+button.CartTotal {
     float: left;
     margin-right: 10px;
     border-radius: 20px;
+    
     padding: 5px;
+    padding-left:25px;
+    padding-right:25px;
     font-size: 24px;
     color: #fff;
     background-color: #ab6c00;
     font-family: Noyland;
-    text-align: left;
+    text-align: center;
+    border:0;
+}
+span.CartTotalMsg {
+    float:right;
+    padding: 5px;
+    padding-top: 10px;
+    font-size: 14px;
+    color: var(--green);
+    font-family: Noyland;
+    text-align: center;
 }
 div.ShCartTotalContainer {
     float: left;
@@ -1423,6 +1391,7 @@ div.ShCartTotalContainer {
     color: #0d4133;
   text-align:right;
     font-family: Noyland;
+
 }
 div.ShCartTotal {
     float: left;
@@ -1430,27 +1399,28 @@ div.ShCartTotal {
     font-size: 14px;
     color: #0d4133;
     font-family: Noyland;
-    width: 100px;
     text-align:left;
+   font-weight:bold;
 }
 button.checkuotBtn {
     margin-right: 10px;
+    margin-left: 10px;
     border-radius: 20px;
     padding: 5px;
-    padding-left: 15px;
-    padding-right: 15px;
-    font-size: 24px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 22px;
     color: #fff;
     background-color: #ab6c00;
-    font-family: Noyland;
-    text-align: left;
+    font-family: NoylandStencil;
+    text-align: center;
     border: 0;
 }
 button.CartAddMoreBtn {
     border-radius: 20px;
-    padding: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 2px;
+    padding-left: 20px;
+    padding-right: 15px;
     font-size: 18px;
     margin-top: 10px;
     color: #fff;
@@ -1458,6 +1428,7 @@ button.CartAddMoreBtn {
     font-family: Noyland;
     text-align: left;
     border: 0;
+    font-weight:lighter;
 }
 
 
@@ -1539,6 +1510,22 @@ select.Join_tb {
     border: 0;
     font-family: "Noyland";
 }
+
+div.OrderReviewSubAddress {
+    overflow:auto;
+    color: var(--brown);
+    font-size: 14px;
+    margin-right:10px;
+}
+
+div.OrderReviewAddressItem {
+    overflow:auto;
+    color: var(--green);
+    font-size: 14px;
+    margin-right:10px;
+    text-align:right;
+}
+
 @-webkit-keyframes sk-bouncedelay {
     0%, 80%, 100% {
         -webkit-transform: scale(0)
@@ -1740,101 +1727,17 @@ div.regErrMsg2 {
     text-align: center
 }
 
-/* DESIGNERS Styles
----------------------------------*/
-.MEGALGELIM-OPEN-ZAN {
-    background-color: #ede7d5;
-    display: grid;
-    justify-items: center;
-    align-items: start;
-    width: 100vw;
-}
 
-    .MEGALGELIM-OPEN-ZAN .div {
-        background-color: var(--background);
-        width: 390px;
-        height: 844px;
-        position: relative;
-    }
-
-    .MEGALGELIM-OPEN-ZAN .text-wrapper {
-        font-family: Noyland;
-        font-weight: 700;
-        color: var(--brown);
-        font-size: 28px;
-        text-align: center;
-        white-space: nowrap;
-        letter-spacing: 0;
-        line-height: normal;
-        direction: rtl;
-    }
-
-    .MEGALGELIM-OPEN-ZAN .logo {
-        position: absolute;
-        width: 286px;
-        height: 148px;
-        top: 186px;
-        left: 52px;
-    }
-
-    .MEGALGELIM-OPEN-ZAN .group {
-        position: absolute;
-        width: 136px;
-        height: 136px;
-        top: 442px;
-        left: 127px;
-    }
-
-    .MEGALGELIM-OPEN-ZAN .frame {
-        flex-direction: column;
-        width: 322px;
-        gap: 24px;
-        position: absolute;
-        top: 692px;
-        left: 34px;
-        display: flex;
-        align-items: center;
-    }
-
-    .MEGALGELIM-OPEN-ZAN .element {
-        position: relative;
-        width: fit-content;
-        margin-top: -1.00px;
-        font-family: Noyland;
-        font-weight: 400;
-        color: var(--green);
-        font-size: 24px;
-        text-align: center;
-        letter-spacing: 0;
-        line-height: normal;
-        direction: rtl;
-    }
-
-    .MEGALGELIM-OPEN-ZAN .div-wrapper {
-        height: 44px;
-        justify-content: center;
-        gap: 10px;
-        padding: 10px 32px;
-        position: relative;
-        align-self: stretch;
-        width: 100%;
-        background-color: var(--brown);
-        border-radius: 24px;
-        display: flex;
-        align-items: center;
-    }
-
-
-.MEGALGELIM-OPEN-ZAN .text-wrasddspper-2 {
-    position: relative;
-    width: fit-content;
+div .DataFormBg {
+    overflow: auto;
+    margin-top: 5px;
+    padding: 5px;
+    padding-right: 20px;
+    padding-left: 20px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 20px;
+    text-align: right;
     font-family: Noyland;
-    font-weight: 400;
-    color: var(--variable-collection-whit);
-    font-size: 20px;
-    text-align: left;
-    white-space: nowrap;
-    letter-spacing: 0;
-    line-height: normal;
-    direction: rtl;
+    font-size: 24px;
 }

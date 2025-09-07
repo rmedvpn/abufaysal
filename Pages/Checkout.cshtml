@@ -1,4 +1,5 @@
-﻿@using System
+﻿@page
+@using System
 @using System.Data.SqlClient
 @using Dapper
 @using Microsoft.AspNetCore.Http
@@ -10,7 +11,7 @@
 @{
     // Disable layout for AJAX requests — preserves WebMatrix behavior
 
-    Layout = null;
+    Layout = "~/Pages/Shared/Layouts/_Mini.cshtml";
     int u_id = WebSecurity.CurrentUserId;
     string user_name = WebSecurity.CurrentUserName;
     var context = HttpContextAccessor.HttpContext;
@@ -48,14 +49,14 @@
         member_nick = user.member_nick;
     }
 
-
+    
 
 
     sqlSelect = "SELECT * FROM Addresses WHERE is_active=1 AND u_id=@0 ORDER BY is_default DESC";
     var MemberAddresses = db.Query(sqlSelect, u_id);
     if (MemberAddresses.Count() > 0) { is_saved_address = true; }
 
-    db.Close();
+
 }
 
 
@@ -76,23 +77,23 @@
                 </div>
 
             </div>
-
-            <div class="A">
+       
+            <div class="A" >
                 <form id="CalcItemCostForm">
                     <input type="hidden" value="ver2" name="ver" />
                     <div class="A">
-                        <div class="OrderIntroMsg">
+                        <div class="OrderIntroMsg" >
                             <b>לאן שולחים?</b>
-
+                        
                         </div>
-
+                  
                     </div>
 
 
 
 
 
-
+         
                     <center>
                         <div class="DataFormBg" id="checkoutInfoDiv">
                             <!-- Checkout Section -->
@@ -105,7 +106,7 @@
 
 
                                             <div class="CkotPropRow">
-                                                <div class="Chkout_TbRTite">שם</div>
+                                                <div class="Chkout_TbRTite">שם המקבל.ת</div>
                                                 <input type="text" class="Chkout_tb" value="@member_nick" readonly style="color:rgba(166, 160, 111, 1);font-weight:normal;" />
                                             </div>
                                         </div>
@@ -120,8 +121,8 @@
                                         </div>
                                         <div class="Chkout_TbRow">
                                             <div class="CkotPropRow" style="border:0">
-                                                <div class="Chkout_question" onclick="toggle_visibility('custom_recipient');">
-                                                    <input type="checkbox" id="send_to_other" name="send_to_other" />
+                                                <div class="Chkout_question"  onclick="toggle_visibility('custom_recipient');">
+                                                    <input type="checkbox" id="send_to_other" name="send_to_other"  />
                                                     <span class="Chkout_question_pad">המשלוח למישהו אחר?</span>
                                                 </div>
                                             </div>
@@ -133,7 +134,7 @@
 
 
                                     <div class="B" id="custom_recipient" style="display:none;">
-                                        <div class="Chkout_TbRow">
+                                        <div class="Chkout_TbRow" >
 
                                             <div class="CkotPropRow">
                                                 <div class="Chkout_TbRTite">שם</div>
@@ -192,6 +193,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="B" id="saved_address_div">
+                                                    
                                                 </div>
 
                                             }
@@ -238,13 +240,13 @@
                                                         </div>
                                                     </div>
 
-
+                                             
 
                                                     <div class="B">
                                                         <div class="Chkout_TbRow">
                                                             <div class="CkotPropRow" style="border:0">
-                                                                <div class="Chkout_question" onclick="toggle_visibility('AddressSaveDiv');">
-                                                                    <input type="checkbox" id="Address_remember" name="Address_remember" />
+                                                                <div class="Chkout_question"  onclick="toggle_visibility('AddressSaveDiv');">
+                                                                    <input type="checkbox" id="Address_remember" name="Address_remember"  />
                                                                     <span class="Chkout_question_pad">לשמור את הכתובת? </span>
                                                                 </div>
                                                             </div>
@@ -254,13 +256,13 @@
                                                             <div class="Chkout_TbRow">
 
                                                                 <div class="CkotPropRow">
-                                                                    <div class="Chkout_TbRTite">איך?</div>
+                                                                    <div class="Chkout_TbRTite">איך לשמור?</div>
 
                                                                     <input type="text" class="Chkout_tb" name="Address_nick" id="Address_nick" placeholder="למשל 'בית'.." onclick="this.value='';document.getElementById('Address_remember').checked=true;">
 
                                                                 </div>
                                                             </div>
-
+                                                          
                                                         </div>
 
                                                     </div>
@@ -278,20 +280,24 @@
 
 
 
+                                 
+                                    <div class="Spacer20"></div>
                                     <div class="Chkout_TbRow">
 
                                         <div class="CkotPropRow">
-                                            <div class="Chkout_TbRTite">הערות<br />להזמנה</div>
-                                            <textarea class="Chkout_tb" id="order_notes" name="order_notes"></textarea>
+                                            <div class="Chkout_TbRTite" style="overflow:auto;float:none;">הערות להזמנה</div>
+                                            <div class="B">
+                                                <textarea class="Chkout_tb2" id="order_notes" name="order_notes"></textarea>
+                                            </div>
+                                            
                                         </div>
                                     </div>
-
-                                    <div class="Spacer20"></div>
+                                    <div class="Spacer10"></div>
 
                                 </div>
 
 
-
+             
 
 
                             </section>

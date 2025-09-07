@@ -96,72 +96,132 @@
 
     if (string.IsNullOrEmpty(errMsg))
     {
+        string disp_address = "";
+        string saved_address_nick = "";
+        int address_id_int = Convert.ToInt32(address_id);
+        if (address_id_int > 0)
+        {
+            var db = Database.Open("faysal");
+            var sqlSelect = "SELECT address_nick,disp_address FROM addresses WHERE id=@0";
+            var savedAddress = db.QuerySingle(sqlSelect, address_id);
+            try { disp_address =  savedAddress.disp_address; } catch { }
+            try { saved_address_nick = savedAddress.address_nick ; } catch { }
+        }
+        
         <section class="wel_sec">
             <div class="container">
                 <div class="B">
-                    <div class="B">
-                        <img src="/images/logo.png" />
-                    </div>
                     <div class="A">
+                        <img class="ordersLogo" src="/images/s_logo.png" />
                         <div class="B" style="float:left">
-                            <img src="images/call.png" style="float:left;height:40px;max-width:40px;margin:5px;" />
-                        </div>
-                        <div class="OrderIntroMsg" style="text-align:right;vertical-align:bottom;">
-                            ההזמנה שלך
-                            <div class="B" style="font-size:14px;">
-                                ❤️ משלוח חינם בהזמנה מעל <b>@free_shipping_marker.ToString("C", culture)</b>
+
+                            <div class="ordersSmallButtons" style="float:left">
+                                <img src="images/call.png" class="ordersSmallButtons" />
                             </div>
-
-
                         </div>
 
                     </div>
                     <div class="A">
                         <form id="ReviewOrderForm">
+                            <div class="B" style="text-align:center;">
+                                <div class="OrderIntroMsg" style="text-align:center;">
+                                    ההזמנה שלך
+                                    <div class="OrderIntroSubMsg" style="font-size:14px;">
+                                        משלוח חינם בהזמנה מעל <b>@free_shipping_marker.ToString("C", culture)</b>
+                                    </div>
+
+
+                                </div>
+
+                            </div>
 
                             <center>
 
                                 <div class="B">
                                     @await Html.PartialAsync("Shared/Partials/_CheckoutItems")
                                 </div>
-                                <div class="A">
+
+                                <div class="shippingInfoReview">
                                     <div class="B" style="text-align:right">
-                                        <h3>פרטי משלוח</h3>
+                                        <h3>הנמענ.ת</h3>
 
                                     </div>
-                                    <div class="A">
-                                        <div class="B" style="text-align:right">
+                                    <div class="B" style="text-align:right">
+                                        <div class="OrderReviewAddressItem">
                                             @ship_name
                                         </div>
-                                        <div class="B" style="text-align:right">
+                                        <div class="OrderReviewSubAddress">
                                             @ship_phone
                                         </div>
-                                        <div class="B" style="text-align:right">
-                                            @address
-                                        </div>
-                                        <div class="B" style="text-align:right">
-                                            @city
-                                        </div>
-
-                                        @if(address_remember){
-                                            <div class="B" style="text-align:right">
-                                               הכתובת תשמר בכינוי '@address_nick' 
+                                        <div class="Spacer10"></div>
+                                        <h3>הכתובת</h3>
+                                        @if (!string.IsNullOrEmpty(saved_address_nick))
+                                        {
+                                            <div class="OrderReviewAddressItem" >
+                                                שולחים ל<b>@saved_address_nick</b>
                                             </div>
+                                            <div class="OrderReviewSubAddress">(@disp_address)</div>
                                         }
 
+                                        @if (address_id=="-1")
+                                        {
+                                            <div class="OrderReviewAddressItem">
+                                                @address @city
+                                            </div>
+                                            @if (address_remember)
+                                            {
+                                                <div class="OrderReviewSubAddress"> הכתובת תשמר בכינוי <b>@address_nick' </b></div>
+                                            }
+                                        }
+
+                              
+
+                                       
+
                                     </div>
+
+                                    @if (!string.IsNullOrEmpty(ship_notes) && address_id == "-1")
+                                    {
+                                        <div class="Spacer10"></div>
+                                        <div class="B" style="text-align:right">
+                                            <h3>הערות לכתובת</h3>
+
+                                        </div>
+                                        <div class="B" style="text-align:right">
+                                            <div class="OrderReviewSubAddress">
+                                                @ship_notes
+                                            </div>
+                                            
+                                            
+                                        </div>
+                                    }
+
+                                    @if (!string.IsNullOrEmpty(order_notes))
+                                    {
+                                        <div class="Spacer10"></div>
+                                        <div class="B" style="text-align:right">
+                                            <h3>הערות להזמנה</h3>
+
+                                        </div>
+                                        <div class="B" style="text-align:right">
+                                            <div class="OrderReviewSubAddress">
+                                                @order_notes
+                                            </div>
+
+
+                                        </div>
+                                    }
+
                                 </div>
 
                                 <div class="B" style="text-align:center;">
-
-                                    <button class="checkuotBtn" type="button" onclick="controller.open('MainSb');" style="background-color:#a6a06f">חזרה</button>
-                                    <button class="checkuotBtn" type="button" onclick="AjaxActions('PlaceOrder', '@sessionId','MainLoader', 'ReviewOrderForm');">ביצוע הזמנה</button>
+                                <div class="Spacer20"></div>
+                                <div class="Spacer5"></div>
+                                    <button class="checkuotBtn" type="button" onclick="controller.open('MainSb');" style="background-color:#a6a06f;float:right;width:30%;"> &lt; חזרה</button>
+                                    <button class="checkuotBtn" type="button" onclick="AjaxActions('PlaceOrder', '@sessionId','MainLoader', 'ReviewOrderForm');" style="float:left;width:50%;">ביצוע הזמנה &gt; </button>
 
                                 </div>
-                                <div class="A" style="text-align:center;display:none">
-                                    <button class="A" type="button" onclick="ControlButton();">ביטול</button>
-                                    <button class="A" type="button" onclick="AjaxActions('PlaceOrder', '@sessionId','MainLoader', 'ReviewOrderForm');">ביצוע הזמנה</button>
-                                </div>
+                         
 
 
                             </center>
