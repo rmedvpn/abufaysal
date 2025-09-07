@@ -67,6 +67,7 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
 
 .container {
     max-width: 500px;
+    min-width: 400px;
     margin: 0 ;
     padding: 0;
 }
@@ -1034,7 +1035,15 @@ div.OrderIntroMsg {
     font-size: 22px;
     font-weight:bold;
     font-family: Noyland;
-    margin-bottom:15px;
+    margin:0;
+}
+div.OrderIntroSubMsg {
+    color: var(--green);
+    font-size: 22px;
+    font-weight:normal;
+    font-family: Noyland;
+    margin:5px;
+    
 }
 span.ExpandMenuOption {
     float: left;
@@ -1221,13 +1230,14 @@ div.OrderFormPrice {
 
 div.CartInfoItem {
     overflow: auto;
-    font-size: 14px;
-    border-bottom: 1px dotted #808080;
+    font-size: 16px;
+    border-bottom: 1px dashed var(--green);
+    padding:5px;
 }
 
 div.CartPrice {
     float: left;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 span.MiniTag {
@@ -1292,13 +1302,36 @@ div.SettingsRawActive {
 
 div .CartRow {
     overflow: auto;
-    margin: 5px;
+    margin-top:5px;
     padding: 5px;
-    background-color:#fff;
-    border-radius:20px;
-    text-align:right;
-    font-family:Noyland;
-    font-size:24px;
+    padding-right: 20px;
+    padding-left: 20px;
+    margin-bottom:10px;
+    background-color: #fff;
+    border-radius: 20px;
+    text-align: right;
+    font-family: Noyland;
+    font-size: 24px;
+}
+
+div .CartRowDesc {
+    overflow: auto;
+    margin: 0;
+    padding: 0;
+  
+}
+
+
+div .CartRowTitle {
+    overflow: auto;
+    margin: 5px;
+    padding: 0;
+    margin-right:0;
+    padding-top:5px;
+    font-family: Noyland;
+    font-size: 18px;
+    font-weight:bold;
+    color:var(--green);
 }
 
 div .SettingsRaw {

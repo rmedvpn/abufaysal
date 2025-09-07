@@ -7,23 +7,23 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-	  <TargetFramework>net6.0</TargetFramework>
-	  <Nullable>enable</Nullable>
-	  <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Pages\Shared\Index.cshtml.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Remove="Pages\Main - Copy.cshtml" />
-    <Content Remove="Pages\Scripts\AjaxActions_bck.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.66" />
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.8" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\PublishProfiles\" />
-  </ItemGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Pages\Shared\Index.cshtml.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Remove="Pages\Main - Copy.cshtml" />
+		<Content Remove="Pages\Scripts\AjaxActions_bck.cshtml" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Dapper" Version="2.1.66" />
+		<PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.8" />
+		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Properties\PublishProfiles\" />
+	</ItemGroup>
 </Project>

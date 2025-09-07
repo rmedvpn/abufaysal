@@ -21,19 +21,26 @@
     decimal shipping_charge = 0;
     decimal free_shipping_marker = 0;
     decimal free_shipping_deficit = 0;
-
+    int items_cnt = 0;try { items_cnt = cart.Count(); } catch { }
     try { shipping_charge = Convert.ToInt32(AppFunctions.GetAppProperty("DefaultShippingCharge")); } catch { }
     try { free_shipping_marker = Convert.ToInt32(AppFunctions.GetAppProperty("FreeShippingMarker")); } catch { }
     ViewData["callingPage"] = "CART";
 }
 
 <section class="wel_sec">
-    <div class="container">
-        <div class="center_wel">
+    <div class="container" >
+
+        <div class="B">
             <div class="B">
                 <div class="A">
-                    <img style="" src="/images/logo.png" />
+                    <img class="ordersLogo" src="/images/s_logo.png" />
                     <span style="z-index:9999;font-size:16px;color:white;float:left;padding-left:10px;direction:ltr;display:none" onclick="window.location.href = '/?go=orderenglish';"><span> 🌐 </span>For English, click here</span>
+                    <div class="B" style="float:left">
+                
+                        <div class="ordersSmallButtons" style="float:left">
+                            <img src="images/call.png" class="ordersSmallButtons" />
+                        </div>
+                    </div>
 
                 </div>
 
@@ -42,14 +49,11 @@
             <div class="A">
                 <form id="CalcItemCostFsdfsdfsdform">
                     <input type="hidden" value="ver2" name="ver" />
-                    <div class="A">
-                        <div class="B" style="float:left">
-                            <img src="images/call.png" style="float:left;height:40px;max-width:40px;margin:5px;" />
-                        </div>
-                        <div class="OrderIntroMsg" style="text-align:right;vertical-align:bottom;">
+                    <div class="B"  style="text-align:center;">
+                     <div class="OrderIntroMsg" style="text-align:center;">
                             ההזמנה שלך
-                            <div class="B" style="font-size:14px;">
-                                ❤️ משלוח חינם בהזמנה מעל <b>@free_shipping_marker.ToString("C", culture)</b>
+                            <div class="OrderIntroSubMsg" style="font-size:14px;">
+                                משלוח חינם בהזמנה מעל <b>@free_shipping_marker.ToString("C", culture)</b>
                             </div>
                             
 
@@ -58,12 +62,12 @@
                     </div>
 
 
-                    <div class="A" >
+                    <div class="B" >
                        <div class="B">
                             @await Html.PartialAsync("Shared/Partials/_CheckoutItems")
                         </div>
                     </div>
-
+                    <div class="Spacer100"></div>
                     <div class="B" style="text-align:center;">
 
                         <button class="checkuotBtn" type="button" onclick="AjaxActions('ClearCart', '', 'MainLoader', '');" style="background-color:#a6a06f">איפוס</button>

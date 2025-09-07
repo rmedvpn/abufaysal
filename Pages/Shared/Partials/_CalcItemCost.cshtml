@@ -156,12 +156,12 @@
 
     <div class="B">
         <div class="B" style="float:left">
-            <button type="button" class="CartQuanAddBtn" style="opacity:0.3;">הוספה לסל</button>
+            <button type="button" class="CartQuanAddBtn" style="background-color:rgba(166, 160, 111, 1);">הוספה לסל</button>
         </div>
         @if (items_cnt > 0)
         {
             <div class="B" style="float:right">
-                <button type="button" class="CartQuanAddBtn" style="font-weight:normal;">צ'קאאוט</button>
+                <button type="button" class="CartQuanAddBtn" style="font-weight:normal;" onclick="PageLoad('CART');">צ'קאאוט</button>
             </div>
         }
     </div>
@@ -187,12 +187,11 @@ else
             <button type="button" class="CartQuanBtn" onclick="CartChangeQuan('-1');">-</button>
 
         </div>
-        @if (items_cnt > 0)
-        {
-            <div class="B" style="float:right">
-                <button type="button" class="CartQuanAddBtn" style="font-weight:normal;background-color:rgba(166, 160, 111, 1);">צ'קאאוט</button>
-            </div>
-        }
+        <div class="CartPriceLabel">
+            <div class="B">@sale_price.ToString("C", culture)</div>
+            <div class="CartPriceSubLabel">יוצא @unit_sale_price.ToString("C", culture) לפייסל</div>
+
+        </div>
      
     </div>
     <div class="Spacer50"></div>
@@ -201,11 +200,13 @@ else
         <div class="B" style="float:left">
             <button type="button" class="CartQuanAddBtn" onclick="AjaxActions('AddToCart', '', 'MainLoader', 'CalcItemCostForm');">הוספה לסל</button>
         </div>
-        <div class="CartPriceLabel">
-            <div class="B">@sale_price.ToString("C", culture)</div>
-            <div class="CartPriceSubLabel">יוצא @unit_sale_price.ToString("C", culture) לפייסל</div>
-
-        </div>
+        @if (items_cnt > 0)
+        {
+            <div class="B" style="float:right">
+                <button type="button" class="CartQuanAddBtn" style="font-weight:normal;background-color:rgba(166, 160, 111, 1);" onclick="PageLoad('CART');">צ'קאאוט</button>
+            </div>
+        }
+     
     </div>
 
 }
