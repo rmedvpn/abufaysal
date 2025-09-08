@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
+using static Faysal.Helpers.Faysal;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -108,6 +109,10 @@ app.Use(async (ctx, next) =>
                         .CreateLogger("RevocationMiddleware");
         logger.LogError(ex, "Revocation check failed; continuing without enforcement.");
         // continue
+    }
+    if (!SessionBootstrapper.IsInitialized(ctx))           // or allow anon cart/session
+    {
+        await SessionBootstrapper.InitializeAsync(ctx);
     }
 
     await next();

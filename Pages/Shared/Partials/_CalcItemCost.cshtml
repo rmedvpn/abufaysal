@@ -14,8 +14,18 @@
                 ? Request.Query[key].ToString()
                 : "";
 
+
+    int u_id = WebSecurity.CurrentUserId;
+    int cart_id = 0;
+    decimal order_total = 0;
     var db = Database.Open("faysal");
-    var sqlSelect = "";
+    var sqlSelect = "SELECT order_total FROM CartSettings WHERE u_id=@0";
+    var cart = db.QuerySingle(sqlSelect, u_id);
+    if (cart != null)
+    {
+        try { order_total = cart.order_total; } catch { }
+    }
+    
 
     int quan = 0; try { quan = Convert.ToInt32(Param("quan")); } catch { }
     int strain = 0; try { strain = Convert.ToInt32(Param("strain")); } catch { }
@@ -156,12 +166,18 @@
 
     <div class="B">
         <div class="B" style="float:left">
-            <button type="button" class="CartQuanAddBtn" style="background-color:rgba(166, 160, 111, 1);">הוספה לסל</button>
+            <button type="button" class="CartQuanAddBtn" style="background-color:rgba(166, 160, 111, 1);">הוספה לסל + </button>
         </div>
         @if (items_cnt > 0)
         {
             <div class="B" style="float:right">
-                <button type="button" class="CartQuanAddBtn" style="font-weight:normal;" onclick="PageLoad('CART');">צ'קאאוט</button>
+                <button type="button" class="OrderPageChkoutBtn"  onclick="PageLoad('CART');">
+                    @if (items_cnt > 0)
+                    {
+                        <div class="CartNotification1">@items_cnt</div>
+                    }
+                    צ'קאאוט @order_total.ToString("C0", culture) &gt;&gt;
+                </button>
             </div>
         }
     </div>
@@ -198,12 +214,15 @@ else
 
     <div class="B">
         <div class="B" style="float:left">
-            <button type="button" class="CartQuanAddBtn" onclick="AjaxActions('AddToCart', '', 'MainLoader', 'CalcItemCostForm');">הוספה לסל</button>
+            <button type="button" class="CartQuanAddBtn" onclick="AjaxActions('AddToCart', '', 'MainLoader', 'CalcItemCostForm');">הוספה לסל + </button>
         </div>
-        @if (items_cnt > 0)
+            @if (items_cnt > 0)
         {
             <div class="B" style="float:right">
-                <button type="button" class="CartQuanAddBtn" style="font-weight:normal;background-color:rgba(166, 160, 111, 1);" onclick="PageLoad('CART');">צ'קאאוט</button>
+                <button type="button" class="OrderPageChkoutBtn" style="background-color:rgba(166, 160, 111, 1);" onclick="PageLoad('CART');">
+                    <div class="CartNotification1">@items_cnt</div>
+                    צ'קאאוט @Convert.ToInt32(order_total)₪ &gt;&gt;
+                </button>
             </div>
         }
      

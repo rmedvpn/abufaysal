@@ -957,21 +957,35 @@ div.PropItemStrainSubTitle {
 }
 
 button.CartQuanAddBtn {
-    padding-right:10px;
-    padding-left:10px;
+    padding-right: 10px;
+    padding-left: 10px;
     padding: 5px;
-    
-    margin: 0;
-    font-weight:600;
-    font-size: 22px;
     background-color: var(--brown);
+    margin: 0;
+    font-size: 22px;
     border: 0;
     float: left;
     font-family: Noyland;
     color: #fff;
     border-radius: 20px;
     cursor: pointer;
-    width:150px;
+    width: 150px;
+}
+button.OrderPageChkoutBtn {
+    padding-right: 10px;
+    padding-left: 10px;
+    padding: 5px;
+    margin: 0;
+    font-size: 22px;
+    background-color: var(--brown);
+    border: 0;
+    float: right;
+    font-family: Noyland;
+    color: #fff;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: normal;
+    width: 210px;
 }
 button.CartQuanBtn {
     padding: 5px;
@@ -1303,7 +1317,7 @@ div .SettingsRaw {
 span.CartBtn {
     float: right;
     text-align: center;
-    line-height: 25px;
+    line-height: 20px;
     font-size: 20px;
     color: #0d4133;
     width: 20px;
@@ -1334,6 +1348,23 @@ div.CartNotification {
     border-radius: 50%;
     line-height: 20px;
 }
+
+div.CartNotification1 {
+    float: right;
+    background-color: #fff;
+    color: var(--brown);
+    font-size: 16px;
+    width: 18px; /* equal width & height → circle */
+    height: 18px;
+    text-align: center; /* centers text horizontally */
+    border-radius: 50%;
+    margin-top:2px;
+    margin-left:2px;
+    line-height:18px;
+    font-weight:bold;
+}
+
+
 div.CartIemPrice {
     float: left;
     font-size: 20px;

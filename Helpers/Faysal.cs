@@ -17,6 +17,91 @@ namespace Faysal.Helpers
                     : "";
         }
 
+        public static class SessionBootstrapper
+        {
+            private const string InitFlag = "Session_InitDone";
+            private static readonly CultureInfo HeIl = new CultureInfo("he-IL");
+
+            public static bool IsInitialized(HttpContext ctx)
+                => ctx?.Session?.GetString(InitFlag) == "1";
+
+            public static async Task InitializeAsync(HttpContext ctx)
+            {
+                // Guard: no session? bail.
+                if (ctx?.Session == null) return;
+
+                // Already initialized? bail.
+                if (IsInitialized(ctx)) return;
+
+                // ---- Pull data you need ONCE per session ----
+                // App-wide settings you use frequently
+                var defaultShippingCharge = GetDecimalAppProp("DefaultShippingCharge");
+                var freeShippingMarker = GetDecimalAppProp("FreeShippingMarker");
+
+                // Current user (if logged in)
+                int currentUserId = 0;
+                try { currentUserId = WebSecurity.CurrentUserId; } catch { }
+
+                // Minimal user profile payload (customize these fields to your schema)
+                int? sessionVersion = null;
+                bool? isBlocked = null;
+                DateTime? blockUntilUtc = null;
+
+                if (currentUserId > 0)
+                {
+                    using var db = Database.Open("faysal");
+                    try
+                    {
+                        // Pull only what you need often
+                        var row = db.QuerySingleOrDefault(
+                            "SELECT user_id, SessionVersion, IsBlocked, BlockUntilUtc FROM UserProfile WHERE user_id=@0",
+                            currentUserId
+                        );
+                        if (row != null)
+                        {
+                            try { sessionVersion = (int?)row.SessionVersion; } catch { }
+                            try { isBlocked = (bool?)row.IsBlocked; } catch { }
+                            try { blockUntilUtc = (DateTime?)row.BlockUntilUtc; } catch { }
+                        }
+                    }
+                    finally { db.Close(); }
+                }
+
+                // Optionally: prime the cart totals now (or skip and compute lazily on first cart view)
+                CartReCalculate(ctx); 
+
+                // ---- Store into session ----
+                // App settings
+                ctx.Session.SetString("Default_Shipping_Charge", defaultShippingCharge.ToString(HeIl));
+                ctx.Session.SetString("Default_Free_Shipping_Marker", freeShippingMarker.ToString(HeIl));
+
+                // User info
+                ctx.Session.SetInt32("User_Id", currentUserId);
+                if (sessionVersion.HasValue) ctx.Session.SetInt32("User_SessionVersion", sessionVersion.Value);
+                if (isBlocked.HasValue) ctx.Session.SetString("User_IsBlocked", isBlocked.Value ? "1" : "0");
+                if (blockUntilUtc.HasValue) ctx.Session.SetString("User_BlockUntilUtc", blockUntilUtc.Value.ToString("o"));
+
+                // Mark as initialized
+                ctx.Session.SetString(InitFlag, "1");
+
+                await Task.CompletedTask;
+            }
+
+            private static decimal GetDecimalAppProp(string key)
+            {
+                try
+                {
+                    var s = AppFunctions.GetAppProperty(key);
+                    if (decimal.TryParse(s, NumberStyles.Number, CultureInfo.InvariantCulture, out var d)) return d;
+                    if (decimal.TryParse(s, NumberStyles.Number, new CultureInfo("he-IL"), out d)) return d;
+                }
+                catch { }
+                return 0m;
+            }
+
+        }
+
+
         public static string GoTmp(HttpContext context)
         {
             System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("he-IL");
@@ -582,6 +667,129 @@ namespace Faysal.Helpers
             return theHtmlOutput;
         }
 
+
+        public static int InitCart()
+        {
+            System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("he-IL");
+            int u_id = WebSecurity.CurrentUserId;
+            int cart_id = 0;
+            DateTime local_time = AppFunctions.LocalTime();
+            var db = Database.Open("faysal");
+            string sqlSelect = "SELECT id FROM CartSettings WHERE u_id=@0";
+            var cart=db.QuerySingle(sqlSelect, u_id);
+            if (cart == null)
+            {
+                db.Execute("INSERT INTO CartSettings(ts,last_active,u_id) VALUES(@0,@0,@1)",local_time,u_id);
+                cart = db.QuerySingle("SELECT id FROM CartSettings WHERE ts=@0 AND u_id=@1", local_time, u_id);
+                try { cart_id = cart.id; } catch { }
+            }
+            else
+            {
+                cart_id = cart.id;
+            }
+
+            db.Close();
+            return cart_id;
+        }
+
+
+        public static void CartReCalculate(HttpContext context,int cart_id = 0)
+        {
+            var Request = context.Request;
+            var culture = new System.Globalization.CultureInfo("he-IL");
+
+            int u_id = WebSecurity.CurrentUserId;
+            DateTime local_time = AppFunctions.LocalTime();
+
+            var db = Database.Open("faysal");
+            var sqlSelect = "";
+            dynamic cart = null;
+            if (cart_id > 0)
+            {
+                sqlSelect = "SELECT u_id FROM CartSettings WHERE id=@0";
+                cart = db.QuerySingle(sqlSelect, cart_id);
+                try { u_id = cart.u_id; } catch { }
+            }
+            else
+            {
+                sqlSelect = "SELECT id FROM CartSettings WHERE u_id=@0";
+                cart = db.QuerySingle(sqlSelect, u_id);
+                try { cart_id = cart.id; } catch { }
+            }
+            sqlSelect = "SELECT * FROM cart WHERE cart_id=@0 order by ts";
+            cart = db.Query(sqlSelect, cart_id);
+
+            db.Close();
+
+            int itemCounter = 0;
+            decimal order_total = 0;
+            decimal order_total_including_shipping = 0;
+            decimal shipping_charge = 0;
+            decimal free_shipping_marker = 0;
+            decimal free_shipping_deficit = 0;
+
+            try { shipping_charge = Convert.ToInt32(AppFunctions.GetAppProperty("DefaultShippingCharge")); } catch { }
+            try { free_shipping_marker = Convert.ToInt32(AppFunctions.GetAppProperty("FreeShippingMarker")); } catch { }
+
+            if (cart.Count>0)
+            {
+                
+                foreach (var item in cart)
+                {
+                    if (cart_id == 0)
+                    {
+                        cart_id = item.cart_id;
+                    }
+                    
+                    itemCounter++;
+                    decimal item_total = item.sale_price * item.quanOfPackages;
+                    order_total += item_total;
+                }
+
+                if (order_total > free_shipping_marker)
+                {
+                    shipping_charge = 0;
+                }
+                else
+                {
+                    free_shipping_deficit = free_shipping_marker - order_total;
+                }
+
+                order_total_including_shipping = order_total + shipping_charge;
+
+                sqlSelect = "UPDATE CartSettings SET last_active=@0,order_total=@1,shipping_charge=@2,order_total_with_sh=@3,free_shipping_deficit=@4 WHERE id=@5";
+                db.Execute(sqlSelect, local_time, order_total, shipping_charge, order_total_including_shipping, free_shipping_deficit, cart_id);
+
+                if (context != null)
+                {
+                    context.Session.SetString("Cart_OrderTotal", order_total.ToString(culture));
+                    context.Session.SetString("Cart_ShippingCharge", shipping_charge.ToString(culture));
+                    context.Session.SetString("Cart_OrderTotalWithShipping", order_total_including_shipping.ToString(culture));
+                    context.Session.SetString("Cart_FreeShippingMarker", free_shipping_marker.ToString(culture));
+                    context.Session.SetString("Cart_FreeShippingDeficit", free_shipping_deficit.ToString(culture));
+                    context.Session.SetInt32("Cart_ItemCounter", itemCounter);
+                }
+            }
+            else
+            {
+                sqlSelect = "DELETE FROM CartSettings WHERE id=@0";
+                db.Execute(sqlSelect, cart_id);
+                if (context != null)
+                {
+                    context.Session.SetString("Cart_OrderTotal", "");
+                    context.Session.SetString("Cart_ShippingCharge", "");
+                    context.Session.SetString("Cart_OrderTotalWithShipping", "");
+                    context.Session.SetString("Cart_FreeShippingMarker", "");
+                    context.Session.SetString("Cart_FreeShippingDeficit", "");
+                    context.Session.SetInt32("Cart_ItemCounter", 0);
+                }
+            }
+
+            db.Close();
+         
+        }
+
+
         public static string AddToCart(HttpContext context)
         {
             System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("he-IL");
@@ -623,6 +831,7 @@ namespace Faysal.Helpers
 
             if (retTxtHtml == "")
             {
+
                 sqlSelect = "SELECT * FROM quanOptions WHERE id=@0";
                 var quanOptions = db.QuerySingle(sqlSelect, quan);
                 if (quanOptions != null)
@@ -702,8 +911,10 @@ namespace Faysal.Helpers
             }
             else
             {
-                sqlSelect = "INSERT INTO cart(ts,u_id,session_id,quanOfPackages,quanInPackage,quan_title,quan_labor_cost,quan_labor_multiplier,quan_labor_charge,strain_title,strain_gram_cost,strain_multiplier,strain_gram_charge,paper_title,paper_gram_in_unit,paper_nick,paper_unit_cost,mixture_title,mixture_gram_cost,mixture_multiplier,mixture_gram_charge,potency_title,potency,potency_nick,total_cost,total_price,unit_cost,unit_price,total_gram,total_potent_gram,mixture_price,potent_price,sale_price,unit_sale_price,last_activity)";
-                sqlSelect += " VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19,@20,@21,@22,@23,@24,@25,@26,@27,@28,@29,@30,@31,@32,@33,@34)";
+                int cart_id = 0; try { cart_id = InitCart(); } catch { }
+
+                sqlSelect = "INSERT INTO cart(ts,u_id,session_id,quanOfPackages,quanInPackage,quan_title,quan_labor_cost,quan_labor_multiplier,quan_labor_charge,strain_title,strain_gram_cost,strain_multiplier,strain_gram_charge,paper_title,paper_gram_in_unit,paper_nick,paper_unit_cost,mixture_title,mixture_gram_cost,mixture_multiplier,mixture_gram_charge,potency_title,potency,potency_nick,total_cost,total_price,unit_cost,unit_price,total_gram,total_potent_gram,mixture_price,potent_price,sale_price,unit_sale_price,last_activity,cart_id)";
+                sqlSelect += " VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19,@20,@21,@22,@23,@24,@25,@26,@27,@28,@29,@30,@31,@32,@33,@34,@35)";
                 db.Execute(sqlSelect, local_time, u_id, sessionId, quanOfPackages, requested_quan, quan_option_title, quan_labor_cost, quan_multiplier, quan_labor_charge,
                     strain_option_title, strain_gram_cost, strain_multiplier, gram_charge,
                     paper_option_title, gram_in_unit, paper_nick, paper_unit_cost,
@@ -711,9 +922,10 @@ namespace Faysal.Helpers
                     mixture_potency_option_title, potency, mixture_potency_option_nick,
                     total_cost, total_price, unit_cost, unit_price,
                     total_gram, total_potent_gram, mixture_price, potent_price,
-                    sale_price, unit_sale_price, local_time);
+                    sale_price, unit_sale_price, local_time,cart_id);
 
-                theHtmlOutput = "הכל טוב";
+                CartReCalculate(context);
+                theHtmlOutput = "OK";
             }
 
             db.Close();
@@ -746,6 +958,7 @@ namespace Faysal.Helpers
             }
 
             db.Execute(sqlSelect, item_serial);
+            CartReCalculate(context);
             theHtmlOutput = "!!!";
             db.Close();
             return theHtmlOutput;
@@ -754,13 +967,14 @@ namespace Faysal.Helpers
         public static string ClearCart(HttpContext context)
         {
             System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("he-IL");
-            string sessionId = context.Session.Id;
-            int member_id = 0;
+            
+            int u_id = WebSecurity.CurrentUserId;
             DateTime local_time = AppFunctions.LocalTime();
             string theHtmlOutput = "";
             var db = Database.Open("faysal");
-            string sqlSelect = "DELETE FROM cart WHERE session_id=@0";
-            db.Execute(sqlSelect, sessionId);
+            string sqlSelect = "DELETE FROM cart WHERE u_id=@0;DELETE FROM CartSettings WHERE u_id=@0";
+            db.Execute(sqlSelect, u_id);
+            CartReCalculate(context);
             theHtmlOutput = "ההזמנה אופסה!";
             db.Close();
             return theHtmlOutput;

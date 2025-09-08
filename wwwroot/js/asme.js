@@ -337,9 +337,6 @@ function AjaxUpdate(theAction, return_container, loaderElement, param1, param2, 
     xmlhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
 
-            console.log(theAction + ":" + this.responseText);
-
-
 
             switch (theAction) {
                 case "RepListSettings":

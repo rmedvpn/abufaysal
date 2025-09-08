@@ -7,9 +7,9 @@
     var sessionId = ViewData["SessionId"]?.ToString() ?? context.Session.Id;
 
     var callingPage = ViewData["callingPage"]?.ToString() ?? null;
-
+    int u_id = WebSecurity.CurrentUserId;
     var db = Database.Open("faysal");
-    var cart = db.Query("SELECT * FROM cart WHERE session_id=@0 order by ts", sessionId);
+    var cart = db.Query("SELECT * FROM cart WHERE u_id=@0 order by ts", u_id);
     db.Close();
 
     int itemCounter = 0;
@@ -25,9 +25,11 @@
         is_actions = true;
     }
 
-    try { shipping_charge = Convert.ToInt32(AppFunctions.GetAppProperty("DefaultShippingCharge")); } catch { }
-    try { free_shipping_marker = Convert.ToInt32(AppFunctions.GetAppProperty("FreeShippingMarker")); } catch { }
+    var Default_Free_Shipping_Marker = context.Session.GetString("Default_Free_Shipping_Marker") ?? "0";
+    var Default_Shipping_Charge = context.Session.GetString("Default_Shipping_Charge") ?? "0";
 
+    try { shipping_charge = Convert.ToDecimal(Default_Shipping_Charge); } catch { }
+    try { free_shipping_marker = Convert.ToDecimal(Default_Free_Shipping_Marker); } catch { }
 
 
 }
@@ -62,7 +64,7 @@
                             {
                                 <div class="CartInfoItem">
                                     מחיר החפיסה
-                                    <div class="CartPrice"><b>@item.sale_price.ToString("C", culture)</b></div>
+                                    <div class="CartPrice"><b>@item.sale_price.ToString("C0", culture)</b></div>
                                 </div>
 
                             }
@@ -74,20 +76,21 @@
                         @if (is_actions)
                         {
                             <img src="images/trash.png" style="float:right;height:20px;max-width:20px;" onclick="AjaxActions('CartAction', 'REMOVE','MainLoader', '@item.serial');" />
+                            <span class="CartBtn" onclick="AjaxActions('CartAction', 'ADDONE', 'MainLoader', '@item.serial');">+</span>
                             @if (item.quanOfPackages > 1)
                             {
                                 <span class="CartBtn" onclick="AjaxActions('CartAction', 'SUBONE', 'MainLoader', '@item.serial');">-</span>
                             }
-                            <span class="CartBtn" onclick="AjaxActions('CartAction', 'ADDONE', 'MainLoader', '@item.serial');">+</span>
+                        
                         }
                         
                         @if (item.quanOfPackages > 1)
                         {
-                            <div class="CartIemPrice">@item.quanOfPackages יחידות - <b>@item_total.ToString("C", culture)</b></div>
+                            <div class="CartIemPrice">@item.quanOfPackages יחידות - <b>@item_total.ToString("C0", culture)</b></div>
                         }
                         else
                         {
-                            <div class="CartIemPrice"><b>@item_total.ToString("C", culture)</b></div>
+                            <div class="CartIemPrice"><b>@item_total.ToString("C0", culture)</b></div>
                         }
 
 
@@ -111,7 +114,7 @@
 
                     @if (is_actions)
                     {
-                        <button class="CartAddMoreBtn" type="button" onclick="PageLoad('ORDERS');" style="display:none;">&lt; חזרה</button>
+                        <button type="button" class="CartAddMoreBtn" type="button" onclick="PageLoad('ORDERS');" style="display:none;">&lt; חזרה</button>
                     }
                     
                     
@@ -121,7 +124,7 @@
                                 @if (shipping_charge > 0)
                                 {
                                     <div class="ShCartTotal">
-                                        עלות משלוח @shipping_charge.ToString("C", culture)
+                                        עלות משלוח @shipping_charge.ToString("C0", culture)
                                     </div>
 
                                 }
@@ -138,8 +141,8 @@
                         <div class="B" style="width:100%;">
                             <div class="CartTotalContainer" style="float:left">
                                 <span class="CartTotalMsg">סך הכל לתשלום</span>
-                                <button class="CartTotal">
-                                    @order_total_including_shipping.ToString("C", culture)
+                                <button type="button" class="CartTotal">
+                                    @order_total_including_shipping.ToString("C0", culture)
                                 </button>
                             </div>
 

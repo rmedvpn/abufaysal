@@ -6,27 +6,33 @@
 
     var context = HttpContextAccessor.HttpContext;
     var culture = new System.Globalization.CultureInfo("he-IL");
-    var sessionId = "";
-    try { sessionId = context.Session.Id; } catch { sessionId = ""; }
-    if (string.IsNullOrWhiteSpace(sessionId)) sessionId = "";
-
-    var db = Database.Open("faysal");
-    var sqlSelect = "SELECT * FROM cart WHERE session_id=@0 order by ts";
-    var cart = db.Query(sqlSelect, sessionId);
-
-    int itemCounter = 0;
-    int quanOfPackages = 0;
-    decimal order_total = 0;
-    decimal order_total_including_shipping = 0;
-    decimal shipping_charge = 0;
+    decimal default_shipping_charge = 0;
+    decimal cart_shipping_charge = 0;
     decimal free_shipping_marker = 0;
     decimal free_shipping_deficit = 0;
-    int items_cnt = 0;try { items_cnt = cart.Count(); } catch { }
-    try { shipping_charge = Convert.ToInt32(AppFunctions.GetAppProperty("DefaultShippingCharge")); } catch { }
-    try { free_shipping_marker = Convert.ToInt32(AppFunctions.GetAppProperty("FreeShippingMarker")); } catch { }
     ViewData["callingPage"] = "CART";
-}
 
+    // read back as string
+    string? totalStr = context.Session.GetString("Cart_OrderTotal");
+    var deficitStr = context.Session .GetString("Cart_FreeShippingDeficit") ?? "0";
+    var Default_Free_Shipping_Marker = context.Session.GetString("Default_Free_Shipping_Marker") ?? "0";
+    var Default_Shipping_Charge = context.Session.GetString("Default_Shipping_Charge") ?? "0";
+
+    try { default_shipping_charge = Convert.ToDecimal(Default_Shipping_Charge); } catch { }
+    try { free_shipping_marker = Convert.ToDecimal(Default_Free_Shipping_Marker); } catch { }
+
+
+    // parse back to decimal
+    decimal order_total = 0;
+    if (!string.IsNullOrEmpty(totalStr))
+    {
+        order_total = decimal.Parse(totalStr, new System.Globalization.CultureInfo("he-IL"));
+    }
+
+
+  
+
+}
 <section class="wel_sec">
     <div class="container" >
 
@@ -52,10 +58,19 @@
                     <div class="B"  style="text-align:center;">
                      <div class="OrderIntroMsg" style="text-align:center;">
                             ההזמנה שלך
-                            <div class="OrderIntroSubMsg" style="font-size:14px;">
-                                משלוח חינם בהזמנה מעל <b>@free_shipping_marker.ToString("C", culture)</b>
-                            </div>
-                            
+                            @if (order_total < free_shipping_marker)
+                            {
+                                <div class="OrderIntroSubMsg" style="font-size:14px;">
+                                    משלוח חינם בהזמנה מעל <b>@free_shipping_marker.ToString("C0", culture)</b>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="OrderIntroSubMsg" style="font-size:14px;">
+                                    המשלוח שלך בחינם!
+                                </div>
+                            }
+
 
                         </div>
 
@@ -71,7 +86,7 @@
                     <div class="B" style="text-align:center;">
                         <button class="checkuotBtn" type="button" onclick="PageLoad('ORDERS');" style="background-color:var(--green);">&lt; חזרה</button>
                         <button class="checkuotBtn" type="button" onclick="AjaxActions('ClearCart', '', 'MainLoader', '');" style="background-color:#a6a06f">איפוס</button>
-                        <button class="checkuotBtn" type="button" onclick="sbload('MainSb','Caller?p1=Checkout');">צקאאוט</button>
+                        <button class="checkuotBtn" type="button" onclick="sbload('MainSb','Caller?p1=Checkout');">צקאאוט &gt;&gt; </button>
 
                     </div>
 
@@ -93,7 +108,3 @@
 </section>
 
 
-
-@{
-    db.Close();
-}

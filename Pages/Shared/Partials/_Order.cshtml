@@ -15,15 +15,15 @@
     var culture = new System.Globalization.CultureInfo("he-IL");
     var sessionId = "";
     try { sessionId = context.Session.Id; } catch { sessionId = ""; }
-
+    int u_id = WebSecurity.CurrentUserId;
     int ref_id = 0; int.TryParse(context.Request.Query["ref_id"], out ref_id);
     int aff_id = 0; int.TryParse(context.Request.Query["aff_id"], out aff_id);
 
     var faysal = Database.Open("faysal");
     var sqlSelect = "";
 
-    sqlSelect = "SELECT count(serial) as the_cnt FROM cart WHERE session_id=@0";
-    var cart = faysal.QuerySingle(sqlSelect, sessionId);
+    sqlSelect = "SELECT count(serial) as the_cnt FROM cart WHERE u_id=@0";
+    var cart = faysal.QuerySingle(sqlSelect, u_id);
     int items_cnt = 0;try { items_cnt = cart.the_cnt; } catch { }
 
     ViewData["items_cnt"] = items_cnt;
@@ -57,20 +57,7 @@
                     <img class="ordersLogo"  src="/images/s_logo.png" />
                     <span style="z-index:9999;font-size:16px;color:white;float:left;padding-left:10px;direction:ltr;display:none" onclick="window.location.href = '/?go=orderenglish';"><span> 🌐 </span>For English, click here</span>
                     <div class="B" style="float:left">
-                        @if (items_cnt > 0)
-                        {
-                            <div class="ordersSmallButtons" onclick="PageLoad('CART');">
-                                <div class="CartNotification">@items_cnt</div>
-                                <img src="images/cart.png" style="float:left;height:40px;max-width:40px;margin:5px;" />
-                            </div>
-
-                        }
-                        else
-                        {
-                            <div class="ordersSmallButtons">
-                                <img src="images/cart.png" class="ordersSmallButtons" />
-                            </div>
-                        }
+            
                         <div class="ordersSmallButtons" style="float:left">
                             <img src="images/call.png" class="ordersSmallButtons" />
                         </div>
