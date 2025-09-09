@@ -642,6 +642,20 @@ input.Chkout_tb {
     font-weight: normal;
 }
 
+input.RegCode_tb {
+    padding: 10px;
+    margin: 10px;
+    font-size: 24px;
+    width: 70%;
+    
+    border-radius: 20px;
+    border: 0;
+    font-family: Noyland;
+    background-color: var(--background);
+    color: var(--brown);
+    font-weight: normal;
+}
+
     input.Chkout_tb::placeholder {
         color: rgba(166, 160, 111, 1);
         font-weight: normal;
@@ -709,6 +723,7 @@ select.Chkout_tb {
     padding-right: 10px;
     font-size: 18px;
     width: 70%;
+    text-align:left;
     color: var(--brown);
     font-weight: normal;
     float: left;
@@ -829,6 +844,9 @@ div.Chkout_question {
     color: rgba(171, 108, 0, 1);
     font-weight: normal;
     padding:5px;
+    margin-top:10px;
+
+
 }
 
 span.Chkout_question_pad {
@@ -1461,6 +1479,16 @@ button.CartAddMoreBtn {
     font-weight:lighter;
 }
 
+div .RegFormBg {
+    overflow: auto;
+    margin: 5px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 20px;
+    text-align: right;
+    font-family: Noyland;
+    font-size: 24px;
+}
 
 div.Join_TbRow {
     overflow: auto;
@@ -1682,16 +1710,21 @@ button.ThankYouBtn {
     color: #fff;
     background-color: #ab6c00;
     font-family: Noyland;
-    text-align: left;
+    text-align: center;
     border: 0;
+    width:60%;
 }
 
 div.ThankYouPageTitle {
+    overflow:hidden;
     text-align: center;
-    font-size: 50px;
-    margin-top: 30px;
+    font-size: 70px;
+    margin-top: 50px;
     font-weight: 700;
     color: #0d4133;
+    font-family:'Noyland 2.0 AAA';
+  line-height:50px;
+
 }
 
 div.ThankYouPageMainTxt {
@@ -1705,15 +1738,29 @@ div.ThankYouPageBotTxt {
     margin-top: 30px;
     text-align: center;
     font-size: 24px;
-    color: rgba(171, 108, 0, 1);
+    color: var(--green);
+    font-weight:bold;
 }
 
+div.ThankYouPageBotSubTxt {
+    color: var(--brown);
+}
+img.ThankYouPageImg {
+    width: 250px;
+    max-height: 250px;
+    
+}
+img.ThankYouPageImg2 {
+    width: 200px;
+    max-height: 200px;
+
+}
 div.loginHeader {
-margin:5px;
-padding:5px;
-font-size:24px;
-color:rgba(171, 108, 0, 1);
-font-weight:bold;
+    margin: 5px;
+    padding: 5px;
+    font-size: 24px;
+    color: rgba(171, 108, 0, 1);
+    font-weight: bold;
 }
 div.loginQuestion {
     margin: 5px;

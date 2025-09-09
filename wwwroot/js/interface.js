@@ -242,6 +242,8 @@ function sbload(sideBar, url, loader_element, form_name, open_after_load){
 
     var content_container = sideBar + "Content";
 
+    console.log(sideBar);
+    console.log(content_container);
     if (document.getElementById(content_container)) {
         document.getElementById(content_container).innerHTML = "";
 
@@ -274,8 +276,9 @@ function sbload(sideBar, url, loader_element, form_name, open_after_load){
         xmlhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 var theRespone = this.responseText;
-
+                console.log(theRespone);
                 if (theRespone.startsWith("!$!")) {
+                    console.log("AAAAAA");
                     let errMsgElement = "ErrorMsgDiv";
                     if (document.getElementById(errMsgElement)) {
                         document.getElementById(errMsgElement).innerHTML = theRespone.replace("!$!", "");
@@ -287,12 +290,17 @@ function sbload(sideBar, url, loader_element, form_name, open_after_load){
 
                 }
                 else {
+                    console.log("EEEEEEEE");
+                    console.log("content_container: " + content_container);
                     document.getElementById(content_container).innerHTML = this.responseText;
                     if (open_after_load) {
+                        console.log("BBBBBBB");
                         if (currentlyOpenSidebar == sideBar) {
                             reOpenSideBar(sideBar);
+                            console.log("CCCCCCCCCCCCCC");
                         }
                         else {
+                            console.log("DDDDDDDDDDDD");
                             controller.open(sideBar);
                         }
                         currentlyOpenSidebar = sideBar;

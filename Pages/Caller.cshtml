@@ -31,7 +31,7 @@
         case "Join":
             if (true)
             {
-                Layout = "~/Pages/Shared/Layouts/_Mini.cshtml";
+                Layout = null;
 
                 <div style="overflow:auto;padding:0;margin:0">
                     @await Html.PartialAsync("Partials/_Join")
@@ -41,7 +41,7 @@
         case "RegCodeSignup":
             if (true)
             {
-                Layout = "~/Pages/Shared/Layouts/_Mini.cshtml";
+                Layout = null;
                 ViewData["pa_code"] = Param("code");
                 <div style="overflow:auto;padding:0;margin:0">
                     @await Html.PartialAsync("Partials/_Signup")
@@ -51,7 +51,7 @@
         case "RegStatementHeb":
             if (true)
             {
-                Layout = "~/Pages/Shared/Layouts/_Mini.cshtml";
+                Layout = null;
                 <div style="overflow:auto;padding:0;margin:0;">
                     @await Html.PartialAsync("Partials/_RegStatementHeb")
                 </div>

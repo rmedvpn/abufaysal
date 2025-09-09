@@ -150,138 +150,129 @@
     }
 
 
-<div class="B" style="background-color:#808080;direction:rtl">
+    <section class="wel_sec" style="text-align:center">
+        <div class="container">
+            <div class="B">
+                <div class="top_spacer"></div>
 
 
-    <center>
-            <section class="wel_sec" style="text-align:center">
-                <div class="B" style="width:400px;min-height: 844px;">
-                    <div class="B" style="margin-top:25px;text-align:center">
-                        <div class="B">
-                            <a href="main"><img src="images/logologin.png"  /></a>
-                        </div>
-                        <div class="loginHeader" >
-                            <b>הרשמה</b>
-                        </div>
+                <a href="/Login"><img class="logo" src="images/newlogo.png" /></a>
             </div>
-                <div class="B" id="MainRegistrationDiv">
-                    <div class="B" style="text-align:center">
-                      
-                        <div class="B" id="RegTypeSelectDiv" style="display:@RegTypeDisplayState">
-                                <button type="button" style="width:90%" class="RegBigBtn" onclick="hideElement('RegTypeSelectDiv');showElement('PreApprovalCodeDiv');">יש לי קוד הרשמה</button>
 
-                                <button type="button" style="width:90%" class="RegBigBtn" onclick="sbload('MainSb', 'Caller?p1=Join');">אני רוצה להרשם</button>
-                                <div class="loginHeader">-- או --</div>
-                            <button type="button" style="width:90%" class="RegBigBtn" onclick="window.location.assign('/Login')">חזרה לדף הכניסה</button>
-                        </div>
-                        
-
-                    </div>
-
-                        <div class="B" id="PreApprovalCodeDiv" style="display:@PaCodeDisplayState">
-                        <form id="RegCodeForm">
-                        <input type="hidden" name="req_type" value="pa_code" />
-                                <div class="Join_TbRow" style="text-align:center;background-color:#0d4133;padding:10px;border-radius:20px;">
-                                    <div class="B" style="color:#fff;font-weight:normal;">
-                                        נא להזין את קוד ההרשמה
-                                    </div>
-                                    <div class="B">
-                                        <input class="Login_tb" type="text" style="text-align:center;width:50%;" name="pa_code" id="pa_code_tb" placeholder="######" maxlength="6" />
-                                    </div>
-                                    <div class="A" style="text-align:center">
-                                        <div class="regErrMsg2" id="PreApprovalErrorDiv"></div>
-                                    </div>
-                                </div>
-
-
-                            <div class="B" style="text-align:center;margin-top:10px;">
-                                    <button type="button" class="RegBigBtn" onclick="hideElement('PreApprovalCodeDiv');showElement('RegTypeSelectDiv');">ביטול</button>
-
-                                    <button type="button" value="המשך" class="RegBigBtn" onclick="AjaxActions('CheckRegistrationCode', ' ', 'MainLoader', 'RegCodeForm');">המשך</button>
-                                    
-                            </div>
-                            
-                        </form>
-                    </div>
-
-                        <div class="B" id="PreApproveRegDiv" style="display:@PaCodeRegDisplayState">
-                        <form method="post">
-                        <input type="hidden" name="pa_code" value="@pa_code" />
-                                <div class="fldLabel">
-                                    <div class="B">
-                                        טלפון
-                                    </div>
-                                    <div style="overflow:auto">
-                                        <input type="text" name="Phone" value="@phone" /><br />
-                                    </div>
-                                </div>
-                                <div class="fldLabel">
-                                    <div class="B">
-                                        כתובת מייל
-                                    </div>
-                                    <div style="overflow:auto">
-                                        <input type="text" name="Email" value="@email" /><br />
-                                    </div>
-                                </div>
-
-                            <div class="fldLabel">
-                                <div class="B">
-                                    נא לבחור שם משתמש 
-                                </div>
-                                <div style="overflow:auto">
-                                    <input type="text" name="UserName" value="@userName" />
-                                </div>
-                            </div>
-                            <div class="fldLabel">
-                                <div class="B">
-                                    נא לבחור סיסמא
-                                </div>
-                                <div style="overflow:auto">
-                                    <input name="Password" type="password" />
-                                </div>
-                            </div>
-                            <div class="fldLabel">
-                                <div class="B">
-                                    נא לאשר את הסיסמא
-                                </div>
-                                <div style="overflow:auto">
-                                        <input name="password_confirm" type="password" />
-                                </div>
-                            </div>
-
-                            <div class="B" style="text-align:center">
-                                @if (errors.Any())
-                                {
-                                    <div style="color:red;background-color:#ffffcc;font-size:16px;padding:5px;margin:5px;border-radius:5px;">
-                                        @foreach (var e in errors)
-                                        {
-                                            <div>@e</div>
-                                        }
-                                    </div>
-                                }
-                            </div>
-
-                            <div class="B" style="text-align:center;margin-top:10px;">
-                                <input  type="submit" value="הרשמה" style="font-size:24px;padding:10px;background-color:#57d600;border-radius:5px;border:2px solid #fff;color:#fff" />
-                            </div>
-                            
-                        </form>
-                    </div>
-
-
-                
-                
-                
+            <div class="B" style="margin-top:25px;text-align:center">
+                <div class="loginHeader">
+                    <b>הרשמה</b>
                 </div>
             </div>
-        </section>
-            <div style="position:fixed;bottom:20px;font-size:14px;color:white;text-align:center;width:100%;z-index:0">
-                <center><span style="color:#e3e3e3">&copy; מערכות ישראל 2025</span></center>
+            <div class="B" id="MainRegistrationDiv">
+                <div class="B" style="text-align:center">
+
+                    <div class="B" id="RegTypeSelectDiv" style="display:@RegTypeDisplayState">
+                        <button type="button" class="LoginBigBtn" onclick="sbload('MainSb', 'Caller?p1=Join');">אני רוצה להרשם</button>
+                        <button type="button" class="LoginBigBtn" onclick="hideElement('RegTypeSelectDiv');showElement('PreApprovalCodeDiv');">יש לי קוד הרשמה</button>
+                        <button type="button" class="LoginBigBtn" onclick="window.location.assign('/Login')">חזרה לדף הכניסה</button>
+                    </div>
+
+
+                </div>
+
+                <div class="B" id="PreApprovalCodeDiv" style="display:@PaCodeDisplayState">
+                    <form id="RegCodeForm">
+                        <input type="hidden" name="req_type" value="pa_code" />
+                        <div class="RegFormBg" style="text-align:center">
+                            <div class="B" style="color:var(--green);font-weight:normal;">
+                                נא להזין את הקוד להפעלה
+                            </div>
+                            <div class="B">
+                                <input class="RegCode_tb" type="text" style="text-align:center;width:50%;" name="pa_code" id="pa_code_tb" placeholder="######" maxlength="6" />
+                            </div>
+                           
+                        </div>
+
+                        <div class="B" style="text-align:center">
+                            <div class="regErrMsg2" id="PreApprovalErrorDiv"></div>
+                        </div>
+                        <div class="A" style="text-align:center;">
+                        <div class="Spacer20"></div>
+                            <button type="button" class="checkuotBtn" style="background-color:#a6a06f;float:right;width:30%" onclick="hideElement('PreApprovalCodeDiv');showElement('RegTypeSelectDiv');">ביטול</button>
+
+                            <button type="button" value="המשך" class="checkuotBtn" style="float:left;width:50%;" onclick="AjaxActions('CheckRegistrationCode', ' ', 'MainLoader', 'RegCodeForm');">המשך</button>
+
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="B" id="PreApproveRegDiv" style="display:@PaCodeRegDisplayState">
+                    <form method="post">
+                        <input type="hidden" name="pa_code" value="@pa_code" />
+                        <div class="fldLabel">
+                            <div class="B">
+                                טלפון
+                            </div>
+                            <div style="overflow:auto">
+                                <input type="text" name="Phone" value="@phone" /><br />
+                            </div>
+                        </div>
+                        <div class="fldLabel">
+                            <div class="B">
+                                כתובת מייל
+                            </div>
+                            <div style="overflow:auto">
+                                <input type="text" name="Email" value="@email" /><br />
+                            </div>
+                        </div>
+
+                        <div class="fldLabel">
+                            <div class="B">
+                                נא לבחור שם משתמש
+                            </div>
+                            <div style="overflow:auto">
+                                <input type="text" name="UserName" value="@userName" />
+                            </div>
+                        </div>
+                        <div class="fldLabel">
+                            <div class="B">
+                                נא לבחור סיסמא
+                            </div>
+                            <div style="overflow:auto">
+                                <input name="Password" type="password" />
+                            </div>
+                        </div>
+                        <div class="fldLabel">
+                            <div class="B">
+                                נא לאשר את הסיסמא
+                            </div>
+                            <div style="overflow:auto">
+                                <input name="password_confirm" type="password" />
+                            </div>
+                        </div>
+
+                        <div class="B" style="text-align:center">
+                            @if (errors.Any())
+                            {
+                                <div style="color:red;background-color:#ffffcc;font-size:16px;padding:5px;margin:5px;border-radius:5px;">
+                                    @foreach (var e in errors)
+                                    {
+                                        <div>@e</div>
+                                    }
+                                </div>
+                            }
+                        </div>
+
+                        <div class="B" style="text-align:center;margin-top:10px;">
+                            <input type="submit" value="הרשמה" style="font-size:24px;padding:10px;background-color:#57d600;border-radius:5px;border:2px solid #fff;color:#fff" />
+                        </div>
+
+                    </form>
+                </div>
+
+
+
+
+
             </div>
-    </center>
-    <div class="B" style="height:150px;">&nbsp;</div>
-    
+        </div>
+    </section>
 
-
-</div>
 }

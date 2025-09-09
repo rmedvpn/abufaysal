@@ -350,7 +350,7 @@ namespace Faysal.Helpers
 
                 if (email == "" || !AppFunctions.ValidateEmail(email)) { is_valid_entry = false; validationFailureMsg += "Email is a required field!<br>"; }
                 if (UserName == "") { is_valid_entry = false; validationFailureMsg += "User Name is a required field!<br>"; }
-                else { if (!AppFunctions.IsValidUsername(UserName)) { is_valid_entry = false; validationFailureMsg += "User Name Must contain at least 6 alphanumeric charachters and start with a letter!<br>"; } }
+                else { if (!AppFunctions.IsValidUsername(UserName)) { is_valid_entry = false; validationFailureMsg += "User Name Must contain at least 5 alphanumeric charachters and start with a letter!<br>"; } }
                 if (password == "")
                 {
                     is_valid_entry = false;
@@ -373,7 +373,7 @@ namespace Faysal.Helpers
 
                 if (email == "" || !AppFunctions.ValidateEmail(email)) { is_valid_entry = false; validationFailureMsg += "כתובת מייל הוא שדה חובה!<br>"; }
                 if (UserName == "") { is_valid_entry = false; validationFailureMsg += "שם משתמש הוא שדה חובה!<br>"; }
-                else { if (!AppFunctions.IsValidUsername(UserName)) { is_valid_entry = false; validationFailureMsg += "שם משתמש חייב להיות בין 6-20 תווים, לא לכלול תווים מיוחדים, ולהתחיל באות ולא במספר!<br>"; } }
+                else { if (!AppFunctions.IsValidUsername(UserName)) { is_valid_entry = false; validationFailureMsg += "שם משתמש חייב להיות בין 5-20 תווים, לא לכלול תווים מיוחדים, ולהתחיל באות ולא במספר!<br>"; } }
                 if (password == "")
                 {
                     is_valid_entry = false;

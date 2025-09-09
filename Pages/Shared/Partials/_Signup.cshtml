@@ -66,73 +66,61 @@
     {
         <center>
             <section class="wel_sec" style="text-align:center">
-                <div class="B" style="width:400px;min-height: 844px;">
+                <div class="container">
                     <div class="B" style="text-align:center">
                         <div class="B">
-                            <img src="images/logoLogin.png" />
+                            <img class="logo" src="images/newlogo.png" />
                         </div>
                         <div class="loginHeader">
-                            <b>הרשמה</b>
+                            <b>סיום הרשמה</b>
                         </div>
-                        <div class="B" id="PreApproveRegDiv" style="min-height:1000px;">
+                        <div id="NewRegDiv" class="RegFormBg">
                             <form id="UserSignUpForm">
                                 <input type="hidden" name="member_id" value="@member_id" />
                                 <input type="hidden" name="PreApprovalId" value="@PreApprovalId" />
                                 <input type="hidden" name="pa_code" value="@pa_code" />
-                                <div class="A">
+                                <div class="A" style="text-align:center;">
                                     <div class="JoinPropSubTitle">לסיום ההרשמה יש למלא את הטופס</div>
                                 </div>
 
-                                <div class="Join_TbRow">
-                                    <div class="JoinPropRow">
-                                        <div class="JoinPropTitle" style="float:right;text-align:right">
+                                <div class="Chkout_TbRow">
+                                    <div class="CkotPropRow">
+                                        <div class="Chkout_TbRTite" style="float:right;text-align:right">
                                             <div class="B">
                                                 שם מלא <span class="reqField">*</span>
                                             </div>
-                                            <div class="B">
-                                                <div class="JoinPropSubTitle">
-                                                    איך קוראים לך?
-                                                </div>
-                                            </div>
-
-
+                                        
+                                       
                                         </div>
-                                        <div style="overflow:auto">
-                                            @if (!String.IsNullOrEmpty(member_name))
-                                            {
-                                                <input type="text" class="Join_TbRow_disabled" readonly value="@member_name" />
-                                                <input type="hidden"  id="member_name" name="member_name" value="@member_name" />
-                                            }
-                                            else
-                                            {
-                                                <input type="text" class="Join_tb" id="member_name" name="member_name" value="@member_name" />
-                                            }
-                                            
-                                        </div>
+                                        @if (!String.IsNullOrEmpty(member_name))
+                                        {
+                                            <input type="text" class="Chkout_tb" readonly value="@member_name" style="color:rgba(166, 160, 111, 1);font-weight:normal;" />
+                                            <input type="hidden" id="member_name" name="member_name" value="@member_name" />
+                                        }
+                                        else
+                                        {
+                                            <input type="text" class="Chkout_tb" id="member_name" name="member_name" value="@member_name" />
+                                        }
+
                                     </div>
                                 </div>
 
                               
 
 
-                                <div class="Join_TbRow">
-                                    <div class="JoinPropRow">
-                                        <div class="JoinPropTitle" style="float:right;text-align:right">
+                                <div class="Chkout_TbRow">
+                                    <div class="CkotPropRow">
+                                        <div class="Chkout_TbRTite" style="float:right;text-align:right">
                                             <div class="B">
                                                 #ווטסאפ <span class="reqField">*</span>
                                             </div>
-                                            <div class="B">
-                                                <div class="JoinPropSubTitle">
-                                                    במספר הזה מתקשרים..
-                                                </div>
-                                            </div>
+                                         
 
 
                                         </div>
-                                        <div style="overflow:auto">
-                                            <input type="text" class="Join_TbRow_disabled" value="@display_wanum" readonly  />
-                                            <input type="hidden" name="wanum" value="@wanum" />
-                                        </div>
+                                        <input type="text" class="Chkout_tb" value="@display_wanum" readonly style="color:rgba(166, 160, 111, 1);font-weight:normal;" />
+                                        <input type="hidden" name="wanum" value="@wanum" />
+
                                     </div>
                                 </div>
 
@@ -140,26 +128,22 @@
 
                                 @if (gender == 0)
                                 {
-                                    <div class="Join_TbRow">
-                                        <div class="JoinPropRow">
-                                            <div class="JoinPropTitle" style="float:right;text-align:right">
+                                    <div class="Chkout_TbRow">
+                                        <div class="CkotPropRow">
+                                            <div class="Chkout_TbRTite" style="float:right;text-align:right">
                                                 <div class="B">
                                                     אני
                                                 </div>
-                                            
-                                            </div>
-                                            <div style="overflow:auto">
-                                                <select class="Join_tb" id="gender" name="gender" onblur="if(IsAccordion('GenderToolTip')){Accordionize('GenderToolTip');}">
-                                                    <option value="0">נא לבחור..</option>
-                                                    <option value="1">זכר</option>
-                                                    <option value="2">נקבה</option>
-                                                    <option value="-1">אחר.ת</option>
-
-                                                </select>
-
-                                             
 
                                             </div>
+                                            <select class="Chkout_tb" id="gender" name="gender" onblur="if(IsAccordion('GenderToolTip')){Accordionize('GenderToolTip');}">
+                                                <option value="0">נא לבחור..</option>
+                                                <option value="1">זכר</option>
+                                                <option value="2">נקבה</option>
+                                                <option value="-1">אחר.ת</option>
+
+                                            </select>
+
                                         </div>
                                     </div>
                                 }
@@ -171,26 +155,22 @@
 
                                 @if (birth_date == defDate)
                                 {
-                                    <div class="Join_TbRow">
-                                        <div class="JoinPropRow">
-                                            <div class="JoinPropTitle" style="float:right;text-align:right">
+                                    <div class="Chkout_TbRow">
+                                        <div class="CkotPropRow">
+                                            <div class="Chkout_TbRTite" style="float:right;text-align:right">
                                                 <div class="B">
                                                     תאריך לידה <span class="reqField">*</span>
                                                 </div>
                                                 <div class="B">
                                                     <div class="JoinPropSubTitle">
-                                                        ההצטרפות מגיל 18!
+                                                        ההרשמה מגיל 18!
                                                     </div>
                                                 </div>
 
 
                                             </div>
-                                            <div style="overflow:auto">
-                                                <input type="date" class="Join_tb" id="birth_date" name="birth_date" value="@birth_date.ToString("yyyy-MM-dd")" />
+                                            <input type="date" class="Chkout_tb" id="birth_date" name="birth_date" value="@birth_date.ToString("yyyy-MM-dd")" />
 
-                                             
-
-                                            </div>
                                         </div>
                                     </div>
                                 }
@@ -201,118 +181,111 @@
                                 }
 
 
-                                <div class="Join_TbRow">
-                                    <div class="JoinPropRow">
-                                        <div class="JoinPropTitle" style="float:right">
+                                <div class="Chkout_TbRow">
+                                    <div class="CkotPropRow">
+                                        <div class="Chkout_TbRTite" style="float:right">
                                             <div class="B">
                                                 כתובת מייל <span class="reqField">*</span>
                                             </div>
-                                            <div class="JoinPropSubTitle">
-                                                לשימוש בחירום בלבד!
-                                            </div>
+                                       
 
                                         </div>
+                                        <input type="text" class="Chkout_tb" name="email" value="@email" />
 
-                                        <div style="overflow:auto">
-                                            <input type="text" class="Join_tb" name="email" value="@email" />
-                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="Join_TbRow">
-                                    <div class="JoinPropRow">
-                                        <div class="JoinPropTitle" style="float:right">
+                                <div class="Chkout_TbRow">
+                                    <div class="CkotPropRow">
+                                        <div class="Chkout_TbRTite" style="float:right">
                                             <div class="B">
                                                 יוזר טלגרם
                                             </div>
-                                            <div class="JoinPropSubTitle">
-                                                מומלץ אבל לא חובה
-                                            </div>
+                                          
 
                                         </div>
-                                  
-                                        <div style="overflow:auto">
-                                            <input class="Join_tb" type="text" name="telegram_nick" value="@telegram_nick" />
-                                        </div>
+                                        <input class="Chkout_tb" type="text" name="telegram_nick" value="@telegram_nick" />
+
+
                                     </div>
                                 </div>
 
-                                <div class="Join_TbRow">
-                                    <div class="JoinPropRow">
-                                        <div class="JoinPropTitle" style="float:right">
+                                <div class="Chkout_TbRow">
+                                    <div class="CkotPropRow">
+                                        <div class="Chkout_TbRTite" style="float:right">
                                             <div class="B">
                                                 שם משתמש <span class="reqField">*</span>
                                             </div>
                                             <div class="JoinPropSubTitle">
-                                                יוזר לכניסה למערכת
+                                                לזיהוי במערכת
                                             </div>
 
                                         </div>
+                                        <input type="text" class="Chkout_tb" name="UserName" value="@suggested_user_name" />
 
-                                        <div style="overflow:auto">
-                                            <input type="text" class="Join_tb" name="UserName" value="@suggested_user_name" />
-                                        </div>
+                                       
                                     </div>
                                 </div>
 
 
-                                <div class="Join_TbRow">
-                                    <div class="JoinPropRow">
-                                        <div class="JoinPropTitle" style="float:right">
+                                <div class="Chkout_TbRow">
+                                    <div class="CkotPropRow">
+                                        <div class="Chkout_TbRTite" style="float:right">
                                             <div class="B">
-                                                נא לבחור סיסמא <span class="reqField">*</span>
+                                                סיסמא <span class="reqField">*</span>
                                             </div>
-                                      
-                                        </div>
 
-                                        <div style="overflow:auto">
-                                            <input class="Join_tb" type="password" name="password"  />
                                         </div>
+                                        <input class="Chkout_tb" type="password" name="password" />
+
                                     </div>
                                 </div>
-                                <div class="Join_TbRow">
-                                    <div class="JoinPropRow">
-                                        <div class="JoinPropTitle" style="float:right">
+                                <div class="Chkout_TbRow">
+                                    <div class="CkotPropRow">
+                                        <div class="Chkout_TbRTite" style="float:right">
                                             <div class="B">
-                                                אישור סיסמא <span class="reqField">*</span>
+                                               סיסמא שוב <span class="reqField">*</span>
                                             </div>
-                                      
-                                        </div>
 
-                                        <div style="overflow:auto">
-                                            <input class="Join_tb" type="password" name="password_confirm" />
                                         </div>
+                                        <input class="Chkout_tb" type="password" name="password_confirm" />
+
                                     </div>
                                 </div>
 
 
-                                <div class="Join_TbRow" style="margin-top:20px">
-                                    <div class="JoinPropRow" style="border:0">
-                                        <div class="JoinPropTitle" style="float:right;color: rgba(171, 108, 0, 1);">
-                                            <input type="checkbox" name="is_terms" style="height:20px;width:20px;" />
-                                            <span>קראתי והסכמתי <span onclick="sbload('Menu1','Caller?p1=TermsHeb');"><b><u><span style="cursor:pointer;">לתנאי השימוש</span></u></b></span><span class="reqField">*</span></span>
+                                <div class="Chkout_TbRow" style="margin-top:20px">
+                                    <div class="CkotPropRow" style="border:0">
+                                        <div class="Chkout_TbRTite" style="float:right;color: rgba(171, 108, 0, 1);">
+                                            <input type="checkbox" name="is_terms" class="A" />
+                                            <span>קראתי והסכמתי <span onclick="sbload('SubMenu','Caller?p1=RegStatementHeb');"><b><u><span style="cursor:pointer;">לתנאי השימוש</span></u></b></span><span class="reqField">*</span></span>
                                         </div>
                                     </div>
 
                                 </div>
-                                <div style="overflow:auto;" id="prospectJoinActions">
-                                    <div class="regErrMsg2" id="SignUpErrorDiv"></div>
-                                    <div class="b_d">
-                                        <button type="button" class="checkuotBtn" style="background-color:#a6a06f" onclick="controller.close('MainSb');">ביטול</button>
-                                        <button type="button" class="checkuotBtn" onclick="AjaxActions('UserSignUp', '', 'MainLoader', 'UserSignUpForm');">שליחה</button>
+                              
 
-                                    </div>
-
-                                </div>
-
-                               
+                               <div class="Spacer5"></div>
                             </form>
                         </div>
 
+                        <div style="overflow:auto;" id="prospectJoinActions">
+                            <div class="regErrMsg2" id="SignUpErrorDiv"></div>
+                            <div class="A" style="text-align:center">
+                            <div class="Spacer10"></div>
+                            <div class="Spacer5"></div>
+                                <button type="button" class="checkuotBtn" style="background-color:#a6a06f;float:right;width:30%" onclick="controller.close('MainSb');">ביטול</button>
+                                <button type="button" class="checkuotBtn" style="float:left;width:50%" onclick="AjaxActions('UserSignUp', '', 'MainLoader', 'UserSignUpForm');">התחברות</button>
 
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </section>
+            <center>
+            </center>
+
         </center>
 
 

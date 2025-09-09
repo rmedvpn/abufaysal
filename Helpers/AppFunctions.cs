@@ -128,7 +128,7 @@ namespace Faysal.Helpers
                 return false;
 
             // Must be at least 6 characters long And no longer than 20 characters
-            if (username.Length < 6 || username.Length > 20)
+            if (username.Length < 5 || username.Length > 20)
                 return false;
 
             // First character must be a letter
