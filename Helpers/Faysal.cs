@@ -1061,8 +1061,8 @@ namespace Faysal.Helpers
 
             string disp_address = MaskString(address + " " + city);
 
-            sqlSelect = "SELECT * FROM cart WHERE session_id=@0 order by ts";
-            var cart = db.Query(sqlSelect, sessionId);
+            sqlSelect = "SELECT * FROM cart WHERE u_id=@0 order by ts";
+            var cart = db.Query(sqlSelect, u_id);
 
             if (cart != null)
             {
@@ -1148,6 +1148,10 @@ namespace Faysal.Helpers
                     sqlSelect += " VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12);";
                     sqlSelect += "SET IDENTITY_INSERT OrderTracking OFF;";
                     db.Execute(sqlSelect, new_order_id, local_time, u_id, order_status, wanum_mask, disp_address, city, order_total, shipping_charge, grand_total, round_up_amount, after_round_up_grand_total, order_notes);
+
+
+                    sqlSelect = "DELETE FROM cart WHERE u_id=@0;DELETE FROM CartSettings WHERE u_id=@0";
+                    db.Execute(sqlSelect, u_id);
                 }
                 theHtmlOutput += "ההזמנה התקבלה בהצלחה!<br>";
             }

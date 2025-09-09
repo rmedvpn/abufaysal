@@ -53,8 +53,6 @@
             </div>
 
             <div class="A">
-                <form id="CalcItemCostFsdfsdfsdform">
-                    <input type="hidden" value="ver2" name="ver" />
                     <div class="B"  style="text-align:center;">
                      <div class="OrderIntroMsg" style="text-align:center;">
                             ההזמנה שלך
@@ -78,15 +76,32 @@
 
 
                     <div class="B" >
-                       <div class="B">
+                       <div class="B" id="CheckoutItemsDiv">
                             @await Html.PartialAsync("Shared/Partials/_CheckoutItems")
                         </div>
                     </div>
-                    <div class="Spacer100"></div>
-                    <div class="B" style="text-align:center;">
-                        <button class="checkuotBtn" type="button" onclick="PageLoad('ORDERS');" style="background-color:var(--green);">&lt; חזרה</button>
+                    
+                    <div class="B" style="text-align:center;" id="CartActionDiv">
+                    <div class="Spacer50"></div>
+                        <button class="checkuotBtn" type="button" onclick="PageLoad('ORDERS');" style="background-color:var(--green);float:right">&lt; חזרה</button>
                         <button class="checkuotBtn" type="button" onclick="AjaxActions('ClearCart', '', 'MainLoader', '');" style="background-color:#a6a06f">איפוס</button>
-                        <button class="checkuotBtn" type="button" onclick="sbload('MainSb','Caller?p1=Checkout');">צקאאוט &gt;&gt; </button>
+                    <button class="checkuotBtn" type="button" onclick="hideElement('CartActionDiv');showElement('CartCheckoutDiv');Accordionize('AccCartCheckout');" style="float:left;">לצקאאוט &gt; </button>
+
+                    </div>
+
+                <div class="B" id="CartCheckoutDiv" style="display:none">
+                        <button class="accordion" id="AccCartCheckout" style="display:none"></button>
+                        <div class="panel" style="padding:0;margin:0">
+                            @await Html.PartialAsync("Shared/Partials/_CartCheckout")
+                        </div>
+
+                    <div class="A" style="text-align:center;">
+                        <div class="regErrMsg2" id="ErrorMsgDiv"></div>
+
+                        <button class="checkuotBtn" type="button" onclick="PageLoad('ORDERS');" style="background-color:var(--green);float:right">&lt; חזרה</button>
+                        <button class="checkuotBtn" type="button" onclick="AjaxActions('ClearCart', '', 'MainLoader', '');" style="background-color:#a6a06f">איפוס</button>
+                        <button class="checkuotBtn" type="button" onclick="sbload('MainSb','Caller?p1=OrderReview','MainLoader','CalcItemCostForm',true);" style="float:left">סקירת ההזמנה &gt;</button>
+                    </div>
 
                     </div>
 
@@ -99,9 +114,6 @@
 
 
 
-
-
-                </form>
             </div>
         </div>
     </div>

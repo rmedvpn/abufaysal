@@ -217,7 +217,8 @@ function AjaxActions(field, value, loader_element, param1, param2, param3, param
                             PageLoad("ORDERS");
                         }
                         else {
-                            AjaxUpdate('Cart', 'MainBodyContent', 'MainLoader', 'CalcItemCostForm');
+                      //      AjaxUpdate('Cart', 'MainBodyContent', 'MainLoader', 'CalcItemCostForm');
+                            AjaxUpdate('CheckoutItems', 'CheckoutItemsDiv', 'MainLoader', 'CalcItemCostForm');
                         }
                         
 

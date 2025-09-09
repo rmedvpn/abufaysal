@@ -6,7 +6,7 @@
     var context = HttpContextAccessor.HttpContext;
     var sessionId = ViewData["SessionId"]?.ToString() ?? context.Session.Id;
 
-    var callingPage = ViewData["callingPage"]?.ToString() ?? null;
+    var callingPage = ViewData["callingPage"]?.ToString() ?? "CART";
     int u_id = WebSecurity.CurrentUserId;
     var db = Database.Open("faysal");
     var cart = db.Query("SELECT * FROM cart WHERE u_id=@0 order by ts", u_id);

@@ -1,0 +1,294 @@
+﻿@using System
+@using System.Data.SqlClient
+@using Dapper
+@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Configuration
+@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration Configuration
+
+@{
+    // Disable layout for AJAX requests — preserves WebMatrix behavior
+
+    Layout = null;
+    int u_id = WebSecurity.CurrentUserId;
+    string user_name = WebSecurity.CurrentUserName;
+    var context = HttpContextAccessor.HttpContext;
+    var culture = new System.Globalization.CultureInfo("he-IL");
+    var sessionId = "";
+    try { sessionId = context.Session.Id; } catch { sessionId = ""; }
+
+    int ref_id = 0; int.TryParse(context.Request.Query["ref_id"], out ref_id);
+    int aff_id = 0; int.TryParse(context.Request.Query["aff_id"], out aff_id);
+
+    var db = Database.Open("faysal");
+    var sqlSelect = "";
+
+    sqlSelect = "SELECT count(serial) as the_cnt FROM cart WHERE session_id=@0";
+    var cart = db.QuerySingle(sqlSelect, sessionId);
+    int items_cnt = 0;try { items_cnt = cart.the_cnt; } catch { }
+
+
+
+    int AddressCount = 0;
+    int FirstAddressId = 0;
+    string NewAddressDisplayState = "block;";
+    string SavedAddressDisplayState = "none;";
+    bool is_saved_address = false;
+
+    string wanum = "";
+    string member_nick = "";
+
+    sqlSelect = "SELECT member_nick,wanum_mask FROM users WHERE u_id=@0";
+    var user = db.QuerySingle(sqlSelect, u_id);
+
+    if (user != null)
+    {
+        wanum = user.wanum_mask;
+        member_nick = user.member_nick;
+    }
+
+
+
+
+    sqlSelect = "SELECT * FROM Addresses WHERE is_active=1 AND u_id=@0 ORDER BY is_default DESC";
+    var MemberAddresses = db.Query(sqlSelect, u_id);
+    if (MemberAddresses.Count() > 0) { is_saved_address = true; }
+
+    db.Close();
+}
+
+
+<div class="B">
+    <div class="B">
+        <form id="CalcItemCostForm">
+            <input type="hidden" value="ver2" name="ver" />
+            <div class="A">
+                <div class="OrderIntroMsg">
+                    <b>לאן שולחים?</b>
+
+                </div>
+
+            </div>
+
+
+
+
+
+
+            <center>
+                <div class="DataFormBg" id="checkoutInfoDiv">
+                    <!-- Checkout Section -->
+                    <section id="checkout">
+                        <!-- Billing Details -->
+                        <div class="B">
+
+                            <div class="B">
+                                <div class="Chkout_TbRow" style="margin-top:10px;">
+
+
+                                    <div class="CkotPropRow">
+                                        <div class="Chkout_TbRTite">שם</div>
+                                        <input type="text" class="Chkout_tb" value="@member_nick" readonly style="color:rgba(166, 160, 111, 1);font-weight:normal;" />
+                                    </div>
+                                </div>
+                                <div class="Chkout_TbRow">
+
+                                    <div class="CkotPropRow">
+                                        <div class="Chkout_TbRTite">#ווטסאפ</div>
+                                        <input type="text" class="Chkout_tb" name="wanum" value="@wanum" readonly style="color:rgba(166, 160, 111, 1);font-weight:normal;direction:rtl" />
+
+
+                                    </div>
+                                </div>
+                                <div class="Chkout_TbRow">
+                                    <div class="CkotPropRow" style="border:0">
+                                        <div class="Chkout_question" onclick="toggle_visibility('custom_recipient');FixAccordion('AccCartCheckout');">
+                                            <input type="checkbox" id="send_to_other" name="send_to_other" />
+                                            <span class="Chkout_question_pad">המשלוח למישהו אחר?</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="B" id="custom_recipient" style="display:none;">
+                                <div class="Chkout_TbRow">
+
+                                    <div class="CkotPropRow">
+                                        <div class="Chkout_TbRTite">שם</div>
+
+                                        <input type="text" class="Chkout_tb" id="ship_name" name="ship_name">
+                                        <input type="hidden" class="Chkout_tb" id="member_nick" name="member_nick" value="@member_nick">
+
+                                    </div>
+                                </div>
+                                <div class="Chkout_TbRow">
+
+                                    <div class="CkotPropRow">
+                                        <div class="Chkout_TbRTite">טלפון</div>
+
+                                        <input type="text" class="Chkout_tb" id="ship_phone" name="ship_phone">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!---->
+
+                            <div style="overflow: auto;padding-top: 10px;">
+
+                                <div style="overflow: auto;">
+                                    @if (MemberAddresses.Any())
+                                    {
+                                        string selectedAddressSelector = "";
+                                        @foreach (var item in MemberAddresses)
+                                        {
+                                            AddressCount++;
+                                            if (AddressCount == 1)
+                                            {
+                                                FirstAddressId = item.id;
+                                                NewAddressDisplayState = "none;";
+                                                SavedAddressDisplayState = "block;";
+                                                break;
+                                            }
+
+                                        }
+                                        <div class="Chkout_TbRow">
+
+                                            <div class="CkotPropRow">
+                                                <div class="Chkout_TbRTite">כתובת</div>
+
+                                                <select id="address_id" name="address_id" class="Chkout_tb"
+                                                        onchange="if(this.value=='-1'){showElement('new_address_div');FixAccordion('AccCartCheckout');}else{hideElement('new_address_div');}">
+                                                    <option value="-1">כתובת חדשה..</option>
+
+                                                    @foreach (var item in MemberAddresses)
+                                                    {
+                                                        <option value="@item.id" selected="@(item.id == FirstAddressId ? "selected" : null)">@item.address_nick - @item.disp_address</option>
+                                                    }
+                                                </select>
+
+                                            </div>
+                                        </div>
+                                        <div class="B" id="saved_address_div">
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <input type="hidden" id="address_id" name="address_id" value="-1">
+                                    }
+
+                                </div>
+                                <div style="overflow: auto;">
+                                    <div id="addressLoader" style="text-align: center;display: none;" class="spinner">
+                                        <div class="bounce1"></div>
+                                        <div class="bounce2"></div>
+                                        <div class="bounce3"></div>
+                                    </div>
+
+                                    <div style="display: @NewAddressDisplayState;" id="new_address_div">
+
+                                        <div class="B">
+                                            <div class="Chkout_TbRow">
+
+                                                <div class="CkotPropRow">
+                                                    <div class="Chkout_TbRTite">רחוב</div>
+
+                                                    <input type="text" class="Chkout_tb" id="address" name="address">
+
+                                                </div>
+                                            </div>
+
+                                            <div class="Chkout_TbRow">
+
+                                                <div class="CkotPropRow">
+                                                    <div class="Chkout_TbRTite">עיר</div>
+
+                                                    <input type="text" class="Chkout_tb" id="city" name="city">
+
+                                                </div>
+                                            </div>
+                                            <div class="Chkout_TbRow">
+
+                                                <div class="CkotPropRow">
+                                                    <div class="Chkout_TbRTite">הערות<br />לכתובת</div>
+                                                    <textarea class="Chkout_tb" id="ship_notes" name="ship_notes"></textarea>
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="B">
+                                                <div class="Chkout_TbRow">
+                                                    <div class="CkotPropRow" style="border:0">
+                                                        <div class="Chkout_question" onclick="toggle_visibility('AddressSaveDiv');FixAccordion('AccCartCheckout');">
+                                                            <input type="checkbox" id="Address_remember" name="Address_remember" />
+                                                            <span class="Chkout_question_pad">לשמור את הכתובת? </span>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="B" style="display: none;" id="AddressSaveDiv">
+                                                    <div class="Chkout_TbRow">
+
+                                                        <div class="CkotPropRow">
+                                                            <div class="Chkout_TbRTite">איך?</div>
+
+                                                            <input type="text" class="Chkout_tb" name="Address_nick" id="Address_nick" placeholder="למשל 'בית'.." onclick="this.value='';document.getElementById('Address_remember').checked=true;">
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <!---->
+
+
+
+                            <div class="Chkout_TbRow">
+
+                                <div class="CkotPropRow">
+                                    <div class="Chkout_TbRTite">הערות<br />להזמנה</div>
+                                    <textarea class="Chkout_tb" id="order_notes" name="order_notes"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="Spacer20"></div>
+
+                        </div>
+
+
+
+
+
+                    </section>
+
+                </div>
+
+
+
+            </center>
+
+
+
+
+
+        </form>
+    </div>
+</div>
