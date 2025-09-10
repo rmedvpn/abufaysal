@@ -34,7 +34,7 @@
     sqlSelect = "SELECT * FROM mixturePotencyOptions WHERE is_active=1";
     var mixturePotencyOptions = faysal.Query(sqlSelect);
 
-    sqlSelect = "SELECT * FROM paperOptions WHERE is_active=1 order by gram_in_unit DESC";
+    sqlSelect = "SELECT * FROM paperOptions WHERE is_active=1";
     var paperOptions = faysal.Query(sqlSelect);
 
     sqlSelect = "SELECT * FROM quanOptions WHERE is_active=1 ORDER BY quan";
@@ -42,22 +42,8 @@
 
     sqlSelect = "SELECT * FROM strainOptions WHERE is_active=1";
     var strainOptions = faysal.Query(sqlSelect);
+
     int strainCnt = 0;
-
-
-    int quanOptionsCnt = quanOptions.Count();
-    int quanOptionsCounter = 0;
-    bool quanOptionsDispEven = true;
-    string quanOptionCurrentClass = "PropItemFull";
-    string quanOptiontitle = "";
-    if (quanOptionsCnt % 2 == 1)
-    {
-        quanOptionsDispEven = false;
-    }
-
-    int paper_icon_width = 100;
-
-    decimal potency = 1;
 
 }
 
@@ -113,39 +99,13 @@
                             <center>
                                 <button class="accordion" id="Acc_quan" style="display:none"></button>
 
-                                <div class="panel" style="width:90%;padding:0">
-                                    <div class="PropItemQuanMenu">
+                                <div class="panel" style="width:90%">
+                                    <div class="PropItemMenu">
 
                                         @foreach (var item in quanOptions)
                                         {
-                                            quanOptionsCounter++;
-
-                                            if (quanOptionsCounter == 1)
-                                            {
-                                                quanOptiontitle = item.title;
-                                            }
-
-                                            if (quanOptionsCounter > 1)
-                                            {
-                                                quanOptiontitle = "<br/>"+  item.quan + " פייסלים";
-
-                                                if (quanOptionsCounter % 2 == 0)
-                                                {
-                                                    quanOptionCurrentClass = "PropItem-R";
-                                                }
-                                                else
-                                                {
-                                                    quanOptionCurrentClass = "PropItem-L";
-                                                }
-
-                                            }
-                                            if (quanOptionsCounter == quanOptionsCnt && quanOptionsDispEven)
-                                            {
-                                                quanOptionCurrentClass = "PropItemFull";
-                                                quanOptiontitle = item.title;
-                                            }
-                                            <div class="@quanOptionCurrentClass" onclick="SelectItemProp('quan', @item.id)">
-                                                <img class="quan_icon" src="~/images/quan_icon.png" />  @Html.Raw(quanOptiontitle)
+                                            <div class="PropItem" onclick="SelectItemProp('quan', @item.id)">
+                                                @item.title
                                             </div>
                                             <div style="display:none"><input type="hidden" id="title_for_quan_@item.id" value="@item.title" /></div>
 
@@ -236,39 +196,16 @@
                                 <button class="accordion" id="Acc_paper" style="display:none"></button>
 
                                 <div class="panel" style="width:90%">
-
                                     <div class="PropItemMenu">
-                                        <div class="PaperColorSelect">גודל</div>
-
                                         @foreach (var item in paperOptions)
                                         {
-                                            paper_icon_width = paper_icon_width - 10;
-                                            string paper_icon_width_str = paper_icon_width.ToString() + "px";
-                                            <div class="PropPaperItem" onclick="SelectItemProp('paper', @item.id)">
-                                                <img class="paper_icon" src="~/images/paper_icon.png" style="width:@paper_icon_width_str" />
+                                            <div class="PropItem" onclick="SelectItemProp('paper', @item.id)">
                                                 @item.title
                                             </div>
-                                            <div class="Spacer5"></div>
                                             <div style="display:none"><input type="hidden" id="title_for_paper_@item.id" value="@item.title" /></div>
 
                                         }
-                                        <div class="Spacer10"></div>
-                                        <div class="PaperColorSelect">צבע</div>
-                                        <div class="A" style="text-align:center;margin-top:0">
-                                            
-                                            <span class="PropItem-N" >
-                                                <input type="radio" name="paper_color" value="0"  checked /> לא משנה
-                                            </span>
-                                            <span class="PropItem-N">
-                                                <input type="radio" name="paper_color" value="1" /> נייר לבן
-                                            </span>
-                                            <span class="PropItem-N">
-                                                <input type="radio" name="paper_color" value="2" /> נייר חום
-                                            </span>
-                                           
-                                        </div>
-                                        <div class="Spacer10"></div>
-                                        
+
 
                                         <input type="hidden" id="paper" name="paper" />
 
@@ -303,29 +240,15 @@
                                 <button class="accordion" id="Acc_MixturePotency" style="display:none"></button>
 
                                 <div class="panel" style="width:90%">
-                                    <div class="PropItemMenu" style="text-align:center">
+                                    <div class="PropItemMenu">
 
                                         @foreach (var item in mixturePotencyOptions)
                                         {
-                                            potency = item.potency;
-                                            int potInt = (int)(potency * 100);
-
-                                            string itmCls = "PropMixtureItem";
-                                            string txtColor = "#0d4133";
-                                            if (potInt > 50)
-                                            {
-                                                txtColor = "#fff";
-                                                // itmCls = "PropMixtureItemWhite";
-                                            }
-
-                                            <div class="@itmCls"
-                                                 style="background-color: rgba(13,65,51,@potency);"
-                                                 onclick="SelectItemProp('MixturePotency', @item.id)">
-                                                <div style="color:@txtColor;">@item.title</div>
+                                            <div class="PropItem" onclick="SelectItemProp('MixturePotency', @item.id)">
+                                                @item.title
                                             </div>
-                                            <div style="display:none">
-                                                <input type="hidden" id="title_for_MixturePotency_@item.id" value="@item.title" />
-                                            </div>
+                                            <div style="display:none"><input type="hidden" id="title_for_MixturePotency_@item.id" value="@item.title" /></div>
+
                                         }
 
                                         <input type="hidden" id="MixturePotency" name="MixturePotency" />

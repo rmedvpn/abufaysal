@@ -906,7 +906,17 @@ div.PropItemMenu {
     text-align: right;
     min-height:100px;
     margin-bottom: 20px;
-    padding:20px;
+    padding:10px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+div.PropItemQuanMenu {
+    overflow: auto;
+    background-color: #fff;
+    text-align: right;
+    min-height:100px;
+    margin-bottom: 20px;
+    padding:0;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
 }
@@ -934,6 +944,104 @@ div.PropItem:hover {
     font-family: Noyland;
     float:right;
 }
+
+div.PropMixtureItem {
+    overflow: auto;
+    background-color: var(--green);
+    margin: 5px;
+    padding: 10px;
+    margin-top:10px;
+    margin-bottom:10px;
+    border-radius: 20px;
+    color: var(--green);
+    font-size: 18px;
+    font-family: Noyland;
+    text-align: center;
+    width: 90%;
+}
+
+
+
+
+div.PropPaperItem {
+    overflow: auto;
+    background-color: #fff;
+    border: 2px solid #0d4133;
+    margin: 5px;
+    padding: 5px;
+    border-radius: 20px;
+    color: #0d4133;
+    font-size: 18px;
+    font-family: Noyland;
+    clear:both;
+    text-align:center;
+    
+}
+
+div.PropItemFull {
+    overflow: auto;
+    background-color: #fff;
+    border: 2px solid #0d4133;
+    margin: 10px;
+    padding: 5px;
+    border-radius: 20px;
+    color: #0d4133;
+    font-size: 18px;
+    font-family: Noyland;
+    clear:both;
+    text-align:center;
+    
+}
+div.PropItem-R {
+    overflow: auto;
+    background-color: #fff;
+    border: 2px solid #0d4133;
+    margin: 10px;
+    padding: 5px;
+    border-radius: 20px;
+    color: #0d4133;
+    font-size: 18px;
+    font-family: Noyland;
+    float: right;
+    width: 40%;
+    direction: rtl;
+    text-align: center;
+}
+div.PropItem-L {
+    overflow: auto;
+    background-color: #fff;
+    border: 2px solid #0d4133;
+    margin: 10px;
+    padding: 5px;
+    border-radius: 20px;
+    color: #0d4133;
+    font-size: 18px;
+    font-family: Noyland;
+    float: left;
+    width: 40%;
+    direction: rtl;
+    text-align: center;
+}
+span.PropItem-N {
+    background-color: #fff;
+    margin: 10px;
+    
+    border-radius: 20px;
+    color: #0d4133;
+    font-size: 18px;
+    font-family: Noyland;
+    direction: rtl;
+    text-align: center;
+}
+img.quan_icon{
+    height:10px;
+    width:auto;
+ 
+}
+img.paper_icon {
+    
+    float: right
+}
 span.SelectedPropTitle {
     float: left;
     padding-top: 10px;
@@ -941,7 +1049,7 @@ span.SelectedPropTitle {
     margin: 0px;
     margin-left: 20px;
     color: #ede7d5;
-    font-weight:400;
+    font-weight: 400;
 }
 div.PropItemStrain {
     float: right;
@@ -1477,6 +1585,17 @@ button.CartAddMoreBtn {
     text-align: left;
     border: 0;
     font-weight:lighter;
+}
+
+div .PaperColorSelect {
+    overflow: auto;
+    margin: 0;
+    padding: 0;
+    text-align: right;
+    font-family: Noyland;
+    font-size: 18px;
+    color:var(--brown);
+    text-align:right;
 }
 
 div .RegFormBg {
