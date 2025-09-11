@@ -541,7 +541,12 @@ function SelectItemProp(prop_type, prop_id) {
     let selected_field = ""; selected_field = document.getElementById(selected_field_name);
     let selected_data = ""; selected_data = document.getElementById(prop_type);
     let selected_title = ""; selected_title = document.getElementById(selected_title_element_name).value;
-   
+
+    if (prop_type == "paper") {
+        let paper_color = document.getElementById("paper_color").value;
+        selected_title += " " + paper_color;
+    }
+
     selected_field.innerHTML = selected_title;
     selected_data.value = prop_id;
     Accordionize(selected_acc);

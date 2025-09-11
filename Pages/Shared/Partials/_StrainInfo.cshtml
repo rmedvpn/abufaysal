@@ -1,0 +1,103 @@
+﻿@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = null;
+
+    var context = HttpContextAccessor.HttpContext;
+    var culture = new System.Globalization.CultureInfo("he-IL");
+    decimal default_shipping_charge = 0;
+    decimal cart_shipping_charge = 0;
+    decimal free_shipping_marker = 0;
+    decimal free_shipping_deficit = 0;
+    ViewData["callingPage"] = "CART";
+    int strain_id = 0; try { strain_id = Convert.ToInt32(ViewData["strain_id"]); } catch { }
+    var db = Database.Open("faysal");
+    var sqlSelect = "";
+
+    if (strain_id > 0)
+    {
+        sqlSelect = "SELECT * FROM strainOptions WHERE id=@0";
+        var strain = db.QuerySingle(sqlSelect, strain_id);
+        sqlSelect = "SELECT file_id FROM strainImages WHERE is_deleted=0 AND is_show=1 AND strain_id=@0";
+        var strainImages = db.Query(sqlSelect, strain_id);
+
+        <section class="wel_sec">
+            <div class="container">
+
+                <div class="B">
+                    <div class="B">
+                        <div class="A">
+                            <img class="ordersLogo" src="/images/s_logo.png" />
+                            <span style="z-index:9999;font-size:16px;color:white;float:left;padding-left:10px;direction:ltr;display:none" onclick="window.location.href = '/?go=orderenglish';"><span> 🌐 </span>For English, click here</span>
+                            <div class="B" style="float:left">
+
+                                <div class="ordersSmallButtons" style="float:left">
+                                    <img src="images/call.png" class="ordersSmallButtons" />
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="A">
+                        <div class="B" style="text-align:center;">
+                            <div class="OrderIntroMsg" style="text-align:center;">
+                                @strain.title
+                                <div class="OrderIntroSubMsg" style="font-size:14px;">
+                                    @strain.cat_title
+                                </div>
+                            </div>
+
+                            <div class="A">
+                            
+                                @foreach(var imgFile in strainImages)
+                                {
+                                    <img class="ProdImgs" src="pImgView?id=@imgFile.file_id" />
+                                    <div class="Spacer10"></div>
+                                }
+
+                            </div>
+
+                            @if (!String.IsNullOrEmpty(@strain.description))
+                            {
+                                <div class="OrderIntroMsg" style="text-align:center;">
+                                    תיאור
+                                    <div class="OrderIntroSubMsg" style="font-size:14px;">
+                                        @strain.description
+                                    </div>
+                                </div>
+                            }
+                            
+                              
+
+                        </div>
+
+                        <div class="A" style="text-align:center;">
+
+
+                            <button class="OrderPageChkoutBtn" type="button" onclick="controller.close('MainSb');" style="background-color:rgba(166, 160, 111, 1);width:50%;float:none;">&lt; חזרה</button>
+
+
+                        </div>
+
+
+
+
+
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    }
+    db.Close();
+
+
+}
+

@@ -89,6 +89,18 @@
             break;
 
 
+        case "StrainInfo":
+            if (true)
+            {
+                Layout = null;
+                ViewData["strain_id"] = Param("p2");
+                <div style="overflow:auto;padding:0;margin:0;">
+                    @await Html.PartialAsync("Shared/Partials/_StrainInfo")
+                </div>
+            }
+            break;
+
+
 
             /*
 

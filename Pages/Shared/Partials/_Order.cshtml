@@ -28,14 +28,16 @@
 
     ViewData["items_cnt"] = items_cnt;
 
-    sqlSelect = "SELECT * FROM mixtureOptions WHERE is_active=1";
+    sqlSelect = "SELECT * FROM mixtureOptions WHERE is_active=1 order by title";
     var mixtureOptions = faysal.Query(sqlSelect);
 
-    sqlSelect = "SELECT * FROM mixturePotencyOptions WHERE is_active=1";
+    sqlSelect = "SELECT * FROM mixturePotencyOptions WHERE is_active=1 ";
     var mixturePotencyOptions = faysal.Query(sqlSelect);
 
     sqlSelect = "SELECT * FROM paperOptions WHERE is_active=1 order by gram_in_unit DESC";
     var paperOptions = faysal.Query(sqlSelect);
+    sqlSelect = "SELECT * FROM paperColors WHERE is_active=1";
+    var paperColors = faysal.Query(sqlSelect);
 
     sqlSelect = "SELECT * FROM quanOptions WHERE is_active=1 ORDER BY quan";
     var quanOptions = faysal.Query(sqlSelect);
@@ -190,7 +192,7 @@
                                             string floatDir = "right";
                                             if (strainCnt % 2 == 0) { floatDir = "left"; }
                                             <div class="PropItemStrain" >
-                                                <div class="B" style="float:right">
+                                                <div class="B" style="float:right" onclick="SelectItemProp('strain', @item.id)">
                                                     <div class="B" style="float:right;width:80px;text-align:center">
                                                         <img style="height: 60px;max-width: 60px;border-radius: 10px;margin: 3px;padding: 3px;" src="pImgView?strain_id=@item.id" />
                                                     </div>
@@ -203,7 +205,7 @@
                                                 </div>
 
                                                 <div style="display:none"><input type="hidden" id="title_for_strain_@item.id" value="@item.title" /></div>
-                                                <div class="PropItemStrainBtn" onclick="SelectItemProp('strain', @item.id)">+</div>
+                                                <div class="PropItemStrainBtn" onclick="sbload('MainSb','Caller?p1=StrainInfo&p2=@item.id');">?</div>
                                             </div>
                                         }
                                         <input type="hidden" id="strain" name="strain" />
@@ -242,7 +244,7 @@
 
                                         @foreach (var item in paperOptions)
                                         {
-                                            paper_icon_width = paper_icon_width - 10;
+                                            paper_icon_width = paper_icon_width - 20;
                                             string paper_icon_width_str = paper_icon_width.ToString() + "px";
                                             <div class="PropPaperItem" onclick="SelectItemProp('paper', @item.id)">
                                                 <img class="paper_icon" src="~/images/paper_icon.png" style="width:@paper_icon_width_str" />
@@ -253,19 +255,20 @@
 
                                         }
                                         <div class="Spacer10"></div>
-                                        <div class="PaperColorSelect">צבע</div>
+                                        <div class="PaperColorSelect">צבע הנייר</div>
                                         <div class="A" style="text-align:center;margin-top:0">
                                             
                                             <span class="PropItem-N" >
-                                                <input type="radio" name="paper_color" value="0"  checked /> לא משנה
+                                                <input type="radio" name="paper_color" value="0" checked onclick="document.getElementById('paper_color').value='';if(document.getElementById('paper').value!=''){SelectItemProp('paper',document.getElementById('paper').value)}" /> לא משנה
                                             </span>
-                                            <span class="PropItem-N">
-                                                <input type="radio" name="paper_color" value="1" /> נייר לבן
-                                            </span>
-                                            <span class="PropItem-N">
-                                                <input type="radio" name="paper_color" value="2" /> נייר חום
-                                            </span>
-                                           
+                                            @foreach(var pColor in paperColors)
+                                            {
+                                                <span class="PropItem-N">
+                                                    <input type="radio" name="paper_color" value="@pColor.id" onclick="document.getElementById('paper_color').value='@pColor.title';if(document.getElementById('paper').value!=''){SelectItemProp('paper',document.getElementById('paper').value)}" /> @pColor.title
+                                                </span>
+                                            }
+                                            <div style="display:none"><input type="hidden" id="paper_color" name="paper_color" value="" /></div>
+
                                         </div>
                                         <div class="Spacer10"></div>
                                         
@@ -365,21 +368,39 @@
                             <center>
                                 <button class="accordion" id="Acc_mixture" style="display:none"></button>
 
-                                <div class="panel" style="width:90%">
-                                    <div class="PropItemMenu">
+                                <div class="panel" style="width:90%;padding:0;margin:0">
+
+                                    <div class="PropItemMenu" style="padding:0;margin:0;text-align:center">
+
                                         @foreach (var item in mixtureOptions)
                                         {
-                                            <div class="PropItem" onclick="SelectItemProp('mixture', @item.id)">
-                                                @item.title
+                                            strainCnt++;
+                                            string floatDir = "right";
+                                            if (strainCnt % 2 == 0) { floatDir = "left"; }
+                                            <div class="PropItemMixture" onclick="SelectItemProp('mixture', @item.id)">
+                                                <div class="B" >
+                                                    <div class="B" style="float:right;width:80px;text-align:center">
+                                                        <img style="height: 60px;max-width: 60px;border-radius: 10px;margin: 3px;padding: 3px;" src="MixOptImgView?id=@item.id" />
+                                                    </div>
+
+                                                    <div class="PropItemStrainTitle" >
+                                                        <div class="B">@item.title</div>
+                                                        <div class="PropItemStrainSubTitle" style="font-size:16px;">@item.cat_title</div>
+                                                    </div>
+
+                                                </div>
+
+                                                <div style="display:none"><input type="hidden" id="title_for_mixture_@item.id" value="@item.cat_title @item.title" /></div>
+                                              
                                             </div>
-                                            <div style="display:none"><input type="hidden" id="title_for_mixture_@item.id" value="@item.title" /></div>
-
                                         }
-
                                         <input type="hidden" id="mixture" name="mixture" />
 
 
+
                                     </div>
+
+
 
                                 </div>
 
