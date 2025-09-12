@@ -806,6 +806,7 @@ namespace Faysal.Helpers
             int MixturePotency = 0; try { MixturePotency = Convert.ToInt32(Param(context, "MixturePotency")); } catch { }
             int Mixture = 0; try { Mixture = Convert.ToInt32(Param(context, "Mixture")); } catch { }
             int quanOfPackages = 1; try { quanOfPackages = Convert.ToInt32(Param(context, "quanOfPackages")); } catch { }
+            int paper_color = 1; try { paper_color = Convert.ToInt32(Param(context, "paperColor")); } catch { }
 
             string retTxtHtml = "";
             if (quan == 0) retTxtHtml += "נא להזין כמות מבוקשת!<br>";
@@ -913,8 +914,8 @@ namespace Faysal.Helpers
             {
                 int cart_id = 0; try { cart_id = InitCart(); } catch { }
 
-                sqlSelect = "INSERT INTO cart(ts,u_id,session_id,quanOfPackages,quanInPackage,quan_title,quan_labor_cost,quan_labor_multiplier,quan_labor_charge,strain_title,strain_gram_cost,strain_multiplier,strain_gram_charge,paper_title,paper_gram_in_unit,paper_nick,paper_unit_cost,mixture_title,mixture_gram_cost,mixture_multiplier,mixture_gram_charge,potency_title,potency,potency_nick,total_cost,total_price,unit_cost,unit_price,total_gram,total_potent_gram,mixture_price,potent_price,sale_price,unit_sale_price,last_activity,cart_id)";
-                sqlSelect += " VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19,@20,@21,@22,@23,@24,@25,@26,@27,@28,@29,@30,@31,@32,@33,@34,@35)";
+                sqlSelect = "INSERT INTO cart(ts,u_id,session_id,quanOfPackages,quanInPackage,quan_title,quan_labor_cost,quan_labor_multiplier,quan_labor_charge,strain_title,strain_gram_cost,strain_multiplier,strain_gram_charge,paper_title,paper_gram_in_unit,paper_nick,paper_unit_cost,mixture_title,mixture_gram_cost,mixture_multiplier,mixture_gram_charge,potency_title,potency,potency_nick,total_cost,total_price,unit_cost,unit_price,total_gram,total_potent_gram,mixture_price,potent_price,sale_price,unit_sale_price,last_activity,cart_id,quan_option_id,strain_option_id,paper_option_id,mixture_potency_option_id,mixture_option_id,paper_color)";
+                sqlSelect += " VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19,@20,@21,@22,@23,@24,@25,@26,@27,@28,@29,@30,@31,@32,@33,@34,@35,@36,@37,@38,@39,@40,@41)";
                 db.Execute(sqlSelect, local_time, u_id, sessionId, quanOfPackages, requested_quan, quan_option_title, quan_labor_cost, quan_multiplier, quan_labor_charge,
                     strain_option_title, strain_gram_cost, strain_multiplier, gram_charge,
                     paper_option_title, gram_in_unit, paper_nick, paper_unit_cost,
@@ -922,7 +923,7 @@ namespace Faysal.Helpers
                     mixture_potency_option_title, potency, mixture_potency_option_nick,
                     total_cost, total_price, unit_cost, unit_price,
                     total_gram, total_potent_gram, mixture_price, potent_price,
-                    sale_price, unit_sale_price, local_time,cart_id);
+                    sale_price, unit_sale_price, local_time,cart_id,quan, strain, paper, MixturePotency, Mixture, paper_color);
 
                 CartReCalculate(context);
                 theHtmlOutput = "OK";
@@ -936,7 +937,7 @@ namespace Faysal.Helpers
         {
             System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("he-IL");
             string sessionId = context.Session.Id;
-            int member_id = 0;
+            int u_id = WebSecurity.CurrentUserId;
             int item_serial = 0; try { item_serial = Convert.ToInt32(Param(context, "param1")); } catch { }
             string theValue = Param(context, "value");
             DateTime local_time = AppFunctions.LocalTime();
@@ -959,7 +960,14 @@ namespace Faysal.Helpers
 
             db.Execute(sqlSelect, item_serial);
             CartReCalculate(context);
-            theHtmlOutput = "!!!";
+
+            sqlSelect = "SELECT top(1) serial FROM cart WHERE u_id=@0";
+            var is_cart = db.QuerySingle(sqlSelect, u_id);
+            if (is_cart == null)
+            {
+                theHtmlOutput = "!!!";
+            }
+            
             db.Close();
             return theHtmlOutput;
         }
@@ -1126,8 +1134,8 @@ namespace Faysal.Helpers
                     new_order_id = order.order_id;
                     foreach (var item in cart)
                     {
-                        sqlSelect = "INSERT INTO orderitems(ts,order_id,u_id,item_status,item_type,quanOfPackages,quanInPackage,quan_title,quan_labor_cost,quan_labor_multiplier,quan_labor_charge,strain_title,strain_gram_cost,strain_multiplier,strain_gram_charge,paper_title,paper_gram_in_unit,paper_nick,paper_unit_cost,mixture_title,mixture_gram_cost,mixture_multiplier,mixture_gram_charge,potency_title,potency,potency_nick,total_cost,total_price,unit_cost,unit_price,total_gram,total_potent_gram,mixture_price,potent_price,sale_price,unit_sale_price) ";
-                        sqlSelect += " VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19,@20,@21,@22,@23,@24,@25,@26,@27,@28,@29,@30,@31,@32,@33,@34,@35)";
+                        sqlSelect = "INSERT INTO orderitems(ts,order_id,u_id,item_status,item_type,quanOfPackages,quanInPackage,quan_title,quan_labor_cost,quan_labor_multiplier,quan_labor_charge,strain_title,strain_gram_cost,strain_multiplier,strain_gram_charge,paper_title,paper_gram_in_unit,paper_nick,paper_unit_cost,mixture_title,mixture_gram_cost,mixture_multiplier,mixture_gram_charge,potency_title,potency,potency_nick,total_cost,total_price,unit_cost,unit_price,total_gram,total_potent_gram,mixture_price,potent_price,sale_price,unit_sale_price,last_activity,quan_option_id,strain_option_id,paper_option_id,mixture_potency_option_id,mixture_option_id,paper_color) ";
+                        sqlSelect += " VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19,@20,@21,@22,@23,@24,@25,@26,@27,@28,@29,@30,@31,@32,@33,@34,@35,@36,@37,@38,@39,@40,@41,@42)";
 
                         db.Execute(sqlSelect, local_time, new_order_id, u_id, item_status, item_type,
                             item.quanOfPackages, item.quanInPackage, item.quan_title, item.quan_labor_cost, item.quan_labor_multiplier, item.quan_labor_charge,
@@ -1136,7 +1144,8 @@ namespace Faysal.Helpers
                             item.mixture_title, item.mixture_gram_cost, item.mixture_multiplier, item.mixture_gram_charge,
                             item.potency_title, item.potency, item.potency_nick,
                             item.total_cost, item.total_price, item.unit_cost, item.unit_price,
-                            item.total_gram, item.total_potent_gram, item.mixture_price, item.potent_price, item.sale_price, item.unit_sale_price);
+                            item.total_gram, item.total_potent_gram, item.mixture_price, item.potent_price, item.sale_price, item.unit_sale_price, local_time, item.quan_option_id, item.strain_option_id, item.paper_option_id, item.mixture_potency_option_id, item.mixture_option_id, item.paper_color
+);
                     }
 
                     string wanum_mask = ""; try { wanum_mask = MaskString(wanum); } catch { }
@@ -1146,7 +1155,7 @@ namespace Faysal.Helpers
 
                     sqlSelect = "SET IDENTITY_INSERT OrderTracking ON;INSERT INTO OrderTracking (order_id,ts,u_id,order_status,wanum,address,city,order_total,shipping_charge,grand_total,round_up_amount,after_round_up_grand_total,order_notes) ";
                     sqlSelect += " VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12);";
-                    sqlSelect += "SET IDENTITY_INSERT OrderTracking OFF;";
+                    sqlSelect += "SET IDENTITY_INSERT OrderTracking OFF;";                                                                                                                                
                     db.Execute(sqlSelect, new_order_id, local_time, u_id, order_status, wanum_mask, disp_address, city, order_total, shipping_charge, grand_total, round_up_amount, after_round_up_grand_total, order_notes);
 
 

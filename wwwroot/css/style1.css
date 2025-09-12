@@ -1107,7 +1107,7 @@ button.CartQuanAddBtn {
     color: #fff;
     border-radius: 20px;
     cursor: pointer;
-    width: 150px;
+    width: 130px;
 }
 button.OrderPageChkoutBtn {
     padding-right: 10px;
@@ -1195,6 +1195,14 @@ div.CartPriceSubLabel {
     font-size: 16px;
     font-family: Noyland;
     font-weight: normal;
+}
+div.CartPriceSubSubLabel {
+    /*border: 2px solid #0d4133;*/
+    color: var(--brown);
+    font-size: 14px;
+    font-family: Noyland;
+    font-weight: normal;
+    padding:2px;
 }
 
 button.CartCheckoutBtn {
@@ -1337,13 +1345,53 @@ div.OrderFormPrice {
 div.CartInfoItem {
     overflow: auto;
     font-size: 16px;
-    border-bottom: 1px dashed var(--green);
-    padding:5px;
+    border-bottom: 1px dashed var(--background);
+    padding: 5px;
+    font-weight: bold;
+    
+    color: var(--variable-collection-light-green);
 }
 
 div.CartPrice {
     float: left;
-    font-size: 14px;
+    font-size: 16px;
+    font-weight: normal;
+    color: var(--brown);
+    max-width: 200px; /* set your desired max width */
+    white-space: normal; /* allow wrapping */
+    word-wrap: break-word; /* wrap long words if needed */
+    overflow-wrap: anywhere; /* modern replacement, ensures wrapping */
+    text-align:left;
+}
+div.CartGrams {
+    overflow:auto;
+    padding:2px;
+    margin-right:10px;
+    font-size: 16px;
+    font-weight: normal;
+    color: var(--brown);
+     /* set your desired max width */
+    white-space: normal; /* allow wrapping */
+    word-wrap: break-word; /* wrap long words if needed */
+    overflow-wrap: anywhere; /* modern replacement, ensures wrapping */
+    text-align: right;
+    float:left;
+    clear:both;
+}
+
+div.CartItemQuanLabel {
+    padding:2px;
+    padding-right: 5px;
+    padding-left: 5px;
+    margin-top: 2px;
+    margin-left: 10px;
+    margin-right: 10px;
+    float: right;
+    background-color: var(--brown);
+    color: #fff;
+    font-size: 16px;
+    text-align: center; /* centers text horizontally */
+    border-radius: 20px;
 }
 
 span.MiniTag {

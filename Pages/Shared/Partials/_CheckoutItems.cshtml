@@ -10,7 +10,8 @@
     int u_id = WebSecurity.CurrentUserId;
     var db = Database.Open("faysal");
     var cart = db.Query("SELECT * FROM cart WHERE u_id=@0 order by ts", u_id);
-    db.Close();
+    string sqlSelect = "";
+ 
 
     int itemCounter = 0;
     decimal order_total = 0;
@@ -32,39 +33,77 @@
     try { free_shipping_marker = Convert.ToDecimal(Default_Free_Shipping_Marker); } catch { }
 
 
-}
+
 <div class="B" style="text-align:right;">
     <div class="B" style="color:#000">
         @if (!cart.Any())
         {
-            <div class="A" style="color:#f00;"> עדיין לא התווספו פריטים להזמנה </div>
-        }
-        else
-        {
-            foreach (var item in cart)
+                <div class="A" style="color:#f00;"> עדיין לא התווספו פריטים להזמנה </div>
+            }
+            else
             {
-                itemCounter++;
-                decimal item_total = item.sale_price * item.quanOfPackages;
-                order_total += item_total;
+                foreach (var item in cart)
+                {
+                    itemCounter++;
+                    decimal item_total = item.sale_price * item.quanOfPackages;
+                    decimal total_gram = item.total_gram ;
+                    decimal total_potent_gram = item.total_potent_gram ;
+                    decimal total_mixture_gram = total_gram - total_potent_gram;
+                    decimal unit_sale_price = 0;
+                    order_total += item_total;
+                    int mixture_option_id = item.mixture_option_id;
+                    sqlSelect = "SELECT cat_title,cat_title_e FROM MixtureOptions WHERE id=@0";
+                    var mixtureOpt = db.QuerySingle(sqlSelect, mixture_option_id);
+                    string mixture_cat_title = "";
+                    try { mixture_cat_title = mixtureOpt.cat_title; } catch { }
 
-                <div class="CartRow">
+                    int paper_color_id = item.paper_color;
+                    sqlSelect = "SELECT * FROM PaperColors WHERE id=@0";
+                    var PaperOpt = db.QuerySingle(sqlSelect, paper_color_id);
+                    string paper_color_title = "";
+                    try { paper_color_title = PaperOpt.title; } catch { }
+
+                    try {
+                        unit_sale_price = Convert.ToDecimal(item.sale_price) / Convert.ToDecimal(item.quanInPackage);
+                        } 
+                    catch { }
+
+                    <div class="CartRow">
                     <div class="B">
                         <div class="CartRowTitle">
                             @item.quan_title
+                          
                         </div>
 
                         <div class="CartRowDesc">
-                            <div class="CartInfoItem">זן<div class="CartPrice"><b>@item.strain_title</b></div></div>
-                            <div class="CartInfoItem">מינון<div class="CartPrice"><b>@item.potency_title</b></div></div>
-                            <div class="CartInfoItem">נייר<div class="CartPrice"><b>@item.paper_title</b></div></div>
-                            <div class="CartInfoItem">פארש<div class="CartPrice"><b>@item.mixture_title</b></div></div>
+                                <div class="CartInfoItem">נייר<div class="CartPrice"> @item.paper_title @paper_color_title</div></div>
+                                <div class="CartInfoItem">מינון<div class="CartPrice">@item.potency_title</div></div>
+                                <div class="CartInfoItem">
+                                    <div class="B" style="color:var(--green);">מפרט טכני</div>
+                                    <div class="CartGrams"> @total_gram.ToString("0.##", culture) גרם קססה סה"כ</div>
 
+                                    <div class="CartGrams"> @total_potent_gram.ToString("0.##", culture) גרם  @item.strain_title</div>
+                                @if (item.potency < 1)
+                            {
+                                        <div class="CartGrams"> @total_mixture_gram.ToString("0.##", culture) גרם @mixture_cat_title @item.mixture_title</div>
+                            }
+                                </div>
+
+
+
+
+
+
+                                <div class="CartInfoItem" style="color:var(--green);">
+                                    מחיר לפייסל<div class="CartPrice">@unit_sale_price.ToString("C1", culture)</div>
+                                </div>
+                             
 
                             @if (item.quanOfPackages > 1)
                             {
                                 <div class="CartInfoItem">
-                                    מחיר החפיסה
-                                    <div class="CartPrice"><b>@item.sale_price.ToString("C0", culture)</b></div>
+                                    מחיר
+                                    <div class="CartPrice">@item.sale_price.ToString("C1", culture)</div>
                                 </div>
 
                             }
@@ -158,3 +197,6 @@
     </div>
 
 </div>
+
+    db.Close();
+}

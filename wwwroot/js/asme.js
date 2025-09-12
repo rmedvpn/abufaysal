@@ -206,28 +206,28 @@ function AjaxActions(field, value, loader_element, param1, param2, param3, param
 
                 case "AddToCart":
                 case "ClearCart":
+                    if (!theRes.startsWith("!$!")) {
 
-                    PageLoad("ORDERS");
+                        PageLoad("ORDERS");
+
+                    }
+                    else {
+                        document.getElementById('AddToCartErr').innerHTML = theRes.replace("!$!", "");
+                        showElement('AddToCartErr');
+
+                    }
 
                     break;
 
                 case "CartAction":
-                    if (!theRes.startsWith("!$!")) {
-                        if (value == 'REMOVE') {
-                            PageLoad("ORDERS");
-                        }
-                        else {
-                      //      AjaxUpdate('Cart', 'MainBodyContent', 'MainLoader', 'CalcItemCostForm');
-                            AjaxUpdate('CheckoutItems', 'CheckoutItemsDiv', 'MainLoader', 'CalcItemCostForm');
-                        }
-                        
-
+                    if (theRes.startsWith("!!!")) {
+                        PageLoad("ORDERS");
+                    }
+                    else {
+                        AjaxUpdate('CheckoutItems', 'CheckoutItemsDiv', 'MainLoader', 'CalcItemCostForm');
                     }
 
-                    if (!theRes.startsWith("!!!")) {
-                        Notify(theRes.replace("!$!", ""), 1);
-                        console.log('theRes ' + theRes);
-                    }
+                
 
                     break;
 
@@ -286,6 +286,7 @@ function CalcItemCost() {
         document.getElementById('mixture').value.trim() !== "" &&
         document.getElementById('MixturePotency').value.trim() !== ""
     ) {
+        hideElement("AddToCartErr");
         AjaxUpdate('CalcItemCost', 'ItemCostReturnContainer', 'MainLoader', 'CalcItemCostForm', cartItemsCnt);
     }
 
@@ -534,7 +535,8 @@ function PageLoad(thePage) {
 
 }
 
-function SelectItemProp(prop_type, prop_id) {
+function SelectItemProp(prop_type, prop_id,prop_value) {
+    prop_value = prop_value || "";
     let selected_acc = "Acc_" + prop_type;
     let selected_field_name = "selected_" + prop_type;
     let selected_title_element_name = "title_for_" + prop_type + "_" + prop_id;
@@ -546,24 +548,110 @@ function SelectItemProp(prop_type, prop_id) {
         let paper_color = document.getElementById("paper_color").value;
         selected_title += " " + paper_color;
     }
+    if (prop_type == "MixturePotency") {
+        console.log("prop_value " + prop_value);
+        if (prop_value == 100) {
+            hideElement('MixtureSelectionDiv');
+            document.getElementById('mixture').value = "-1";
+        }
+        else {
+            if (document.getElementById('mixture').value == "-1") {
+                document.getElementById('mixture').value = "";
+                document.getElementById('selected_mixture').innerHTML = "";
+            }
+
+           
+
+            showElement('MixtureSelectionDiv');
+        }
+    }
 
     selected_field.innerHTML = selected_title;
     selected_data.value = prop_id;
     Accordionize(selected_acc);
     CalcItemCost();
 }
-function CartChangeQuan(theAction) {
+function CartChangeQuan2(theAction) {
     theAction = theAction || "+1";
     let displayElement = document.getElementById("quanOfPackagesLabel");
     let InputElement = document.getElementById("quanOfPackages");
+    let UnitPriceElement = document.getElementById("unit_price");
+    let UnitPricedisplayElement = document.getElementById("CartPriceLabel");
     let curQuan = parseInt(InputElement.value, 10);
-    console.log(InputElement.value)
-    console.log(theAction)
+    let unit_price = parseInt(UnitPriceElement.value, 10);
+ //   console.log(InputElement.value)
+//    console.log(theAction)
     console.log(curQuan)
     if (theAction == "+1") {InputElement.value = curQuan + 1;}
     if (theAction == "-1") {
         if (curQuan > 1) {InputElement.value = curQuan - 1;}
     }
-    displayElement.innerHTML = InputElement.value;
+    curQuan = parseInt(InputElement.value, 10);
+    console.log(curQuan)
 
+    let tot_price = curQuan * unit_price;
+    console.log("tot_price " + tot_price);
+    displayElement.innerHTML = InputElement.value;
+    UnitPricedisplayElement.innerHTML = tot_price;
+
+}
+
+function CartChangeQuan(theAction) {
+    theAction = theAction || "+1";
+    let displayElement = document.getElementById("quanOfPackagesLabel");
+    let InputElement = document.getElementById("quanOfPackages");
+    let UnitPriceElement = document.getElementById("unit_price");
+    let UnitPricedisplayElement = document.getElementById("CartPriceLabel");
+    ///
+    let TotalGramElement = document.getElementById("total_gram");
+    let TotalGramdisplayElement = document.getElementById("total_gram_display_element");
+    let TotalPotentGramElement = document.getElementById("total_potent_gram");
+    let TotalPotentGramdisplayElement = document.getElementById("total_potent_gram_display_element");
+    let TotalMixtureGramElement = document.getElementById("total_mixture_gram");
+    let TotalMixtureGramdisplayElement = document.getElementById("total_mixture_gram_display_element");
+
+    let curQuan = parseInt(InputElement.value, 10);
+    let unit_price = parseFloat(UnitPriceElement.value); // keep decimals
+    let total_gram = parseFloat(TotalGramElement.value); // keep decimals
+    let total_potent_gram = parseFloat(TotalPotentGramElement.value); // keep decimals
+    let total_mixture_gram = parseFloat(TotalMixtureGramElement.value); // keep decimals
+
+    if (theAction == "+1") {
+        InputElement.value = curQuan + 1;
+    }
+    if (theAction == "-1") {
+        if (curQuan > 1) {
+            InputElement.value = curQuan - 1;
+        }
+    }
+
+    curQuan = parseInt(InputElement.value, 10);
+    let tot_price = curQuan * unit_price;
+    let new_total_gram = curQuan * total_gram;
+    let new_total_potent_gram = curQuan * total_potent_gram;
+    let new_total_mixture_gram = curQuan * total_mixture_gram;
+
+    // Format currency, show decimals only if needed
+    let formattedPrice = tot_price.toLocaleString("he-IL", {
+        style: "currency",
+        currency: "ILS",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2
+    });
+    console.log("unit_price " + formattedPrice)
+
+    displayElement.innerHTML = InputElement.value;
+    UnitPricedisplayElement.innerHTML = formattedPrice;
+
+    // Format grams with max 1 decimal, only if needed
+    function formatGrams(value) {
+        return value.toLocaleString("he-IL", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        });
+    }
+
+    TotalGramdisplayElement.innerHTML = formatGrams(new_total_gram);
+    TotalPotentGramdisplayElement.innerHTML = formatGrams(new_total_potent_gram);
+    TotalMixtureGramdisplayElement.innerHTML = formatGrams(new_total_mixture_gram);
 }

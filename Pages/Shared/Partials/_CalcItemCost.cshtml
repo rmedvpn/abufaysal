@@ -55,6 +55,8 @@
     string mixture_potency_option_title = "";
     string mixture_potency_option_nick = "";
     string mixture_option_title = "";
+    string mixture_option_cat_title = "";
+    string mixture_option_cat_title_e = "";
 
     string quan_option_title_e = "";
     string paper_option_title_e = "";
@@ -74,6 +76,7 @@
     decimal mixture_multiplier = 0;
 
     decimal total_potent_gram = 0;
+    decimal total_mixture_gram = 0;
     decimal total_gram = 0;
     decimal mixture_price = 0;
     decimal potent_price = 0;
@@ -141,10 +144,15 @@
             mixture_gram_charge = mixture_gram_cost * mixture_multiplier;
             mixture_option_title = mixtureOptions.title;
             mixture_option_title_e = mixtureOptions.title_e;
+            mixture_option_cat_title = mixtureOptions.cat_title;
+            mixture_option_cat_title_e = mixtureOptions.cat_title_e;
         }
 
-        total_gram = requested_quan * gram_in_unit;
+        //total_gram = requested_quan * gram_in_unit;
+        total_gram = (decimal)requested_quan * gram_in_unit;
+
         total_potent_gram = total_gram * potency;
+        total_mixture_gram = total_gram - total_potent_gram;
         mixture_price = (total_gram - total_potent_gram) * mixture_gram_charge;
         potent_price = total_potent_gram * gram_charge;
         total_price = potent_price + mixture_price + quan_labor_charge;
@@ -199,13 +207,37 @@ else
                 1
                 </div>
             <input type="hidden" name="quanOfPackages" id="quanOfPackages" value="1" />
+            <input type="hidden" name="unit_price" id="unit_price" value="@sale_price.ToString("C", culture)" />
+            <input type="hidden" name="total_gram" id="total_gram" value="@total_gram.ToString("0.##", culture)" />
+            <input type="hidden" name="total_potent_gram" id="total_potent_gram" value="@total_potent_gram.ToString("0.##", culture)" />
+            <input type="hidden" name="total_mixture_gram" id="total_mixture_gram" value="@total_mixture_gram.ToString("0.##", culture)" />
 
             <button type="button" class="CartQuanBtn" onclick="CartChangeQuan('-1');">-</button>
 
         </div>
         <div class="CartPriceLabel">
-            <div class="B">@sale_price.ToString("C", culture)</div>
+            <div class="B" id="CartPriceLabel">@sale_price.ToString("C0", culture)</div>
             <div class="CartPriceSubLabel">יוצא @unit_sale_price.ToString("C", culture) לפייסל</div>
+            <div class="CartPriceSubLabel"><span id="total_gram_display_element">@total_gram.ToString("0.##", culture)</span> גרם קססה סה"כ</div>
+            <div class="CartPriceSubSubLabel">
+                <span id="total_potent_gram_display_element">@total_potent_gram.ToString("0.##", culture)</span>
+                גרם @strain_option_title
+                @if (total_mixture_gram > 0)
+                {
+                    <div class="B">
+                        
+                        <span id="total_mixture_gram_display_element">@total_mixture_gram.ToString("0.##", culture)</span>
+                        גרם @mixture_option_cat_title @mixture_option_title
+
+                    </div>
+                }
+                else
+                {
+                    <span id="total_mixture_gram_display_element" style="display:none"></span>
+                }
+
+
+            </div>
 
         </div>
      

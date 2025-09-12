@@ -259,12 +259,12 @@
                                         <div class="A" style="text-align:center;margin-top:0">
                                             
                                             <span class="PropItem-N" >
-                                                <input type="radio" name="paper_color" value="0" checked onclick="document.getElementById('paper_color').value='';if(document.getElementById('paper').value!=''){SelectItemProp('paper',document.getElementById('paper').value)}" /> לא משנה
+                                                <input type="radio" name="paperColor" value="0" checked onclick="document.getElementById('paper_color').value='';if(document.getElementById('paper').value!=''){SelectItemProp('paper',document.getElementById('paper').value)}" /> לא משנה
                                             </span>
                                             @foreach(var pColor in paperColors)
                                             {
                                                 <span class="PropItem-N">
-                                                    <input type="radio" name="paper_color" value="@pColor.id" onclick="document.getElementById('paper_color').value='@pColor.title';if(document.getElementById('paper').value!=''){SelectItemProp('paper',document.getElementById('paper').value)}" /> @pColor.title
+                                                    <input type="radio" name="paperColor" value="@pColor.id" onclick="document.getElementById('paper_color').value='@pColor.title';if(document.getElementById('paper').value!=''){SelectItemProp('paper',document.getElementById('paper').value)}" /> @pColor.title
                                                 </span>
                                             }
                                             <div style="display:none"><input type="hidden" id="paper_color" name="paper_color" value="" /></div>
@@ -323,7 +323,7 @@
 
                                             <div class="@itmCls"
                                                  style="background-color: rgba(13,65,51,@potency);"
-                                                 onclick="SelectItemProp('MixturePotency', @item.id)">
+                                                 onclick="SelectItemProp('MixturePotency', @item.id,@potInt)">
                                                 <div style="color:@txtColor;">@item.title</div>
                                             </div>
                                             <div style="display:none">
@@ -349,52 +349,60 @@
                     <div class="OrderMakerSpacer"></div>
 
 
-                    <div class="PropItemSelection">
+                    <div class="B" id="MixtureSelectionDiv">
+                        <div class="PropItemSelection">
 
 
-                        <div class="PropRow" onclick="Accordionize('Acc_mixture');">
-                            <div class="PropTitle">פארש</div>
-                            <span class="ExpandMenuOption">+</span>
-                            <span id="selected_mixture" class="SelectedPropTitle"></span>
+                            <div class="PropRow" onclick="Accordionize('Acc_mixture');">
+                                <div class="PropTitle">פארש</div>
+                                <span class="ExpandMenuOption">+</span>
+                                <span id="selected_mixture" class="SelectedPropTitle"></span>
+
+                            </div>
+
+
+
 
                         </div>
-
-
-
-
-                    </div>
-                    <div class="B" style="text-align:center">
                         <div class="B" style="text-align:center">
-                            <center>
-                                <button class="accordion" id="Acc_mixture" style="display:none"></button>
+                            <div class="B" style="text-align:center">
+                                <center>
+                                    <button class="accordion" id="Acc_mixture" style="display:none"></button>
 
-                                <div class="panel" style="width:90%;padding:0;margin:0">
+                                    <div class="panel" style="width:90%;padding:0;margin:0">
 
-                                    <div class="PropItemMenu" style="padding:0;margin:0;text-align:center">
+                                        <div class="PropItemMenu" style="padding:0;margin:0;text-align:center">
 
-                                        @foreach (var item in mixtureOptions)
-                                        {
-                                            strainCnt++;
-                                            string floatDir = "right";
-                                            if (strainCnt % 2 == 0) { floatDir = "left"; }
-                                            <div class="PropItemMixture" onclick="SelectItemProp('mixture', @item.id)">
-                                                <div class="B" >
-                                                    <div class="B" style="float:right;width:80px;text-align:center">
-                                                        <img style="height: 60px;max-width: 60px;border-radius: 10px;margin: 3px;padding: 3px;" src="MixOptImgView?id=@item.id" />
+                                            @foreach (var item in mixtureOptions)
+                                            {
+                                                strainCnt++;
+                                                string floatDir = "right";
+                                                if (strainCnt % 2 == 0) { floatDir = "left"; }
+                                                <div class="PropItemMixture" onclick="SelectItemProp('mixture', @item.id)">
+                                                    <div class="B">
+                                                        <div class="B" style="float:right;width:80px;text-align:center">
+                                                            <img style="height: 60px;max-width: 60px;border-radius: 10px;margin: 3px;padding: 3px;" src="MixOptImgView?id=@item.id" />
+                                                        </div>
+
+                                                        <div class="PropItemStrainTitle">
+                                                            <div class="B">@item.title</div>
+                                                            <div class="PropItemStrainSubTitle" style="font-size:16px;">@item.cat_title</div>
+                                                        </div>
+
                                                     </div>
 
-                                                    <div class="PropItemStrainTitle" >
-                                                        <div class="B">@item.title</div>
-                                                        <div class="PropItemStrainSubTitle" style="font-size:16px;">@item.cat_title</div>
-                                                    </div>
+                                                    <div style="display:none">
+                                                        <input type="hidden" id="title_for_mixture_@item.id" value="@item.cat_title @item.title" />
+                                                        </div>
 
                                                 </div>
+                                            }
+                                            <input type="hidden" id="mixture" name="mixture" />
+                                            
 
-                                                <div style="display:none"><input type="hidden" id="title_for_mixture_@item.id" value="@item.cat_title @item.title" /></div>
-                                              
-                                            </div>
-                                        }
-                                        <input type="hidden" id="mixture" name="mixture" />
+
+
+                                        </div>
 
 
 
@@ -402,21 +410,21 @@
 
 
 
-                                </div>
+                                </center>
 
-
-
-                            </center>
+                            </div>
 
                         </div>
 
                     </div>
+                 
+                    
                     <center>
-                        <div class="spinner" style="font-size: 20px;display:none;" id="ItemCostLoader">
-                            <div class="bounce1"></div>
-                            <div class="bounce2"></div>
-                            <div class="bounce3"></div>
-                        </div>
+                        
+
+                        <div class="regErrMsg2" id="AddToCartErr" style="display:none;"></div>
+
+
                         <div style="overflow:auto;padding:5px;" id="ItemCostReturnContainer">
 
                             @await Html.PartialAsync("Shared/Partials/_CalcItemCost")
@@ -425,7 +433,7 @@
 
                         <div style="overflow:auto;display:none" id="CartContainer">
                             
-                            @await Html.PartialAsync("Shared/Partials/_Cart")
+                            <span>await Html.PartialAsync("Shared/Partials/_Cart")</span>
 
                         </div>
 
