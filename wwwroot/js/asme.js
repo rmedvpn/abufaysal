@@ -148,6 +148,12 @@ function AjaxActions(field, value, loader_element, param1, param2, param3, param
             var theRes = this.responseText;
 
             switch (field) {
+                case "Logout":
+                    window.location.href = "Login";
+
+
+                    Notify(theRes.replace("!$!", ""), 1);
+                    break;
                 case "UpdateSettings":
                     if (!theRes.startsWith("!$!")) {
                         sbload('MainSb', 'prsettings');

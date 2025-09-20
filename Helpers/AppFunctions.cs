@@ -43,14 +43,19 @@ namespace Faysal.Helpers
             db.Execute(sqlSelect, local_time, u_id);
             db.Close();
         }
+
+        public static string Logout(HttpContext context)
+        {
+            WebSecurity.Logout();
+            DoLogout(WebSecurity.CurrentUserId);
+            return "✌";
+        }
         public static void DoLogout(int u_id)
         {
             var db = Database.Open("faysal");
             DateTime local_time = LocalTime();
             var sqlSelect = "UPDATE users SET last_logout=@0 WHERE u_id=@1";
             db.Execute(sqlSelect, local_time, u_id);
-            sqlSelect = "DELETE FROM cartsettings WHERE u_id=@0";
-           // db.Execute(sqlSelect, u_id);
             sqlSelect = "DELETE FROM Cart WHERE u_id=@0";
             db.Execute(sqlSelect, u_id);
 
@@ -240,6 +245,32 @@ namespace Faysal.Helpers
             }
         }
 
+        public static string GetTitleById(string TitleOf, int id, int lang = 1)
+        {
+            var db = Database.Open("faysal");
+            var sqlSelect = "";
+            switch (TitleOf)
+            {
+
+                case "Cat":
+                    sqlSelect = "SELECT title AS the_label FROM categories WHERE id=@0";
+                    break;
+
+                case "OrderStatus":
+                    sqlSelect = "SELECT heb_status AS the_label FROM OrderStatuses WHERE order_status=@0";
+                    break;
+
+
+                default:
+                    break;
+            }
+
+            var rs = db.QuerySingleOrDefault(sqlSelect, id);
+            db.Close();
+            if (rs != null) { return rs.the_label; }
+            else { return ""; }
+
+        }
 
     }
 }

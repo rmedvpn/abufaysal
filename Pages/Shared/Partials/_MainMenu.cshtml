@@ -1,0 +1,145 @@
+﻿@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = null;
+    var context = HttpContextAccessor.HttpContext;
+    var Request = context.Request;
+    var culture = new System.Globalization.CultureInfo("he-IL");
+    string? member_nick = HttpContextAccessor.HttpContext!.Session.GetString("member_nick");
+
+    string Param(string key) =>
+        Request.HasFormContentType && Request.Form.ContainsKey(key)
+            ? Request.Form[key].ToString()
+            : Request.Query.ContainsKey(key)
+                ? Request.Query[key].ToString()
+                : "";
+
+    int u_id = 0; try { u_id = WebSecurity.CurrentUserId; } catch { }
+    var db = Database.Open("faysal");
+    var sqlSelect = "";
+
+    sqlSelect = "SELECT TOP(5) order_id,ts,order_status,grand_total FROM ordertracking WHERE u_id=@0 ORDER BY ts DESC";
+    var orders = db.Query(sqlSelect, u_id);
+    db.Close();
+}
+
+<section class="wel_sec">
+    <div class="container">
+
+        <div class="top_spacer"></div>
+        <div class="mainGreet">שלום @member_nick
+            <div class="LogOffBtn" onclick="AjaxActions('Logout');">התנתקות</div>
+        
+        </div>
+        <img class="logo" style="margin:5px;" src="images/newlogo.png" />
+        <div class="MainMenuTitle">
+            תפריט ראשי
+        </div>
+        <div class="B">
+
+
+            @if (orders.Count() > 0){
+                <div class="B">
+                    <div class="MainMenuBtn" onclick="Accordionize('OrdHistAcc');">
+                        מעקב הזמנות
+                        <img class="MainMenuIcon" src="~/images/ordertracking.png" />
+                    </div>
+                </div>
+                <div class="B" style="text-align:center">
+                    <div class="B" style="text-align:center">
+                        <center>
+                            <button class="accordion" id="OrdHistAcc" style="display:none"></button>
+
+                            <div class="panel" style="width:90%;padding:0">
+                                <div class="PropItemQuanMenu">
+
+                                    @foreach (var order in orders)
+                                    {
+                                        string ordStatus = AppFunctions.GetTitleById("OrderStatus", order.order_status);
+                                        <div class="OrderTrackItem">
+                                            <div class="B" style="float:right;">
+                                                <div class="OrderInfBtn">
+                                                    ?
+                                                </div>
+
+
+                                            </div>
+                                            <div class="B" style="float:right;width:30%;text-align:right">
+                                                הזמנה# @order.order_id<br />
+                                                <span class="MiniTag">@order.ts.ToShortDateString() @order.ts.ToString("HH:mm")</span>
+                                            </div>
+                                            <div class="B" style="float:right;width:30%">
+                                                @ordStatus
+                                            </div>
+
+
+
+                                            <div class="B" style="float:left;">
+                                                @order.grand_total.ToString("C0",culture)
+
+
+                                            </div>
+
+                                        </div>
+
+
+                                    }
+
+                                    <input type="hidden" id="quan" name="quan" />
+
+
+                                </div>
+
+                            </div>
+
+                        </center>
+
+                    </div>
+
+                </div>
+
+            }
+
+
+
+
+            <div class="B">
+                <div class="MainMenuBtn" onclick="PageLoad('ORDERS');controller.close('BottomUp');">הזמנה חדשה
+                    <span class="MainMenuIcon">&gt;</span>
+
+                </div>
+            </div>
+
+
+
+            <div class="B">
+                <div class="MainMenuBtn" onclick="sbload('BottomUp','Caller?p1=MemberInfo');">
+                    אזור אישי
+                    <img class="MainMenuIcon" src="~/images/members.png" />
+                </div>
+            </div>
+
+
+
+            <div class="B">
+                <div class="MainMenuBtn" onclick="sbload('BottomUp','Caller?p1=FAQ');">
+                    שאלות נפוצות
+                    <span class="MainMenuIcon">?</span>
+                </div>
+            </div>
+
+
+            <div class="B">
+                <div class="MainMenuCloseBtn" onclick="controller.close('BottomUp'); ">סגירת תפריט
+                    <img class="MainMenuIcon" src="~/images/x.png" />
+                </div>
+                
+            </div>
+
+
+        </div>
+
+    </div>
+    </section>
+

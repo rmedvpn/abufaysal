@@ -1029,6 +1029,7 @@ namespace Faysal.Helpers
             CultureInfo culture = new CultureInfo("he-IL");
             DateTime local_time = AppFunctions.LocalTime();
             int u_id = WebSecurity.CurrentUserId;
+            string user_name = WebSecurity.CurrentUserName;
             string theHtmlOutput = "";
             var db = Database.Open("faysal");
             string sqlSelect = "";
@@ -1051,7 +1052,7 @@ namespace Faysal.Helpers
             bool address_remember = !string.IsNullOrEmpty(Param(context, "Address_remember"));
             bool send_to_other = !string.IsNullOrEmpty(Param(context, "send_to_other"));
 
-            int order_status = 1;
+            int order_status = 10;
             int member_id = 0;
             decimal order_total = 0;
             decimal shipping_charge = 0;
@@ -1122,9 +1123,9 @@ namespace Faysal.Helpers
          
                 }
 
-                sqlSelect = "INSERT INTO orders(session_id,ts,order_status,u_id,full_name,wanum,telegram_nick,address,city,order_total,shipping_charge,grand_total,order_notes,ship_name,ship_phone ,address_id ,ship_notes) ";
-                sqlSelect += " VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16)";
-                db.Execute(sqlSelect, session_id, local_time, order_status, u_id, full_name, wanum, telegram_nick, address, city, order_total, shipping_charge, grand_total, order_notes, ship_name, ship_phone, address_id, ship_notes);
+                sqlSelect = "INSERT INTO orders(session_id,ts,order_status,u_id,full_name,wanum,telegram_nick,address,city,order_total,shipping_charge,grand_total,order_notes,ship_name,ship_phone ,address_id ,ship_notes,user_name) ";
+                sqlSelect += " VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17)";
+                db.Execute(sqlSelect, session_id, local_time, order_status, u_id, full_name, wanum, telegram_nick, address, city, order_total, shipping_charge, grand_total, order_notes, ship_name, ship_phone, address_id, ship_notes, user_name);
 
                 sqlSelect = "SELECT order_id FROM orders WHERE ts=@0 AND session_id=@1";
                 var order = db.QuerySingle(sqlSelect, local_time, session_id);

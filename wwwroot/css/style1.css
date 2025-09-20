@@ -1868,6 +1868,83 @@ div .HomeBtn {
     margin: 25px auto 0;
 
 }
+div .MainMenuBtn {
+    color: var(--variable-collection-whit);
+    font-family: Noyland;
+    font-weight: 700;
+    background-color: var(--green);
+    font-size: 28px;
+    text-align: right;
+    border-radius: 20px;
+    padding: 5px;
+    padding-right: 25px;
+    padding-left: 25px;
+    margin: 25px auto 0;
+    margin-right:10px;
+    margin-left:10px;
+}
+div .MainMenuCloseBtn {
+    color: var(--variable-collection-whit);
+    font-family: Noyland;
+    font-weight: 700;
+    background-color: var(--variable-collection-light-green);
+    font-size: 28px;
+    text-align: right;
+    border-radius: 20px;
+    padding: 5px;
+    padding-right: 25px;
+    padding-left: 25px;
+    margin: 25px auto 0;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+div .MainMenuTitle {
+    color: var(--brown);
+    font-family: Noyland;
+    font-weight: 700;
+    font-size: 32px;
+    text-align: center;
+    padding: 5px;
+    margin: 25px auto 0;
+}
+span.MainMenuIcon {
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+    padding-top:2px;
+    padding-left:5px;
+}
+img.MainMenuIcon {
+    height: 24px;
+    float: left;
+    padding-top: 2px;
+}
+div.OrderTrackItem{
+    overflow:auto;
+    padding:5px;
+    margin:5px;
+    text-align:center;
+    border-bottom:1px dashed var(--brown);
+}
+div.OrderInfBtn{
+    background-color:var(--brown);
+    color:#fff;
+    border-radius:50%;
+    padding:5px;
+    font-size:12px;
+    height:15px;
+    width:15px;
+    line-height:18px;
+    margin-left:15px;
+}
+div.LogOffBtn{
+    font-size:14px;
+    color:var(--brown);
+    margin:0;
+    overflow:auto;
+    font-weight:normal;
+}
 .copyDisc {
     position: fixed;
     bottom: 20px;
