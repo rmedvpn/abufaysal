@@ -57,7 +57,7 @@
                                     @foreach (var order in orders)
                                     {
                                         string ordStatus = AppFunctions.GetTitleById("OrderStatus", order.order_status);
-                                        <div class="OrderTrackItem">
+                                        <div class="OrderTrackItem" onclick="sbload('BottomUp','Caller?p1=OrderInfo&p2=@order.order_id');">
                                             <div class="B" style="float:right;">
                                                 <div class="OrderInfBtn">
                                                     ?
@@ -105,7 +105,7 @@
 
 
             <div class="B">
-                <div class="MainMenuBtn" onclick="PageLoad('ORDERS');controller.close('BottomUp');">הזמנה חדשה
+                <div class="MainMenuBtn" onclick="PageLoad('ORDERS');controller.close('MainMenu');">הזמנה חדשה
                     <span class="MainMenuIcon">&gt;</span>
 
                 </div>
@@ -131,7 +131,7 @@
 
 
             <div class="B">
-                <div class="MainMenuCloseBtn" onclick="controller.close('BottomUp'); ">סגירת תפריט
+                <div class="MainMenuCloseBtn" onclick="controller.close('MainMenu'); ">סגירת תפריט
                     <img class="MainMenuIcon" src="~/images/x.png" />
                 </div>
                 

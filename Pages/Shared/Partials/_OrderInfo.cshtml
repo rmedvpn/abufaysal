@@ -25,22 +25,28 @@
             : HttpContextAccessor.HttpContext.Request.Query[key].ToString();
 
     // Read inputs
-    var sessionId = HttpContextAccessor.HttpContext.Session.Id;
-    ViewData["SessionId"] = sessionId;
-    var lang = Param("lang");
-    string wanum = ""; wanum = Param("wanum");
-    string full_name = ""; full_name = Param("full_name");
-    string address = ""; address = Param("address");
-    string city = ""; city = Param("city");
-    string address_id = Param("address_id");
-    string ship_phone = Param("ship_phone");
-    string ship_name = Param("ship_name");
-    string ship_notes = Param("ship_notes");
-    string order_notes = Param("order_notes");
-    string address_nick = Param("address_nick");
-    string member_nick = Param("member_nick");
-    bool address_remember = !string.IsNullOrEmpty(Param("Address_remember"));
-    bool send_to_other = !string.IsNullOrEmpty(Param("send_to_other"));
+
+    int order_id = 0; try { order_id = Convert.ToInt32(Param("p2")); } catch { }
+    var db = Database.Open("faysal");
+    var sqlSelect = "";
+
+    sqlSelect="SELECT * FROM ordertracking WHERE order_id=@0";
+    var order = db.QuerySingle(sqlSelect, order_id);
+
+
+    //  var lang = Param("lang");
+    string wanum = order.wanum; 
+    string address = ""; address = order.address;
+    string city = ""; city = order.city;
+    int address_id = 0; try { address_id = order.address_id; } catch { }
+    string ship_phone = order.ship_phone;
+    string ship_name = order.ship_name;
+    string ship_notes =  order.ship_notes;
+    string order_notes = order.order_notes;
+    string address_nick = "";
+    string member_nick = "";
+    string disp_address = "";
+
 
     decimal order_total = 0;
     decimal order_total_including_shipping = 0;
@@ -50,244 +56,147 @@
     decimal default_shipping_charge = 0;
     decimal cart_shipping_charge = 0;
 
-
-    try { shipping_charge = Convert.ToInt32(AppFunctions.GetAppProperty("DefaultShippingCharge")); } catch { }
-    try { free_shipping_marker = Convert.ToInt32(AppFunctions.GetAppProperty("FreeShippingMarker")); } catch { }
-    ViewData["callingPage"] = "ORDERREVIEW";
-
-    // read back as string
-    string? totalStr = context.Session.GetString("Cart_OrderTotal");
-    var deficitStr = context.Session.GetString("Cart_FreeShippingDeficit") ?? "0";
-    var Default_Free_Shipping_Marker = context.Session.GetString("Default_Free_Shipping_Marker") ?? "0";
-    var Default_Shipping_Charge = context.Session.GetString("Default_Shipping_Charge") ?? "0";
-
-    try { default_shipping_charge = Convert.ToDecimal(Default_Shipping_Charge); } catch { }
-    try { free_shipping_marker = Convert.ToDecimal(Default_Free_Shipping_Marker); } catch { }
-
-
-    // parse back to decimal
-    if (!string.IsNullOrEmpty(totalStr))
+    if (address_id > 0)
     {
-        order_total = decimal.Parse(totalStr, new System.Globalization.CultureInfo("he-IL"));
-    }
-
-
-    var errMsg = "";
-
-    if (address_id == "")
-    {
-        errMsg = errMsg + " בבקשה לבחור כתובת!<br>";
-    }
-    if (address_id == "-1")
-    {
-        if (address == "")
+        sqlSelect="SELECT * FROM Addresses WHERE id=@0";
+        var addr = db.QuerySingle(sqlSelect, address_id);
+        if(addr!= null)
         {
-            errMsg = errMsg + " בבקשה להזין רחוב!<br>";
-        }
-        if (city == "")
-        {
-            errMsg = errMsg + " בבקשה להזין עיר!<br>";
-        }
-
-        if (address_remember && address_nick.Length < 2)
-        {
-            errMsg = errMsg + "אי אפשר לשמור כתובת בלי כינוי!<br>";
-        }
-
-    }
-
-    if(send_to_other){
-
-
-        if (string.IsNullOrEmpty(Param("ship_phone"))){
-            errMsg += "בבקשה להזין את הטלפון של מקבל.ת המשלוח!<br>";
-
-        }
-        if (string.IsNullOrEmpty(Param("ship_name"))){
-            errMsg += "בבקשה להזין את שם מקבל.ת המשלוח!<br>";
-
-        }
-    }
-    else{
-        ship_name = member_nick;
-        ship_phone = wanum;
-    }
-
-    if (string.IsNullOrEmpty(errMsg))
-    {
-        string disp_address = "";
-        string saved_address_nick = "";
-        int address_id_int = Convert.ToInt32(address_id);
-        if (address_id_int > 0)
-        {
-            var db = Database.Open("faysal");
-            var sqlSelect = "SELECT address_nick,disp_address FROM addresses WHERE id=@0";
-            var savedAddress = db.QuerySingle(sqlSelect, address_id);
-            try { disp_address =  savedAddress.disp_address; } catch { }
-            try { saved_address_nick = savedAddress.address_nick ; } catch { }
+            address_nick = addr.address_nick;
+            disp_address = addr.disp_address;
+            ship_notes = addr.address_notes;
         }
         
-        <section class="wel_sec">
-            <div class="container">
-                <div class="B">
-                    <div class="A">
-                        <img class="ordersLogo" src="/images/s_logo.png" />
-                        <div class="B" style="float:left">
+    }
 
-                            <div class="ordersSmallButtons" style="float:left">
-                                <img src="images/call.png" class="ordersSmallButtons" />
-                            </div>
+
+    ViewData["callingPage"] = "ORDERINFO";
+    ViewData["order_id"] = order_id;
+
+    <section class="wel_sec">
+        <div class="container">
+            <div class="B">
+                <div class="A">
+                    <img class="ordersLogo" src="/images/s_logo.png" />
+                    <div class="B" style="float:left">
+
+                        <div class="ordersSmallButtons" style="float:left">
+                            <img src="images/call.png" class="ordersSmallButtons" />
                         </div>
-
                     </div>
-                    <div class="A">
-                        <form id="ReviewOrderForm">
+
+                </div>
+                <div class="A">
+                    <form id="ReviewOrderForm">
+
+                        <div class="B" style="text-align:center;">
+                            <div class="OrderIntroMsg" style="text-align:center;">
+                                הזמנה #@order.order_id
+                                <div class="OrderIntroSubMsg" style="font-size:14px;">
+                                    @order.ts.ToShortDateString() - @order.ts.ToString("HH:mm")
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <center>
+
+                            <div class="B">
+                                @await Html.PartialAsync("Shared/Partials/_CheckoutItems")
+                            </div>
+
+                            <div class="shippingInfoReview">
+                                <div class="B" style="text-align:right">
+                                    <h3>הנמענ.ת</h3>
+
+                                </div>
+                                <div class="B" style="text-align:right">
+                                    <div class="OrderReviewAddressItem">
+                                        @ship_name
+                                    </div>
+                                    <div class="OrderReviewSubAddress">
+                                        @ship_phone
+                                    </div>
+                                    <div class="Spacer10"></div>
+                                    <h3>הכתובת</h3>
+                                    @if (!string.IsNullOrEmpty(address_nick))
+                                    {
+                                        <div class="OrderReviewAddressItem">
+                                            <b>@address_nick</b>
+                                        </div>
+                                        <div class="OrderReviewSubAddress">(@disp_address)</div>
+                                    }
+
+                                    @if (address_id == -1)
+                                    {
+                                        <div class="OrderReviewAddressItem">
+                                            @address @city
+                                        </div>
+                                     
+                                 
+                                    }
+
+
+
+
+
+                                </div>
+
+                                @if (!string.IsNullOrEmpty(ship_notes) )
+                                {
+                                    <div class="Spacer10"></div>
+                                    <div class="B" style="text-align:right">
+                                        <h3>הערות לכתובת</h3>
+
+                                    </div>
+                                    <div class="B" style="text-align:right">
+                                        <div class="OrderReviewSubAddress">
+                                            @ship_notes
+                                        </div>
+
+
+                                    </div>
+                                }
+
+                                @if (!string.IsNullOrEmpty(order_notes))
+                                {
+                                    <div class="Spacer10"></div>
+                                    <div class="B" style="text-align:right">
+                                        <h3>הערות להזמנה</h3>
+
+                                    </div>
+                                    <div class="B" style="text-align:right">
+                                        <div class="OrderReviewSubAddress">
+                                            @order_notes
+                                        </div>
+
+
+                                    </div>
+                                }
+
+                            </div>
 
                             <div class="B" style="text-align:center;">
-                                <div class="OrderIntroMsg" style="text-align:center;">
-                                    ההזמנה שלך
-                                    @if (order_total < free_shipping_marker)
-                                    {
-                                        <div class="OrderIntroSubMsg" style="font-size:14px;">
-                                            משלוח חינם בהזמנה מעל <b>@free_shipping_marker.ToString("C0", culture)</b>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="OrderIntroSubMsg" style="font-size:14px;">
-                                            המשלוח שלך בחינם!
-                                        </div>
-                                    }
-
-
-                                </div>
-
-                            </div>
-                            <center>
-
-                                <div class="B">
-                                    @await Html.PartialAsync("Shared/Partials/_CheckoutItems")
-                                </div>
-
-                                <div class="shippingInfoReview">
-                                    <div class="B" style="text-align:right">
-                                        <h3>הנמענ.ת</h3>
-
-                                    </div>
-                                    <div class="B" style="text-align:right">
-                                        <div class="OrderReviewAddressItem">
-                                            @ship_name
-                                        </div>
-                                        <div class="OrderReviewSubAddress">
-                                            @ship_phone
-                                        </div>
-                                        <div class="Spacer10"></div>
-                                        <h3>הכתובת</h3>
-                                        @if (!string.IsNullOrEmpty(saved_address_nick))
-                                        {
-                                            <div class="OrderReviewAddressItem" >
-                                                שולחים ל<b>@saved_address_nick</b>
-                                            </div>
-                                            <div class="OrderReviewSubAddress">(@disp_address)</div>
-                                        }
-
-                                        @if (address_id=="-1")
-                                        {
-                                            <div class="OrderReviewAddressItem">
-                                                @address @city
-                                            </div>
-                                            @if (address_remember)
-                                            {
-                                                <div class="OrderReviewSubAddress"> הכתובת תשמר בכינוי <b>@address_nick' </b></div>
-                                            }
-                                        }
-
-                              
-
-                                       
-
-                                    </div>
-
-                                    @if (!string.IsNullOrEmpty(ship_notes) && address_id == "-1")
-                                    {
-                                        <div class="Spacer10"></div>
-                                        <div class="B" style="text-align:right">
-                                            <h3>הערות לכתובת</h3>
-
-                                        </div>
-                                        <div class="B" style="text-align:right">
-                                            <div class="OrderReviewSubAddress">
-                                                @ship_notes
-                                            </div>
-                                            
-                                            
-                                        </div>
-                                    }
-
-                                    @if (!string.IsNullOrEmpty(order_notes))
-                                    {
-                                        <div class="Spacer10"></div>
-                                        <div class="B" style="text-align:right">
-                                            <h3>הערות להזמנה</h3>
-
-                                        </div>
-                                        <div class="B" style="text-align:right">
-                                            <div class="OrderReviewSubAddress">
-                                                @order_notes
-                                            </div>
-
-
-                                        </div>
-                                    }
-
-                                </div>
-
-                                <div class="B" style="text-align:center;">
                                 <div class="Spacer20"></div>
                                 <div class="Spacer5"></div>
-                                    <button class="checkuotBtn" type="button" onclick="controller.close('MainSb');" style="background-color:#a6a06f;float:right;width:30%;"> &lt; חזרה</button>
-                                    <button class="checkuotBtn" type="button" onclick="AjaxActions('PlaceOrder', '@sessionId','MainLoader', 'ReviewOrderForm');" style="float:left;width:50%;">ביצוע הזמנה &gt; </button>
+                                <button class="checkuotBtn" type="button" onclick="controller.open('MainMenu');" style="background-color:#a6a06f;width:50%;"> &lt; חזרה</button>
 
-                                </div>
-                         
-
-
-                            </center>
+                            </div>
 
 
 
-                            <input type="hidden" name="full_name" value="@full_name" />
-                            <input type="hidden" name="wanum" value="@wanum" />
-                            <input type="hidden" name="address" value="@address" />
-                            <input type="hidden" name="city" value="@city" />
+                        </center>
 
-                            <input type="hidden" name="address_id" value="@address_id" />
-                            <input type="hidden" name="ship_phone" value="@ship_phone" />
-                            <input type="hidden" name="ship_name" value="@ship_name" />
-                            <input type="hidden" name="ship_notes" value="@ship_notes" />
-                            <input type="hidden" name="order_notes" value="@order_notes" />
 
-                            <input type="hidden" name="address_nick" value="@address_nick" />
-                            <input type="hidden" name="member_nick" value="@member_nick" />
-                            @if (address_remember)
-                            {
-                                <input type="hidden" name="address_remember" value="true" />
-                            }
-                            @if (send_to_other)
-                            {
-                                <input type="hidden" name="send_to_other" value="true" />
-                            }
 
-                        </form>
-                    </div>
+                    
+                    </form>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-    }
-    else
-    {
-        await Response.WriteAsync("!$!" + errMsg);
 
-    }
+    db.Close();
 }

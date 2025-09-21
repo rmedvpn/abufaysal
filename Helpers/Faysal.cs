@@ -667,7 +667,6 @@ namespace Faysal.Helpers
             return theHtmlOutput;
         }
 
-
         public static int InitCart()
         {
             System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("he-IL");
@@ -691,7 +690,6 @@ namespace Faysal.Helpers
             db.Close();
             return cart_id;
         }
-
 
         public static void CartReCalculate(HttpContext context,int cart_id = 0)
         {
@@ -788,7 +786,6 @@ namespace Faysal.Helpers
             db.Close();
          
         }
-
 
         public static string AddToCart(HttpContext context)
         {
@@ -988,8 +985,6 @@ namespace Faysal.Helpers
             return theHtmlOutput;
         }
 
-
-
         public static string ReviewOrder(HttpContext context)
         {
             CultureInfo culture = new CultureInfo("he-IL");
@@ -1154,10 +1149,10 @@ namespace Faysal.Helpers
                     //string address_mask = ""; try { address_mask = "***" + address.Substring(address.Length - 3) ; } catch { }
                     
 
-                    sqlSelect = "SET IDENTITY_INSERT OrderTracking ON;INSERT INTO OrderTracking (order_id,ts,u_id,order_status,wanum,address,city,order_total,shipping_charge,grand_total,round_up_amount,after_round_up_grand_total,order_notes) ";
-                    sqlSelect += " VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12);";
+                    sqlSelect = "SET IDENTITY_INSERT OrderTracking ON;INSERT INTO OrderTracking (order_id,ts,u_id,order_status,wanum,address,city,order_total,shipping_charge,grand_total,round_up_amount,after_round_up_grand_total,order_notes,status_change_ts,ship_name,ship_phone,address_id,ship_notes) ";
+                    sqlSelect += " VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17);";
                     sqlSelect += "SET IDENTITY_INSERT OrderTracking OFF;";                                                                                                                                
-                    db.Execute(sqlSelect, new_order_id, local_time, u_id, order_status, wanum_mask, disp_address, city, order_total, shipping_charge, grand_total, round_up_amount, after_round_up_grand_total, order_notes);
+                    db.Execute(sqlSelect, new_order_id, local_time, u_id, order_status, wanum_mask, disp_address, city, order_total, shipping_charge, grand_total, round_up_amount, after_round_up_grand_total, order_notes, local_time, ship_name, ship_phone, address_id, ship_notes);
 
 
                     sqlSelect = "DELETE FROM cart WHERE u_id=@0;DELETE FROM CartSettings WHERE u_id=@0";

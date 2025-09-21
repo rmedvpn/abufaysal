@@ -8,8 +8,24 @@
 
     var callingPage = ViewData["callingPage"]?.ToString() ?? "CART";
     int u_id = WebSecurity.CurrentUserId;
+    int order_id = 0; try { order_id = Convert.ToInt32(ViewData["order_id"]); } catch { }
+
     var db = Database.Open("faysal");
-    var cart = db.Query("SELECT * FROM cart WHERE u_id=@0 order by ts", u_id);
+
+    dynamic cart;
+
+    if (order_id > 0)
+    {
+        cart = db.Query("SELECT * FROM orderitems WHERE order_id=@0 order by ts", order_id);
+    }
+    else
+    {
+        cart = db.Query("SELECT * FROM cart WHERE u_id=@0 order by ts", u_id);
+    }
+    
+
+
+
     string sqlSelect = "";
  
 
@@ -36,7 +52,7 @@
 
 <div class="B" style="text-align:right;">
     <div class="B" style="color:#000">
-        @if (!cart.Any())
+        @if (cart.Count==0)
         {
                 <div class="A" style="color:#f00;"> עדיין לא התווספו פריטים להזמנה </div>
             }
