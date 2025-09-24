@@ -1,0 +1,317 @@
+﻿@using System
+@using System.Data.SqlClient
+@using Dapper
+@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Configuration
+@using Faysal.Helpers
+@inject IConfiguration Configuration
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    // Shared layout for members
+    Layout = null;
+    var context = HttpContextAccessor.HttpContext;
+    var Request = context.Request;
+    var Response = context.Response;
+    var culture = new System.Globalization.CultureInfo("he-IL");
+
+    DateTime defDate = Convert.ToDateTime("1/1/1900");
+    // Helper to read form or query values
+    string Param(string key) =>
+        HttpContextAccessor.HttpContext.Request.HasFormContentType && HttpContextAccessor.HttpContext.Request.Form.ContainsKey(key)
+            ? HttpContextAccessor.HttpContext.Request.Form[key].ToString()
+            : HttpContextAccessor.HttpContext.Request.Query[key].ToString();
+
+    // Read inputs
+
+    int order_id = 0; try { order_id = Convert.ToInt32(Param("p2")); } catch { }
+    var db = Database.Open("faysal");
+    var sqlSelect = "";
+
+    sqlSelect = "SELECT DISTINCT orderitems.strain_option_id,strainOptions.* FROM orderitems JOIN strainOptions ON orderitems.strain_option_id= strainOptions.id  where order_id=@0";
+    var orderitems = db.Query(sqlSelect, order_id);
+
+    int noOfStars = 10;
+
+
+
+    <section class="wel_sec">
+        <div class="container">
+            <div class="B">
+                <div class="A">
+                    <img class="ordersLogo" src="/images/s_logo.png" />
+                    <div class="B" style="float:left">
+
+                        <div class="ordersSmallButtons" style="float:left">
+                            <img src="images/call.png" class="ordersSmallButtons" />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="A">
+                    <form id="OrderFbForm">
+
+                        <div class="B" style="text-align:center;">
+                            <div class="OrderIntroMsg" style="text-align:center;">
+                                משוב הזמנה #@order_id
+                                <div class="OrderIntroSubMsg" style="font-size:14px;">
+                                    המשוב שלך חשוב לנו מאד ועוזר לנו להשתפר!
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <center>
+
+                          
+
+
+                            @foreach(var item in orderitems)
+                            {
+                                int fbId = item.strain_option_id;
+                                string txtAreaPlhldr = "איך היתה החוויה שלך עם ה" + item.title + " שלנו?";
+                                <div class="CartRow">
+                                    <div class="B">
+                                        <div class="CartRowTitle">
+                                            בבקשה לדרג את הזן @item.title
+
+                                        </div>
+
+                                        <div class="B" style="text-align:center;">
+                                        <center>
+                                        <div class="B">
+                                                    <img class="FbImg" src="pImgView?strain_id=@item.strain_option_id" />
+                                        </div>
+                                                <div class="B">
+
+                                                    @for (var i = 1; i <= 10; i++)
+                                                    {
+                                                        string fbFldName = "fb_" + fbId + "_" + i;
+                                                        <button type="button" class="FbStar" id="@fbFldName" onclick="fbSelect(@fbId  ,@i);"  >★</button>
+                                                    }
+
+                                                    <div class="B">
+                                                        <input type="hidden" id="fbVal_@fbId" name="fbVal_@fbId" value="0" />
+
+                                                        <textarea class="FbComments" id="fbNotes_@fbId" name="fbNotes_@fbId" placeholder="@txtAreaPlhldr"></textarea>
+
+                                                    </div>
+                                                 
+
+
+                                        </div>
+                                                
+                                        </center>
+                                            
+
+
+
+
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+
+                            }
+
+                            <div class="CartRow">
+                                <div class="B">
+                                    <div class="CartRowTitle">
+                                        איך היתה חווית השירות שלנו?
+
+                                    </div>
+
+                                    <div class="B" style="text-align:center;">
+                                        <center>
+                                        
+                                            <div class="B">
+
+                                                @for (var i = 1; i <= 10; i++)
+                                                {
+                                                  
+                                                    string fbFldName = "fb_" + -1 + "_" + i;
+                                                    <button type="button" class="FbStar" id="@fbFldName" onclick="fbSelect(-1  ,@i);">★</button>
+                                                }
+
+                                                <div class="B">
+                                                    <input type="hidden" id="fbVal_-1" name="fbVal_-1" value="0" />
+
+                                                    <textarea class="FbComments" id="fbNotes_-1" name="fbNotes_-1" placeholder="במה אנחנו צריכים להשתפר? מה כדאי לשמר?"></textarea>
+
+                                                </div>
+
+
+
+                                            </div>
+
+                                        </center>
+
+
+
+
+
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+
+                            <div class="CartRow">
+                                <div class="B">
+                                    <div class="CartRowTitle">
+                                        איך היה תהליך המשלוח?
+
+                                    </div>
+
+                                    <div class="B" style="text-align:center;">
+                                        <center>
+                                        
+                                            <div class="B">
+
+                                                @for (var i = 1; i <= 10; i++)
+                                                {
+                                                  
+                                                    string fbFldName = "fb_" + -2 + "_" + i;
+                                                    <button type="button" class="FbStar" id="@fbFldName" onclick="fbSelect(-2  ,@i);">★</button>
+                                                }
+
+                                                <div class="B">
+                                                    <input type="hidden" id="fbVal_-2" name="fbVal_-2" value="0" />
+
+                                                    <textarea class="FbComments" id="fbNotes_-2" name="fbNotes_-2" placeholder="הגענו בזמן? הכל היה סבבה?"></textarea>
+
+                                                </div>
+
+
+
+                                            </div>
+
+                                        </center>
+
+
+
+
+
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+
+                            <div class="CartRow">
+                                <div class="B">
+                                    <div class="CartRowTitle">
+                                        האם צריך לצור איתך קשר לגבי הזמנה זו?
+
+                                    </div>
+
+                                    <div class="B" style="text-align:center;">
+                                        <center>
+                                        
+                                            <div class="B">
+
+                                                <div class="fbContact" >
+                                                    <input type="radio" class="A"  name="is_contact"  value="no" checked /> לא
+
+
+                                                </div>
+
+
+
+                                                <div class="fbContact">
+                                                    <input type="radio" class="A" name="is_contact" value="yes" /> כן
+
+
+                                                </div>
+
+
+
+                                            </div>
+
+                                        </center>
+
+
+
+
+
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+
+                            <div class="CartRow">
+                                <div class="B">
+                                    <div class="CartRowTitle">
+                                        סבבה שנשתף את המשוב שלך עם הקהילה?
+
+                                    </div>
+
+                                    <div class="B" style="text-align:center;">
+                                        <center>
+                                        
+                                            <div class="B">
+
+                                                <div class="fbContact" >
+                                                    <input type="radio" class="A"  name="is_public"  value="no"  /> לא
+
+
+                                                </div>
+
+
+
+                                                <div class="fbContact">
+                                                    <input type="radio" class="A" name="is_public" value="yes" checked /> כן
+
+
+                                                </div>
+
+
+
+                                            </div>
+
+                                        </center>
+
+
+
+
+
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+                            <div class="B" style="text-align:center">
+                                <div class="Spacer20"></div>
+                                <div class="Spacer5"></div>
+                                <button class="checkuotBtn" type="button" onclick="controller.open('MainMenu');" style="width:30%;background-color:rgba(166, 160, 111, 1);">&lt; חזרה </button>
+                                <button class="checkuotBtn" type="button" onclick="controller.open('MainMenu');" style="width:50%;">  שליחת משוב &gt; </button>
+                            </div>
+                            
+
+
+                        </center>
+
+
+
+                    
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    db.Close();
+}

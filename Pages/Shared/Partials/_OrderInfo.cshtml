@@ -39,6 +39,8 @@
     string address = ""; address = order.address;
     string city = ""; city = order.city;
     int address_id = 0; try { address_id = order.address_id; } catch { }
+    int order_status = 0; try { order_status = order.order_status; } catch { }
+    DateTime schedueled_delivery_date = defDate; try { schedueled_delivery_date = order.schedueled_delivery_date; } catch { }
     string ship_phone = order.ship_phone;
     string ship_name = order.ship_name;
     string ship_notes =  order.ship_notes;
@@ -72,6 +74,8 @@
 
     ViewData["callingPage"] = "ORDERINFO";
     ViewData["order_id"] = order_id;
+    ViewData["order_status"] = order_status;
+    ViewData["schedueled_delivery_date"] = schedueled_delivery_date;
 
     <section class="wel_sec">
         <div class="container">
@@ -101,6 +105,11 @@
 
                         </div>
                         <center>
+
+                            <div style="overflow:auto;padding:0;margin:0">
+                                @await Html.PartialAsync("Partials/_OrderStatusSummary")
+                            </div>
+
 
                             <div class="B">
                                 @await Html.PartialAsync("Shared/Partials/_CheckoutItems")
@@ -177,13 +186,12 @@
 
                             </div>
 
-                            <div class="B" style="text-align:center;">
+                            <div class="B" style="text-align:center">
                                 <div class="Spacer20"></div>
                                 <div class="Spacer5"></div>
                                 <button class="checkuotBtn" type="button" onclick="controller.open('MainMenu');" style="background-color:#a6a06f;width:50%;"> &lt; חזרה</button>
-
                             </div>
-
+                            
 
 
                         </center>

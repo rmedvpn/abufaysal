@@ -1,0 +1,157 @@
+﻿
+@{
+    // Shared layout for members
+
+    int order_status = 0; try { order_status = Convert.ToInt32(ViewData["order_status"]); } catch { }
+    DateTime schedueled_delivery_date = Convert.ToDateTime("1/1/1900"); try { schedueled_delivery_date = Convert.ToDateTime(ViewData["schedueled_delivery_date"]); } catch { }
+
+     
+    ViewData["order_status"] = order_status;
+    ViewData["schedueled_delivery_date"] = schedueled_delivery_date;
+
+
+
+    <div class="B" style="text-align:center;">
+
+
+        @switch (order_status)
+        {
+            case 10:
+
+                <div class="OrderStatusInfoDiv">
+                    <div class="B">
+                        הזמנה חדשה
+                    </div>
+
+                    <div class="B">
+                        עכשיו ממתינים לאישור ההזמנה
+                    </div>
+
+                </div>
+
+                break;
+
+            case 20:
+
+                <div class="OrderStatusInfoDiv">
+                    <div class="B">
+                        ההזמנה אושרה
+                    </div>
+
+                    <div class="B">
+                        אספקה מתוכננת @schedueled_delivery_date.ToShortDateString()
+                    </div>
+
+                </div>
+
+                break;
+
+
+            case 30:
+
+                <div class="OrderStatusInfoDiv">
+                    <div class="B">
+                        ההזמנה נארזה וממתינה למשלוח
+                    </div>
+
+                    <div class="B">
+                        אספקה מתוכננת @schedueled_delivery_date.ToShortDateString()
+                    </div>
+
+                </div>
+
+                break;
+
+
+            case 40:
+
+                <div class="OrderStatusInfoDiv">
+                    <div class="B">
+                        ההזמנה בדרך
+                    </div>
+
+                    <div class="B">
+                        השליח יצור קשר בקרוב!
+                    </div>
+
+                </div>
+
+                break;
+
+
+            case 50:
+
+                <div class="OrderStatusInfoDiv">
+                    <div class="B">
+                        ההזמנה נמסרה!
+                    </div>
+
+                    <div class="B">
+                        עכשיו משאירים משוב!
+                    </div>
+
+                </div>
+
+                break;
+
+
+            case 60:
+
+                <div class="OrderStatusInfoDiv">
+                    <div class="B">
+                        ההזמנה לא נמסרה!
+                    </div>
+
+                    <div class="B">
+                        משהו השתבש ולא הצלחנו להשלים את המסירה!
+                    </div>
+
+                </div>
+                break;
+            case 70:
+            case 200:
+
+                <div class="OrderStatusInfoDiv">
+                    <div class="B">
+                        ההזמנה הושלמה!
+                    </div>
+
+                    <div class="B">
+                        הטיפול בהזמנה הסתיים!
+                    </div>
+
+                </div>
+
+                break;
+
+            case 300:
+
+                <div class="OrderStatusInfoDiv">
+                    <div class="B">
+                        ההזמנה בוטלה!
+                    </div>
+
+
+
+                </div>
+
+                break;
+
+            default:
+                <div class="OrderStatusInfoDiv">
+                    <div class="B">
+                        סטטוס @order_status
+                    </div>
+
+
+
+                </div>
+                break;
+        }
+
+
+
+    </div>
+
+
+}

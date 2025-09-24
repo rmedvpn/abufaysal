@@ -1945,6 +1945,16 @@ div.LogOffBtn{
     overflow:auto;
     font-weight:normal;
 }
+div.OrderStatusInfoDiv {
+    font-size: 20px;
+    color: var(--green);
+    background-color:#fff;
+    margin: 10px;
+    padding: 10px;
+    overflow: auto;
+    font-weight: normal;
+    border-radius:20px;
+}
 .copyDisc {
     position: fixed;
     bottom: 20px;
@@ -2080,4 +2090,73 @@ img.ProdImgs{
     border-radius:20px;
     
     
+}
+
+div.FbStar{
+    
+    padding:5px;
+    margin:5px;
+    font-size:30px;
+    float:left;
+    color:var(--background);
+}
+
+button.FbStar{
+    
+    padding:0;
+    margin-right:1px;
+    margin-left:1px;
+    font-size:24px;
+    
+    color:var(--background);
+    background:transparent;
+    border:0;
+}
+
+button.FbStarOn{
+    
+    padding:0;
+    margin-right:1px;
+    margin-left:1px;
+    font-size:24px;
+    
+    color:var(--brown);
+    background:transparent;
+    border:0;
+}
+
+    button.FbStar:hover {
+        color: var(--variable-collection-light-green);
+    }
+
+img.FbImg{
+    border-radius:20px;
+    width:400px;
+    height:auto;
+}
+
+textarea.FbComments{
+    font-size:16px;
+    resize:none;
+    margin:5px;
+    padding:10px;
+    color:var(--green);
+    width:90%;
+    border-radius:20px;
+    font-family:Noyland;
+    border:2px dotted var(--background);
+}
+
+    textarea.FbComments::placeholder {
+        color: var(--variable-collection-light-green);
+        text-align: center;
+    }
+
+div.fbContact{
+    float:right;
+    margin:5px;
+    padding:5px;
+    color:var(--variable-collection-light-green);
+    font-size:16px;
+    font-weight:bold;
 }

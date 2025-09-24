@@ -577,29 +577,95 @@ function SelectItemProp(prop_type, prop_id,prop_value) {
     Accordionize(selected_acc);
     CalcItemCost();
 }
-function CartChangeQuan2(theAction) {
-    theAction = theAction || "+1";
-    let displayElement = document.getElementById("quanOfPackagesLabel");
-    let InputElement = document.getElementById("quanOfPackages");
-    let UnitPriceElement = document.getElementById("unit_price");
-    let UnitPricedisplayElement = document.getElementById("CartPriceLabel");
-    let curQuan = parseInt(InputElement.value, 10);
-    let unit_price = parseInt(UnitPriceElement.value, 10);
- //   console.log(InputElement.value)
-//    console.log(theAction)
-    console.log(curQuan)
-    if (theAction == "+1") {InputElement.value = curQuan + 1;}
-    if (theAction == "-1") {
-        if (curQuan > 1) {InputElement.value = curQuan - 1;}
+function fbHover(fldName,fbId,StarRatings) {
+    fldName = fldName || "";
+    fbId = fbId || 0;
+    StarRatings = StarRatings || "";
+    let isValue = false;
+
+    let valueFld = "fbVal_" + fbId;
+    if (document.getElementById(valueFld)) {
+        if (document.getElementById(valueFld).value != "") {
+            isValue = true;
+
+        }
     }
-    curQuan = parseInt(InputElement.value, 10);
-    console.log(curQuan)
+    let clsName = "FbStarOn";
+    console.log("isValue " + isValue);
+    if (!isValue) {
+        fbHoverOff(fbId);
+        for (var i = 1; i <= StarRatings; i++) {
+            let curFld = "fb_" + fbId + "_" + i;
+            var fld;
 
-    let tot_price = curQuan * unit_price;
-    console.log("tot_price " + tot_price);
-    displayElement.innerHTML = InputElement.value;
-    UnitPricedisplayElement.innerHTML = tot_price;
+            if (document.getElementById(curFld)) {
+                fld = document.getElementById(curFld);
+                fld.className = clsName;
+                console.log(curFld)
+            }
+            // loop body here
+        }
 
+    }
+}
+function fbHoverOff(fbId,isForce) {
+    fbId = fbId || 0;
+    isForce = isForce || false;
+    let isValue = false;
+    let valueFld = "fbVal_" + fbId;
+    let clsName = "FbStar";
+    
+    var fld;
+
+    if (!isForce) {
+        if (document.getElementById(valueFld)) {
+            if (document.getElementById(valueFld).value != "") {
+                isValue = true;
+
+            }
+        }
+    }
+    
+
+    if (!isValue) {
+        for (var i = 1; i <= 10; i++) {
+            let curFld = "fb_" + fbId + "_" + i;
+            if (document.getElementById(curFld)) {
+                fld = document.getElementById(curFld);
+                fld.className = clsName;
+                console.log(curFld)
+            }
+            // loop body here
+        }
+    }
+    
+
+    
+
+    console.log(isValue)
+    console.log(fbId)
+
+}
+function fbSelect(fbId, StarRatings) {
+    fbId = fbId || 0;
+    StarRatings = StarRatings || 0;
+
+    let clsName = "FbStar";
+    var fld;
+    let curRating = document.getElementById("fbVal_" + fbId).value  ;
+
+    if (curRating > 0) {
+        for (var i = 1; i <= curRating; i++) {
+            let curFld = "fb_" + fbId + "_" + i;
+            document.getElementById(curFld).className = clsName
+        }
+    }
+    clsName = "FbStarOn";
+    for (var i = 1; i <= StarRatings; i++) {
+        let curFld = "fb_" + fbId + "_" + i;
+        document.getElementById(curFld).className = clsName
+    }
+    document.getElementById("fbVal_" + fbId).value = StarRatings;
 }
 
 function CartChangeQuan(theAction) {

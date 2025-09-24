@@ -3,6 +3,7 @@
 
 @{
     Layout = null;
+    DateTime local_time = AppFunctions.LocalTime();
     var context = HttpContextAccessor.HttpContext;
     var Request = context.Request;
     var culture = new System.Globalization.CultureInfo("he-IL");
@@ -56,8 +57,17 @@
 
                                     @foreach (var order in orders)
                                     {
-                                        string ordStatus = AppFunctions.GetTitleById("OrderStatus", order.order_status);
-                                        <div class="OrderTrackItem" onclick="sbload('BottomUp','Caller?p1=OrderInfo&p2=@order.order_id');">
+                                        int order_status = order.order_status;
+                                        string ordStatus = AppFunctions.GetTitleById("OrderStatus", order_status);
+                                        string ordAction = "Caller?p1=OrderInfo&p2=" + order.order_id;
+
+                                        if (order_status == 50)
+                                        {
+                                            ordAction = "Caller?p1=OrderFeedback&p2=" + order.order_id;
+                                        }
+
+
+                                        <div class="OrderTrackItem" onclick="sbload('BottomUp','@ordAction');">
                                             <div class="B" style="float:right;">
                                                 <div class="OrderInfBtn">
                                                     ?
@@ -65,12 +75,29 @@
 
 
                                             </div>
-                                            <div class="B" style="float:right;width:30%;text-align:right">
-                                                הזמנה# @order.order_id<br />
-                                                <span class="MiniTag">@order.ts.ToShortDateString() @order.ts.ToString("HH:mm")</span>
+
+                                            <div class="B" style="float:right;width:25%;text-align:right;">
+                                                @if (order.ts.ToShortDateString() == local_time.ToShortDateString())
+                                                {
+                                                    <span>
+                                                        @order.ts.ToString("HH:mm")
+                                                    </span>
+                                                    
+                                                }
+                                                else
+                                                {
+                                                    <span>
+                                                        @order.ts.ToShortDateString()
+                                                    </span>
+                                                }
+                                                
+                                                
                                             </div>
-                                            <div class="B" style="float:right;width:30%">
+                                            <div class="B" style="float:right;width:40%;text-align:right">
                                                 @ordStatus
+                                                @if(order_status==50){
+                                                    <div class="B" style="color:#f00">נא למלא משוב</div>
+                                                }
                                             </div>
 
 
