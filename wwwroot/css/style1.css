@@ -78,7 +78,7 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
 }
 
 .container {
-    max-width: 500px;
+    max-width: 450px;
     min-width: 400px;
     margin: 0 ;
     padding: 0;
@@ -196,120 +196,9 @@ img.ordersSmallButtons {
     background-color: #ede7d5;
     border-radius: 20px;
     text-align: center;
+
 }
 
-.center_wel {
-    margin: 0;
-    display: table;
-    background-color: #ede7d5;
-}
-
-
-.menubtn {
-    width: 100%;
-    display: table;
-    margin: 0 auto;
-    max-width: 370px;
-    padding: 0;
-}
-
-    .menubtn ul {
-        width: 100%;
-        float: right;
-        margin: 0 auto;
-        padding: 0;
-        list-style: none;
-    }
-
-        .menubtn ul li {
-            width: 100%;
-            float: right;
-            margin: 0 auto 28px;
-            padding: 0;
-            list-style: none;
-        }
-
-            .menubtn ul li:last-child {
-                margin-bottom: 0px;
-            }
-
-            .menubtn ul li a {
-                font-size: 35px;
-                line-height: 90px;
-                font-weight: 400;
-                color: #dfffbd;
-                background: transparent;
-                cursor: pointer;
-                outline: 0;
-                border: none;
-                text-align: center;
-                border-radius: 50px;
-                display: table;
-                width: 100%;
-                max-width: 100%;
-                margin: 0 auto;
-                letter-spacing: 0.7px;
-                border: 3px solid #dfffbd;
-            }
-
-                .menubtn ul li a:hover {
-                    color: black;
-                    background: #dfffbd;
-                }
-
-.ft_bot {
-    width: 100%;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    position: relative;
-    top: 40px;
-}
-
-    .ft_bot .container {
-        width: 90%;
-        margin: 0 auto;
-        padding: 0;
-        max-width: 40%;
-        display: flex;
-        align-items: flex-end;
-    }
-
-.s_left {
-    width: 50%;
-    float: left;
-    margin: 0 auto;
-    padding: 0;
-}
-
-    .s_left li {
-        width: auto;
-        float: left;
-        margin: 0 29px 0 0;
-        padding: 0;
-    }
-
-        .s_left li:last-child {
-            margin-right: 0px;
-        }
-
-        .s_left li a {
-            display: inline-block;
-            cursor: pointer;
-        }
-
-.s_right {
-    width: 50%;
-    float: right;
-    margin: 0 auto;
-    padding: 0;
-    text-align: right;
-}
-
-    .s_right a {
-        display: inline-block;
-        cursor: pointer;
-    }
 
 /**Registration page**/
 .reg_sec {
@@ -322,231 +211,14 @@ img.ordersSmallButtons {
     background-position: top center;
     position: relative;
 }
-
-.iner_cont {
-    max-width: 565px;
-    margin: 40px auto 0;
-    display: table;
-    padding: 80px 60px 20px;
-    background: rgba(255,255,255,0.97);
-    border-radius: 5px;
-}
-
 .simg {
     text-align: center;
 }
 
-.iner_cont h1 {
-    font-size: 38px;
-    line-height: 38px;
-    color: #231f20;
-    font-weight: bold;
-    margin: 0 0 35px;
-    text-align: center;
-    letter-spacing: 0.76px;
-}
-
-.tx_block {
-    width: 100%;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-}
-
-    .tx_block p {
-        font-size: 26px;
-        line-height: 36px;
-        letter-spacing: 0.52px;
-        margin: 0 auto 34px;
-        font-weight: 400;
-        width: 97%;
-        color: #231f20;
-    }
-
-.btn_block {
-    max-width: 456px;
-    margin: 0 auto;
-}
-
-    .btn_block a {
-        font-size: 36px;
-        line-height: 50px;
-        font-weight: bold;
-        color: #231f20;
-        padding: 0px;
-        background: transparent;
-        border: 3px solid #000000;
-        border-radius: 10px;
-        box-shadow: 5px 9px 8px 0px rgba(5, 3, 4, 0.17);
-        margin-left: 6%;
-        width: 206px;
-        text-align: center;
-        display: inline-block;
-        cursor: pointer;
-        letter-spacing: 0.76px;
-    }
-
-        .btn_block a:last-child {
-            margin-left: 0px;
-        }
-
-        .btn_block a:hover {
-            background: #000000;
-            color: rgba(255,255,255,0.97);
-        }
 
 /**content page**/
-.cont_sect {
-    padding: 0 0 90px;
-}
-
-    .cont_sect .iner_cont h1 {
-        text-align: right;
-        margin: 0 auto 30px;
-    }
-
-    .cont_sect .iner_cont {
-        padding: 35px 60px 110px;
-        background: rgba(255,255,255,0.86);
-    }
-
-    .cont_sect .tx_block {
-        margin: 50px 0 0;
-        text-align: right;
-    }
-
-        .cont_sect .tx_block p {
-            width: 100%;
-            margin: 0 auto;
-        }
-
 /**Form page**/
-.form_sec {
-    background-repeat: repeat;
-    padding: 50px 0 80px;
-}
 
-.form_wel {
-    max-width: 385px;
-    margin: 0px auto 0;
-    display: table;
-}
-
-    .form_wel .caption {
-        width: 100%;
-        float: right;
-        margin: 0px auto 55px;
-        padding: 0;
-    }
-
-        .form_wel .caption h1 {
-            color: #dfffbd;
-            margin: 0px;
-            padding: 5px 0 28px;
-            font-size: 55px;
-            line-height: 79px;
-            letter-spacing: 2.24px;
-            position: relative;
-        }
-
-            .form_wel .caption h1 strong {
-                color: #dfffbd;
-                font-size: 84px;
-                line-height: 79px;
-                letter-spacing: 1.68px;
-            }
-
-            .form_wel .caption h1:before {
-                content: '';
-                width: 100%;
-                height: 3px;
-                background-position: top;
-                background-size: 100%;
-                position: absolute;
-                top: 0;
-                right: 0;
-            }
-
-            .form_wel .caption h1:after {
-                content: '';
-                width: 100%;
-                height: 3px;
-                background-position: top;
-                margin-top: 25px;
-                background-size: 100%;
-                position: absolute;
-                bottom: 0;
-                right: 0;
-            }
-
-.f_details {
-    width: 100%;
-    clear: both;
-}
-
-    .f_details form {
-        width: 100%;
-        max-width: 350px;
-        margin: 0 auto;
-        padding: 0;
-    }
-
-        .f_details form input {
-            font-size: 28px;
-            line-height: 45px;
-            background: #f8f8f8;
-            border: none;
-            color: #231f20;
-            outline: 0;
-            border-radius: 5px;
-            font-family: 'Tahoma', sans-serif;
-            clear: both;
-            display: block;
-            padding: 0 20px 0 7px;
-            margin: 0 0 25px;
-            font-weight: 400;
-            box-shadow: -1px 9px 0px 0px rgba(14, 4, 4, 1) !important;
-            border: 1px solid #c6c6c6;
-            width: 90%;
-        }
-
-        .f_details form textarea {
-            font-size: 28px;
-            line-height: 45px;
-            background: #f8f8f8;
-            border: none;
-            color: #231f20;
-            outline: 0;
-            border-radius: 5px;
-            font-family: 'Tahoma', sans-serif;
-            clear: both;
-            display: block;
-            padding: 0 20px 0 7px;
-            margin: 0 0 25px;
-            font-weight: 400;
-            box-shadow: -1px 9px 0px 0px rgba(14, 4, 4, 1) !important;
-            border: 1px solid #c6c6c6;
-            resize: none;
-            width: 90%;
-        }
-
-        .f_details form input[type='checkbox'] {
-            padding: 5px;
-            margin: 5px;
-            float: right;
-            width: 20px;
-            height: 20px;
-        }
-
-        .f_details form input[type='radio'] {
-            padding: 5px;
-            margin: 5px;
-            float: right;
-            width: 20px;
-            height: 20px;
-            box-shadow: none;
-            background: transparent !important;
-        }
 
 .box_details {
     width: 100%;
@@ -1882,6 +1554,7 @@ div .MainMenuBtn {
     margin: 25px auto 0;
     margin-right:10px;
     margin-left:10px;
+
 }
 div .MainMenuCloseBtn {
     color: var(--variable-collection-whit);

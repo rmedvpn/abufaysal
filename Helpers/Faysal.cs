@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Globalization;
+using System.Reflection;
+using System.Xml.Linq;
 
 namespace Faysal.Helpers
 {
@@ -1168,6 +1170,70 @@ namespace Faysal.Helpers
             db.Close();
             return theHtmlOutput;
         }
+
+        public static string SubmitFeedback(HttpContext context)
+        {
+            System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("he-IL");
+            DateTime local_time = AppFunctions.LocalTime();
+
+            int u_id = WebSecurity.CurrentUserId;
+            string sessionId = context.Session.Id;
+            
+            string theHtmlOutput = "";
+            var db = Database.Open("faysal");
+            var sqlSelect = "";
+            int order_id = 0; try { order_id = Convert.ToInt32(Param(context, "order_id")); } catch { }
+            int ServiceRating = 0; try { ServiceRating = Convert.ToInt32(Param(context, "fbVal_-1")); } catch { }
+            int SHRating = 0; try { SHRating = Convert.ToInt32(Param(context, "fbVal_-2")); } catch { }
+            string ServiceNotes= Param(context, "fbNotes_-1");
+            string SHNotes= Param(context, "fbNotes_-2");
+            bool is_contact = false;if(Param(context, "is_contact") == "yes") { is_contact = true; }
+            bool is_public = false;if(Param(context, "is_public") == "yes") { is_public = true; }
+
+            string nick = AppFunctions.GetUserNick(u_id);
+
+            if (SHRating > 0 || ServiceRating > 0)
+            {
+                sqlSelect = "INSERT INTO FeedBacks(u_id,order_id,ServiceRating,SHRating,ServiceNotes,SHNotes,ts,nick,is_contact,is_public)";
+                sqlSelect += " VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9)";
+                db.Execute(sqlSelect, u_id, order_id, ServiceRating, SHRating, ServiceNotes, SHNotes, local_time,nick,is_contact,is_public);
+            }
+
+
+            sqlSelect = "SELECT DISTINCT orderitems.strain_option_id,strainOptions.* FROM orderitems JOIN strainOptions ON orderitems.strain_option_id= strainOptions.id  where order_id=@0";
+            var orderitems = db.Query(sqlSelect, order_id);
+            foreach(var item in orderitems)
+                            {
+
+                sqlSelect = "";
+                int strain_id = item.strain_option_id;
+                string fbRatingFldName = "fbVal_" + strain_id;
+                int strainRatings = 0; try { strainRatings = Convert.ToInt32(Param(context, fbRatingFldName)); } catch { }
+                 string fbCommentFldName = "fbNotes_" + strain_id;
+                string strainComments = ""; try { strainComments = Param(context, fbCommentFldName); } catch { }
+
+                if(strainRatings>0 || !String.IsNullOrEmpty(strainComments))
+                {
+                    sqlSelect = "INSERT INTO StrainsFeedbacks(ts,u_id,nick,order_id,strain_id,rating,comment,is_public)";
+                    sqlSelect += " VALUES(@0,@1,@2,@3,@4,@5,@6,@7)";
+                    db.Execute(sqlSelect, local_time, u_id, nick, order_id, strain_id, strainRatings, strainComments,is_public);
+                }
+                
+
+                
+                            }
+
+            sqlSelect = "UPDATE OrderTracking SET order_status=70,status_change_ts=@0 WHERE order_id=@1";
+            db.Execute(sqlSelect, local_time, order_id);
+            theHtmlOutput = "תודה, הדירוג נרשם!";
+
+
+            db.Close();
+
+
+            return theHtmlOutput;
+        }
+
 
 
         public static string MaskString(string input)

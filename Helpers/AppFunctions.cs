@@ -62,6 +62,20 @@ namespace Faysal.Helpers
             db.Close();
         }
 
+        public static string GetUserNick(int u_id)
+        {
+            string nick = "";
+            var db = Database.Open("faysal");
+            DateTime local_time = LocalTime();
+            var sqlSelect = "SELECT member_nick FROM users  WHERE u_id=@0";
+            var user = db.QuerySingle(sqlSelect,  u_id);
+            db.Close();
+
+            try { nick = user.member_nick; } catch { }
+
+            return nick;
+        }
+
 
         public static bool ValidateEmail(string input)
         {

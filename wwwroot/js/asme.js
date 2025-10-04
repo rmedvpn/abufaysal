@@ -126,6 +126,7 @@ function AjaxActions(field, value, loader_element, param1, param2, param3, param
         case "ReviewOrder":
         case "PlaceOrder":
         case "CheckRegistrationCode":
+        case "SubmitFeedback":
             var form = document.getElementById(param1);
             formData = new FormData(form);
             break;
@@ -259,6 +260,15 @@ function AjaxActions(field, value, loader_element, param1, param2, param3, param
                     else {
                         Notify(theRes.replace("!$!", ""), 1);
                     }
+
+
+                    break;
+
+
+
+                case "SubmitFeedback":
+                    sbload('MainMenu', 'Caller?p1=MainMenu');
+                    Notify(theRes.replace("!$!", ""), 1);
 
 
                     break;

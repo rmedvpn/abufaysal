@@ -51,6 +51,7 @@
                 <div class="A">
                     <form id="OrderFbForm">
 
+                    <input type="hidden" name="order_id" value="@order_id" />
                         <div class="B" style="text-align:center;">
                             <div class="OrderIntroMsg" style="text-align:center;">
                                 משוב הזמנה #@order_id
@@ -65,6 +66,7 @@
                         <center>
 
                           
+
 
 
                             @foreach(var item in orderitems)
@@ -296,7 +298,7 @@
                                 <div class="Spacer20"></div>
                                 <div class="Spacer5"></div>
                                 <button class="checkuotBtn" type="button" onclick="controller.open('MainMenu');" style="width:30%;background-color:rgba(166, 160, 111, 1);">&lt; חזרה </button>
-                                <button class="checkuotBtn" type="button" onclick="controller.open('MainMenu');" style="width:50%;">  שליחת משוב &gt; </button>
+                                <button class="checkuotBtn" type="button" onclick="AjaxActions('SubmitFeedback', '', 'MainLoader', 'OrderFbForm');" style="width:50%;">  שליחת משוב &gt; </button>
                             </div>
                             
 
