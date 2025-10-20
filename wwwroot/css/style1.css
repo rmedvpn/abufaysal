@@ -1757,12 +1757,15 @@ div .DataFormBg {
     font-family: Noyland;
     font-size: 24px;
 }
-img.ProdImgs{
-    max-width:100%;
-    max-height:250px;
-    border-radius:20px;
-    
-    
+img.ProdImgs {
+    width: 165px;
+    height: auto;
+    max-height: 140px;
+    border-radius: 20px;
+    background-color:rgba(255, 255, 255, 1);
+    margin:5px;
+ 
+ 
 }
 
 div.FbStar{
@@ -1832,4 +1835,20 @@ div.fbContact{
     color:var(--variable-collection-light-green);
     font-size:16px;
     font-weight:bold;
+}
+
+div.floatingGrnBg {
+    height: 300px;
+    background-color: var(--green);
+    position:fixed;
+    width:100%;
+    z-index:0;
+}
+
+div.StrainInfoTitle {
+    color: rgba(255, 255, 255, 1);
+    font-size: 22px;
+    font-weight: bold;
+    font-family: Noyland;
+    margin: 0;
 }

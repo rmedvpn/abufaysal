@@ -15,6 +15,8 @@
     var db = Database.Open("faysal");
     var sqlSelect = "";
 
+    int imgCnt = 0;
+
     if (strain_id > 0)
     {
         sqlSelect = "SELECT * FROM strainOptions WHERE id=@0";
@@ -41,9 +43,11 @@
 
                     </div>
 
-                    <div class="A">
-                        <div class="B" style="text-align:center;">
-                            <div class="OrderIntroMsg" style="text-align:center;">
+                    <div class="B">
+                        <div class="floatingGrnBg">&nbsp;</div>
+
+                        <div class="B" style="text-align:center;position:relative;z-index:1">
+                            <div class="StrainInfoTitle" style="text-align:center;">
                                 @strain.title
                                 <div class="OrderIntroSubMsg" style="font-size:14px;">
                                     @strain.cat_title
@@ -54,8 +58,27 @@
                             
                                 @foreach(var imgFile in strainImages)
                                 {
-                                    <img class="ProdImgs" src="pImgView?id=@imgFile.file_id" />
-                                    <div class="Spacer10"></div>
+                                    imgCnt++;
+                                    if (imgCnt % 2 == 0)
+                                    {
+                                        <div class="B" style="float:right;min-height:130px;width:50%">
+                                            <img class="ProdImgs" src="pImgView?id=@imgFile.file_id" />
+                                        </div>
+                                        
+
+                                    }
+                                    else
+                                    {
+                                        <div class="B" style="float:left;min-height:130px;width:50%">
+                                            <img class="ProdImgs" src="pImgView?id=@imgFile.file_id"  />
+                                        </div>
+                                        
+                                    }
+
+                                    if (imgCnt % 2 == 0)
+                                    {
+                                        <div style="clear: both;"></div>
+                                    }
                                 }
 
                             </div>
