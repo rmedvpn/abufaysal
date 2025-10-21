@@ -21,9 +21,11 @@
     {
         sqlSelect = "SELECT * FROM strainOptions WHERE id=@0";
         var strain = db.QuerySingle(sqlSelect, strain_id);
+        int strain_rating = 0;try { strain_rating = Convert.ToInt32(strain.rating); } catch { }
         sqlSelect = "SELECT file_id FROM strainImages WHERE is_deleted=0 AND is_show=1 AND strain_id=@0";
         var strainImages = db.Query(sqlSelect, strain_id);
-
+        sqlSelect = "SELECT nick,rating,comment,ts FROM strainsFeedbacks WHERE strain_id=@0 AND is_public=1 AND is_publish=1 ORDER BY ts DESC";
+        var feedbacks = db.Query(sqlSelect, strain_id);
         <section class="wel_sec">
             <div class="container">
 
@@ -49,7 +51,7 @@
                         <div class="B" style="text-align:center;position:relative;z-index:1">
                             <div class="StrainInfoTitle" style="text-align:center;">
                                 @strain.title
-                                <div class="OrderIntroSubMsg" style="font-size:14px;">
+                                <div class="StrainIntroSubMsg">
                                     @strain.cat_title
                                 </div>
                             </div>
@@ -85,26 +87,57 @@
 
                             @if (!String.IsNullOrEmpty(@strain.description))
                             {
-                                <div class="OrderIntroMsg" style="text-align:center;">
-                                    תיאור
-                                    <div class="OrderIntroSubMsg" style="font-size:14px;">
-                                        @strain.description
-                                    </div>
+                                <div class="StrainDesc" >
+                                    @strain.description
                                 </div>
                             }
                             
-                              
+                            @if (feedbacks.Count() > 0)
+                            {
+                                <div class="A">
+                                    <span class="fbStrainTitle">חברים מספרים על הזן <span>@strain.title</span></span>
+                                    <div class="B" style="text-align:center;clear:both;">
+                                        @for (var i = 0; i < strain_rating; i++)
+                                        {
+                                            <span class="fbStarRating">⭐</span>
+                                        }
+                                    </div>
+
+                                    @foreach (var fb in feedbacks)
+                                    {
+                                        int rating = fb.rating;
+                                        <div class="fbItem">
+                                            <div class="B">
+                                                <span class="fbNick">@fb.nick</span>
+                                                <span class="fbRating">
+                                                    @for (var i = 0; i < rating; i++)
+                                                    {
+                                                        <span class="fbStarRating">⭐</span>
+                                                    }
+                                                </span>
+                                            </div>
+
+                                            <div class="fbInfo">
+                                                @fb.comment
+                                                <span class="fbTime">@fb.ts.ToShortDateString()</span>
+                                            </div>
+                                        </div>
+                                    }
+
+                                </div>
+                            }
+                            
 
                         </div>
 
                         <div class="A" style="text-align:center;">
 
 
-                            <button class="OrderPageChkoutBtn" type="button" onclick="controller.close('MainSb');" style="background-color:rgba(166, 160, 111, 1);width:50%;float:none;">&lt; חזרה</button>
+                            <button class="OrderPageChkoutBtn" type="button" onclick="controller.close('MainSb');" style="width:50%;float:none;">&lt; חזרה</button>
 
 
                         </div>
-
+                        <div class="Spacer50">&nbsp;</div>
 
 
 

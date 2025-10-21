@@ -1850,5 +1850,66 @@ div.StrainInfoTitle {
     font-size: 22px;
     font-weight: bold;
     font-family: Noyland;
+    padding-top:5px;
     margin: 0;
+
+}
+div.StrainIntroSubMsg {
+    color: var(--background);
+    font-size: 16px;
+    font-weight: normal;
+    font-family: Noyland;
+    margin: 5px;
+}
+
+div.StrainDesc {
+    color: var(--brown);
+    font-size: 16px;
+    font-weight: normal;
+    font-family: Noyland;
+    margin: 10px;
+    padding:5px;
+    text-align:right;
+}
+div.fbItem{
+    padding:5px;
+    margin:5px;
+    background-color:#fff;
+    border-radius:10px;
+    font-size:16px;
+    color:#000;
+    text-align:right;
+}
+span.fbNick {
+    float: right;
+    padding: 5px;
+    color:var(--brown);
+}
+span.fbRating {
+    float: left;
+    padding: 5px;
+}
+div.fbInfo{
+    clear:both;
+    overflow:auto;
+    padding-right:5px;
+    font-size:14px;
+}
+span.fbStarRating {
+    padding: 0;
+    margin: 0;
+    font-size:14px;
+}
+span.fbStrainTitle {
+    color: var(--green);
+    padding:2px;
+    margin:1px;
+    font-size:18px;
+    font-weight:bold;
+}
+span.fbTime{
+    font-size:14px;
+    color:var(--variable-collection-light-green);
+    float:left;
+    padding:5px;
 }
