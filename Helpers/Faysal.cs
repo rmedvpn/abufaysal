@@ -1235,6 +1235,53 @@ namespace Faysal.Helpers
         }
 
 
+        public static string ChangePw(HttpContext context)
+        {
+            System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("he-IL");
+            DateTime local_time = AppFunctions.LocalTime();
+
+            int u_id = WebSecurity.CurrentUserId;
+            string sessionId = context.Session.Id;
+            
+            string theHtmlOutput = "";
+            var db = Database.Open("faysal");
+            var sqlSelect = "";
+            string pw= Param(context, "pw");
+            string pw2= Param(context, "pw2");
+            string errMsg = "!$!";
+
+            if (pw.Length<4)
+            {
+                errMsg += "מינימום אורך סיסמא - 4 תווים<br>";
+            }
+
+            if (pw != pw2 )
+            {
+                errMsg += "הסיסמאות לא תואמות<br>";
+            }
+
+            if(errMsg== "!$!")
+            {
+                 sqlSelect = "UPDATE webpages_Membership SET password=@0 WHERE UserId=@1";
+                 db.Execute(sqlSelect, pw,u_id);
+                theHtmlOutput = "הסיסמא שונתה בהצלחה!";
+
+
+            }
+            else
+            {
+                theHtmlOutput = errMsg;
+            }
+
+                
+
+            db.Close();
+
+
+            return theHtmlOutput;
+        }
+
+
 
         public static string MaskString(string input)
         {

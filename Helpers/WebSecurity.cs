@@ -1,11 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Security.Claims;
-using Dapper;
+﻿using Dapper;
 using Faysal.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Security.Cryptography;
+
+using System.Text;
+using static System.Net.WebRequestMethods;
 
 namespace Faysal.Helpers
 {
@@ -84,7 +88,119 @@ namespace Faysal.Helpers
             DefaultAdminSeeder.Ensure(db);
         }
 
-        public static bool Login(string username, string password, bool rememberMe = false)
+
+
+public static bool Login(string username, string password, bool rememberMe = false)
+    {
+        const int MAX_FAILED = 5;   // consecutive failures before temp block
+        const int LOCK_MINUTES = 15;  // block duration
+
+        var db = Database.Open("faysal");
+
+        var user = db.QuerySingleOrDefault(@"
+        SELECT 
+            u.UserId, u.UserName, u.SessionVersion, u.IsBlocked, u.BlockUntilUtc,
+            m.Password, m.PasswordFailuresSinceLastSuccess, m.LastPasswordFailureDate
+        FROM UserProfile u
+        INNER JOIN webpages_Membership m ON u.UserId = m.UserId
+        WHERE u.UserName = @0;", username);
+
+        if (user == null) return false;
+
+        // Permanent or temporary block check
+        bool isBlocked = false; try { isBlocked = Convert.ToBoolean(user.IsBlocked); } catch { }
+        DateTime? blockUntil = null; try { blockUntil = (DateTime?)user.BlockUntilUtc; } catch { }
+        if (isBlocked || (blockUntil.HasValue && DateTime.UtcNow < blockUntil.Value))
+            return false;
+
+        // Current (consecutive) failure count
+        int failedCount = 0; try { failedCount = (int)user.PasswordFailuresSinceLastSuccess; } catch { }
+
+        // Password check (replace with your hash verifier if applicable)
+        string storedPassword = Convert.ToString(user.Password)?.Trim() ?? "";
+        bool ok = storedPassword == (password ?? "");
+
+        if (!ok)
+        {
+            var nowUtc = DateTime.UtcNow;
+            int newCount = failedCount + 1;
+
+            if (newCount >= MAX_FAILED)
+            {
+                // Hit threshold → set a temporary lock for 15 minutes
+                var lockUntil = nowUtc.AddMinutes(LOCK_MINUTES);
+
+                // 1) Reset counters (so we start fresh after the lock)
+                db.Execute(@"
+UPDATE webpages_Membership
+SET PasswordFailuresSinceLastSuccess = 0,
+    LastPasswordFailureDate = @0
+WHERE UserId = @1;",
+                    nowUtc, (int)user.UserId);
+
+                // 2) Set BlockUntilUtc on the profile
+                db.Execute(@"
+UPDATE UserProfile
+SET BlockUntilUtc = @0
+WHERE UserId = @1;",
+                    lockUntil, (int)user.UserId);
+
+                return false;
+            }
+            else
+            {
+                // Below threshold → just increment & timestamp
+                db.Execute(@"
+UPDATE webpages_Membership
+SET PasswordFailuresSinceLastSuccess = @0,
+    LastPasswordFailureDate = @1
+WHERE UserId = @2;",
+                    newCount, nowUtc, (int)user.UserId);
+
+                return false;
+            }
+        }
+
+        // Success → clear counters and any temp block
+        db.Execute(@"
+UPDATE webpages_Membership
+SET PasswordFailuresSinceLastSuccess = 0,
+    LastPasswordFailureDate = NULL
+WHERE UserId = @0;", (int)user.UserId);
+
+        db.Execute(@"
+UPDATE UserProfile
+SET BlockUntilUtc = NULL
+WHERE UserId = @0;", (int)user.UserId);
+
+        // Sign-in (unchanged)
+        int u_id = (int)user.UserId;
+        int sessionVersion = 0; try { sessionVersion = (int)user.SessionVersion; } catch { }
+
+        var identity = new ClaimsIdentity(new[]
+        {
+        new Claim(ClaimTypes.NameIdentifier, u_id.ToString()),
+        new Claim(ClaimTypes.Name, Convert.ToString(user.UserName) ?? ""),
+        new Claim("sv", sessionVersion.ToString())
+    }, CookieAuthenticationDefaults.AuthenticationScheme);
+
+        var principal = new ClaimsPrincipal(identity);
+
+        var authProps = new AuthenticationProperties { IsPersistent = rememberMe };
+        if (rememberMe) authProps.ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30);
+
+        _http!.HttpContext!.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            principal,
+            authProps
+        ).GetAwaiter().GetResult();
+
+        _http.HttpContext.User = principal;
+        return true;
+    }
+
+
+    public static bool LoginOLD(string username, string password, bool rememberMe = false)
         {
             var db = Database.Open("faysal");
 
@@ -176,5 +292,8 @@ namespace Faysal.Helpers
                 db.Execute("INSERT INTO webpages_UsersInRoles (UserId, RoleId) VALUES (@0, @1)", newId, roleId);
             }
         }
+
+
+    
     }
 }

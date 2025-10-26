@@ -127,6 +127,7 @@ function AjaxActions(field, value, loader_element, param1, param2, param3, param
         case "PlaceOrder":
         case "CheckRegistrationCode":
         case "SubmitFeedback":
+        case "ChangePw":
             var form = document.getElementById(param1);
             formData = new FormData(form);
             break;
@@ -276,6 +277,24 @@ function AjaxActions(field, value, loader_element, param1, param2, param3, param
 
 
 
+                case "ChangePw":
+                    if (!theRes.startsWith("!$!")) {
+                        Notify(theRes.replace("!$!", ""), 1);
+                        sbload('BottomUp', 'Caller?p1=MemberInfo');
+                    }
+                    else {
+                        document.getElementById('pwChangeErrDiv').innerHTML = theRes.replace("!$!", "");
+                        FixAccordion('Acc_ChP');
+
+                    }
+                  
+                    
+
+                    break;
+
+
+
+
             }
 
 
@@ -357,8 +376,8 @@ function AjaxUpdate(theAction, return_container, loaderElement, param1, param2, 
 
 
             switch (theAction) {
-                case "RepListSettings":
-
+                case "PwChangeVerify":
+                    FixAccordion('Acc_ChP');
                     break;
 
 

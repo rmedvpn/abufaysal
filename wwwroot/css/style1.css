@@ -1913,3 +1913,24 @@ span.fbTime{
     float:left;
     padding:5px;
 }
+div.forgotPw {
+    overflow:auto;
+    font-size:14px;
+    color:blue;
+    padding-right:10px;
+    padding-bottom:10px;
+}
+
+img.PInfoIcon{
+    float:right;
+    height:30px;
+    max-width:30px;
+    padding:5px;
+    margin:5px;
+}
+span.PInfoIcon {
+    float: right;
+    font-size: 30px;
+   
+    margin: 5px;
+}

@@ -1,0 +1,99 @@
+﻿@using Faysal.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = null;
+    var context = HttpContextAccessor.HttpContext;
+    var Request = context.Request;
+    var culture = new System.Globalization.CultureInfo("he-IL");
+    var Session = context.Session;
+
+    string Param(string key) =>
+        Request.HasFormContentType && Request.Form.ContainsKey(key)
+            ? Request.Form[key].ToString()
+            : Request.Query.ContainsKey(key)
+                ? Request.Query[key].ToString()
+                : "";
+
+
+    // Session-based attempt counter
+    const int MAX_ATTEMPTS = 4;
+    int attemptCount = Session.GetInt32("pw_attempts") ?? 0;
+
+    string failure_msg = "סיסמא שגויה!";
+    bool is_max_attempts = false;
+    // Stop processing if too many failed attempts
+    if (attemptCount >= MAX_ATTEMPTS)
+    {
+        is_max_attempts = true;
+        failure_msg = "סיסמא שגויה הוזנה יותר מדי פעמים!";
+    }
+
+    string inputPassword = Param("param1");
+    bool is_correct_old_pw = false;
+    int u_id = WebSecurity.CurrentUserId;
+    var db = Database.Open("faysal");
+    var sqlSelect = "SELECT password FROM webpages_Membership WHERE UserId=@0";
+    dynamic user = db.QuerySingleOrDefault(sqlSelect, u_id);
+    string currentPw = "";
+    if (user != null)
+    {
+        currentPw = (string)user.password;
+        if (inputPassword == currentPw)
+        {
+            is_correct_old_pw = true;
+        }
+    }
+
+
+    if (!is_correct_old_pw)
+    {
+        attemptCount++;
+        Session.SetInt32("pw_attempts", attemptCount);
+
+
+        <div class="PropItemQuanMenu">
+            <input type="password" class="RegCode_tb" placeholder="מה הסיסמא הנוכחית שלך?" id="curPw" />
+            <div class="B" style="float:right">
+                <div class="regErrMsg2">@failure_msg</div>
+                <div class="forgotPw" onclick="PageLoad('FORGOTPW');"><u>שכחת את הסיסמא?</u></div>
+            </div>
+            
+            @if (!is_max_attempts)
+            {
+                <div class="B" style="float:left">
+                    <button type="button" class="CartQuanAddBtn" style="margin:10px;width:auto" onclick="AjaxUpdate('PwChangeVerify', 'ChPwDiv', 'MainLoader', document.getElementById('curPw').value);">שינוי סיסמא &gt;</button>
+                </div>
+            }
+        
+
+        </div>
+    }
+    else
+    {
+        Session.SetInt32("pw_attempts", 0);
+
+        <div class="PropItemQuanMenu" >
+            <form id="chPw">
+            <div class="B">
+                    <input type="password" name="pw" class="RegCode_tb" placeholder="נא לבחור סיסמא חדשה.." />
+
+            </div>
+            <div class="B">
+                    <input type="password" name="pw2" class="RegCode_tb" placeholder="נא להזין שוב.." />
+            </div>
+                <div class="B" style="float:right">
+                    <div class="regErrMsg2" id="pwChangeErrDiv"></div>
+                </div>
+                <div class="B" style="float:left">
+                    <button type="button" class="CartQuanAddBtn" style="margin:10px;" onclick="AjaxActions('ChangePw', @u_id,'MainLoader', 'chPw');">שינוי סיסמא &gt;</button>
+                </div>
+            </form>
+        </div>
+
+    }
+
+
+
+    db.Close();
+}

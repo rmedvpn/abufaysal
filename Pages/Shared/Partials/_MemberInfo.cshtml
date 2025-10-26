@@ -6,6 +6,8 @@
     var context = HttpContextAccessor.HttpContext;
     var Request = context.Request;
     var culture = new System.Globalization.CultureInfo("he-IL");
+    var Session = context.Session;
+
     string? member_nick = HttpContextAccessor.HttpContext!.Session.GetString("member_nick");
 
     string Param(string key) =>
@@ -18,9 +20,20 @@
     int u_id = 0; try { u_id = WebSecurity.CurrentUserId; } catch { }
     var db = Database.Open("faysal");
     var sqlSelect = "";
-
+    const int MAX_ATTEMPTS = 4;
+    int attemptCount = Session.GetInt32("pw_attempts") ?? 0;
     sqlSelect = "SELECT TOP(5) order_id,ts,order_status,grand_total FROM ordertracking WHERE u_id=@0 ORDER BY ts DESC";
     var orders = db.Query(sqlSelect, u_id);
+    sqlSelect = "SELECT address_nick,address_notes,is_active,disp_address FROM Addresses WHERE u_id=@0 ORDER BY last_active DESC";
+    var addresses = db.Query(sqlSelect, u_id);
+    sqlSelect = "SELECT wanum_mask,email_mask,tlg_mask FROM USERS WHERE u_id=@0 ";
+    var user = db.QuerySingle(sqlSelect, u_id);
+
+    string email_mask = ""; try { email_mask = user.email_mask; } catch { }
+    string wanum_mask = ""; try { wanum_mask = user.wanum_mask; } catch { }
+    string tlg_mask = ""; try { tlg_mask = user.tlg_mask; } catch { }
+
+
     db.Close();
 }
 
@@ -62,15 +75,31 @@
                         <button class="accordion" id="Acc_ChP" style="display:none"></button>
 
                         <div class="panel" style="width:90%;padding:0">
-                            <div class="PropItemQuanMenu">
-                                    <form id="chPw">
-                          <input type="password" class="RegCode_tb" placeholder="נא לבחור סיסמא חדשה.." />
-                                    <input type="password" class="RegCode_tb" placeholder="נא להזין שוב.." />
-                                <div class="B" style="float:left">
-                                    <button type="button" class="CartQuanAddBtn" style="margin:10px;" >שינוי סיסמא</button>
+
+                            <div id="ChPwDiv">
+                                <div class="PropItemQuanMenu">
+
+                                    @if (attemptCount <= MAX_ATTEMPTS)
+                                    {
+                                        <input type="password" class="RegCode_tb" placeholder="מה הסיסמא הנוכחית שלך?" id="curPw" />
+                                        <div class="B" style="float:left">
+                                            <button type="button" class="CartQuanAddBtn" style="margin:10px;width:auto" onclick="AjaxUpdate('PwChangeVerify', 'ChPwDiv', 'MainLoader', document.getElementById('curPw').value);">שינוי סיסמא &gt;</button>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="regErrMsg2">
+                                            סיסמא שגויה הוזנה יותר מדי פעמים!
+                                        </div>
+                                        <div class="forgotPw" onclick="PageLoad('FORGOTPW');"><u>שכחת את הסיסמא?</u></div>
+
+                                    }
+
                                 </div>
-                                </form>
                             </div>
+
+                           
+
 
                         </div>
 
@@ -82,18 +111,92 @@
 
 
             <div class="B">
-                <div class="MainMenuBtn" onclick="sbload('BottomUp','Caller?p1=MemberInfo');">
+                <div class="MainMenuBtn" onclick="Accordionize('Acc_UpdInf');">
                     עדכון פרטים
                     <img class="MainMenuIcon" src="~/images/members.png" />
                 </div>
+            </div>
+            <div class="B" style="text-align:center">
+                <div class="B" style="text-align:center">
+                    <center>
+                        <button class="accordion" id="Acc_UpdInf" style="display:none"></button>
+
+                        <div class="panel" style="width:90%;padding:0">
+
+                            <div id="UpdateMemberInfoDiv">
+                                <div class="PropItemQuanMenu">
+                                    <div class="B">
+                                        <span class="PInfoIcon">📧</span>
+                                        <input type="text" class="RegCode_tb" placeholder="כתובת מייל" disabled name="email" id="email" value="@email_mask" />
+                                    </div>
+                                    <div class="B">
+                                        <img class="PInfoIcon" src="~/images/wa_icon.jpg">
+                                        <input type="text" class="RegCode_tb" placeholder="#ווטסאפ" disabled name="wanum" id="wanum" value="@wanum_mask" />
+                                    </div>
+                                    <div class="B">
+                                        <img class="PInfoIcon" src="~/images/tlg_icon.jpg">
+                                        <input type="text" class="RegCode_tb" placeholder="טלגרם" disabled name="tlg" id="tlg" value="@tlg_mask" />
+                                    </div>
+                                    
+                                    
+                                    
+                                    <div class="B" style="float:left">
+                                        <button type="button" class="CartQuanAddBtn" style="margin:10px;width:auto" onclick="AjaxUpdate('PwChangeVerify', 'ChPwDiv', 'MainLoader', document.getElementById('curPw').value);">&gt;</button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                        </div>
+
+                    </center>
+
+                </div>
+
             </div>
 
 
 
             <div class="B">
-                <div class="MainMenuBtn" onclick="PageLoad('ORDERS');">הכתובות שלי 
+                <div class="MainMenuBtn" onclick="Accordionize('Acc_MemberAddress');">
+                    הכתובות שלי
                     <span class="MainMenuIcon">?</span>
                 </div>
+            </div>
+            <div class="B" style="text-align:center">
+                <div class="B" style="text-align:center">
+                    <center>
+                        <button class="accordion" id="Acc_MemberAddress" style="display:none"></button>
+
+                        <div class="panel" style="width:90%;padding:0">
+
+                            <div id="UpdateMemberInfoDiv">
+                                <div class="PropItemQuanMenu">
+                                    @foreach(var address in addresses)
+                                    {
+                                        <div class="B">
+                                            <span class="PInfoIcon">🏠</span>
+                                            <div class="A">
+                                                @address.address_nick<br /><span class="MiniTag" style="color:gray">@address.address_notes</span>
+                                            </div>
+                                        </div>
+                                    }
+                                    
+                                    
+                                </div>
+                            </div>
+
+
+
+
+                        </div>
+
+                    </center>
+
+                </div>
+
             </div>
 
 
