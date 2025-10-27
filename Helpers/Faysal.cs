@@ -1365,6 +1365,31 @@ namespace Faysal.Helpers
 
 
 
+        public static string DeleteAddress(HttpContext context)
+        {
+            System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("he-IL");
+            DateTime local_time = AppFunctions.LocalTime();
+
+            int u_id = WebSecurity.CurrentUserId;
+           
+            string theHtmlOutput = "";
+            var db = Database.Open("faysal");
+            var sqlSelect = "";
+           
+            int address_id = 0; try { address_id = Convert.ToInt32(Param(context, "param1")); } catch { }
+            
+
+            sqlSelect = "UPDATE Addresses SET is_active=0 WHERE id=@0 AND u_id=@1";
+            db.Execute(sqlSelect, address_id,u_id);
+            theHtmlOutput = "המידע עודכן בהצלחה!" + address_id;
+            db.Close();
+
+
+            return theHtmlOutput;
+        }
+
+
+
         public static string MaskString(string input)
         {
             if (string.IsNullOrEmpty(input))

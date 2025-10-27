@@ -24,7 +24,7 @@
     int attemptCount = Session.GetInt32("pw_attempts") ?? 0;
     sqlSelect = "SELECT TOP(5) order_id,ts,order_status,grand_total FROM ordertracking WHERE u_id=@0 ORDER BY ts DESC";
     var orders = db.Query(sqlSelect, u_id);
-    sqlSelect = "SELECT address_nick,address_notes,is_active,disp_address FROM Addresses WHERE u_id=@0 ORDER BY last_active DESC";
+    sqlSelect = "SELECT id,address_nick,address_notes,is_active,disp_address FROM Addresses WHERE is_active=1 AND u_id=@0 ORDER BY last_active DESC";
     var addresses = db.Query(sqlSelect, u_id);
     sqlSelect = "SELECT wanum_mask,email_mask,tlg_mask FROM USERS WHERE u_id=@0 ";
     var user = db.QuerySingle(sqlSelect, u_id);
@@ -203,15 +203,19 @@
                         <button class="accordion" id="Acc_MemberAddress" style="display:none"></button>
 
                         <div class="panel" style="width:90%;padding:0">
-
+                        
                             <div id="UpdateMemberInfoDiv">
                                 <div class="PropItemQuanMenu">
+                                    <div class="AddAddressDiv">
+                                        ➕ הוספת כתובת
+                                    </div>
+
                                     @foreach(var address in addresses)
                                     {
                                         <div class="B">
                                             <span class="PInfoIcon">🏠</span>
                                             <div class="A">
-                                                <button type="button" class="infDelBtn" onclick="hideElement('tlg');showElement('tlg_mask');"> <img class="infCancelBtn" src="~/images/x.png" /></button>
+                                                <button type="button" class="infDelBtn" onclick="AjaxActions('DeleteAddress', '@address.id', 'MainLoader',@address.id);"> <img class="infCancelBtn" src="~/images/x.png" /></button>
                                                 <span style="color:var(--brown);font-weight:bold;">@address.address_nick:</span> @address.disp_address<br /><span class="MiniTag" style="color:gray">@address.address_notes</span>
                                                 
                                             </div>

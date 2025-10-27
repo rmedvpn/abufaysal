@@ -2013,3 +2013,10 @@ button.infDelBtn {
     width: 30px;
     text-align: center;
 }
+
+div.AddAddressDiv{
+    padding:5px;
+    margin:5px;
+    color:var(--green);
+    font-size:18px;
+}

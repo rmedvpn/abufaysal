@@ -289,6 +289,7 @@ function AjaxActions(field, value, loader_element, param1, param2, param3, param
                     }
                   
                 case "UpdateMemberInfo":
+                case "DeleteAddress":
                     if (!theRes.startsWith("!$!")) {
                         Notify(theRes.replace("!$!", ""), 1);
                         sbload('BottomUp', 'Caller?p1=MemberInfo');
