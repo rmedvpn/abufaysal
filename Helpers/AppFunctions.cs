@@ -141,6 +141,51 @@ namespace Faysal.Helpers
         }
 
 
+        public static bool ValidatePhone(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return false;
+
+            var phone = input.Trim();
+
+            // Reject obvious bad inputs
+            if (phone.Length < 6 || phone.Length > 20)
+                return false;
+
+            // Allow: digits, spaces, parentheses, plus, hyphen
+            if (!Regex.IsMatch(phone, @"^[\d\+\-\(\)\s]+$"))
+                return false;
+
+            // Must contain at least 6 digits total
+            int digitCount = phone.Count(char.IsDigit);
+            if (digitCount < 6)
+                return false;
+
+            // Normalize (remove formatting) for deeper validation
+            string numericOnly = new string(phone.Where(char.IsDigit).ToArray());
+
+            // Handle Israeli or international numbers if needed
+            // Example: +9725xxxxxxx or 05xxxxxxxx
+            if (phone.StartsWith("+"))
+            {
+                // International format: + and country code
+                if (!Regex.IsMatch(phone, @"^\+\d{6,15}$") &&
+                    !Regex.IsMatch(phone.Replace(" ", ""), @"^\+\d{6,15}$"))
+                    return false;
+            }
+            else if (phone.StartsWith("0"))
+            {
+                // Local (e.g., Israeli) numbers: 0 + 8–10 digits
+                if (!Regex.IsMatch(phone, @"^0\d{8,10}$"))
+                    return false;
+            }
+
+            // Disallow repeated single digit like 0000000
+            if (numericOnly.Distinct().Count() == 1)
+                return false;
+
+            return true;
+        }
         public static bool IsValidUsername(string username)
         {
             if (string.IsNullOrWhiteSpace(username))

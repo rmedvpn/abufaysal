@@ -1921,16 +1921,95 @@ div.forgotPw {
     padding-bottom:10px;
 }
 
-img.PInfoIcon{
-    float:right;
-    height:30px;
-    max-width:30px;
-    padding:5px;
-    margin:5px;
+img.PInfoIcon {
+    float: right;
+    height: 30px;
+    max-width: 30px;
+    padding: 5px;
+    padding-top: 10px;
+    margin: 5px;
 }
 span.PInfoIcon {
     float: right;
     font-size: 30px;
-   
+   padding-top:5px;
     margin: 5px;
+}
+
+input.infUpdate_tb {
+    padding: 10px;
+    margin: 10px;
+    font-size: 24px;
+    width: 50%;
+    border-radius: 20px;
+    border: 0;
+    font-family: Noyland;
+    background-color: var(--background);
+    color: var(--brown);
+    font-weight: normal;
+}
+
+    input.infUpdate_tb::placeholder {
+        color: var(--variable-collection-light-green);
+        font-weight: normal;
+    }
+
+button.infUpdateBtn {
+
+    padding: 0;
+    background-color: var(--brown);
+    margin: 15px;
+    font-size: 22px;
+    border: 0;
+    float: left;
+    font-family: Noyland;
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 30px;
+}
+button.infCancelBtn {
+    padding: 0;
+    padding-left: 10px;
+    background-color: var(--variable-collection-light-green);
+    margin: 15px;
+    font-size: 22px;
+    border: 0;
+    float: left;
+    font-family: Noyland;
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 30px;
+    text-align:center;
+}
+
+img.infCancelBtn {
+    height: 20px;
+    margin:5px;
+    
+}
+
+div.infUpdDisclaimer{
+    overflow:auto;
+    font-size:14px;
+    color:var(--variable-collection-light-green);
+    text-align:center;
+    margin-top:10px;
+
+}
+button.infDelBtn {
+    padding: 0;
+    padding-left: 10px;
+    background-color: #f00;
+
+    font-size: 22px;
+    border: 0;
+    float: left;
+    font-family: Noyland;
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 30px;
+    text-align: center;
 }

@@ -125,24 +125,56 @@
 
                             <div id="UpdateMemberInfoDiv">
                                 <div class="PropItemQuanMenu">
+
+                                    <div class="B">
+                                        <div class="infUpdDisclaimer">
+                                            ⚠️ בלי לחץ, אנחנו לא שומרים שום מידע שעשוי לזהות אותך
+                                        </div>
+                                        
+                                    </div>
+
                                     <div class="B">
                                         <span class="PInfoIcon">📧</span>
-                                        <input type="text" class="RegCode_tb" placeholder="כתובת מייל" disabled name="email" id="email" value="@email_mask" />
+                                        <input type="text" class="RegCode_tb" placeholder="כתובת מייל"  id="email_mask" value="@email_mask" onclick="hideElement('email_mask');showElement('email');" />
+                                        <div class="B" id="email" style="display:none;">
+                                           
+                                            <input type="text" class="infUpdate_tb" placeholder="כתובת מייל" name="email" id="email_tb" />
+                                            <button type="button" class="infUpdateBtn" onclick="AjaxActions('UpdateMemberInfo', 'EMAIL', 'MainLoader', document.getElementById('email_tb').value);">✔</button>
+                                            <button type="button" class="infCancelBtn" onclick="hideElement('email');showElement('email_mask');document.getElementById('email_tb').value=''"> <img class="infCancelBtn" src="~/images/x.png" /></button>
+
+
+                                        </div>
                                     </div>
                                     <div class="B">
                                         <img class="PInfoIcon" src="~/images/wa_icon.jpg">
-                                        <input type="text" class="RegCode_tb" placeholder="#ווטסאפ" disabled name="wanum" id="wanum" value="@wanum_mask" />
+                                        <input type="text" class="RegCode_tb" placeholder="#ווטסאפ"  id="wanum_mask" value="@wanum_mask" onclick="hideElement('wanum_mask');showElement('wanum');" />
+                                        <div class="B" id="wanum" style="display:none;">
+                                            <input type="text" class="infUpdate_tb" placeholder="#ווטסאפ" name="wanum" id="wanum_tb" />
+                                            <button type="button" class="infUpdateBtn" onclick="AjaxActions('UpdateMemberInfo', 'WANUM', 'MainLoader', document.getElementById('wanum_tb').value);">✔</button>
+                                           
+                                            <button type="button" class="infCancelBtn" onclick="hideElement('wanum');showElement('wanum_mask');document.getElementById('wanum_tb').value=''" "> <img class="infCancelBtn" src="~/images/x.png" /></button>
+
+                                        </div>
+                                       
                                     </div>
                                     <div class="B">
                                         <img class="PInfoIcon" src="~/images/tlg_icon.jpg">
-                                        <input type="text" class="RegCode_tb" placeholder="טלגרם" disabled name="tlg" id="tlg" value="@tlg_mask" />
+                                        <input type="text" class="RegCode_tb" placeholder="טלגרם"  id="tlg_mask" value="@tlg_mask" onclick="hideElement('tlg_mask');showElement('tlg');" />
+                                        <div class="B" id="tlg" style="display:none;">
+                                        
+                                            <input type="text" class="infUpdate_tb" placeholder="טלגרם" name="tlg" id="tlg_tb" />
+                                            <button type="button" class="infUpdateBtn" onclick="AjaxActions('UpdateMemberInfo', 'TLG', 'MainLoader', document.getElementById('tlg_tb').value);">✔</button>
+                                            <button type="button" class="infCancelBtn" onclick="hideElement('tlg');showElement('tlg_mask');document.getElementById('tlg_tb').value=''" "> <img class="infCancelBtn" src="~/images/x.png" /></button>
+
+                                        </div>
+                                     
                                     </div>
                                     
-                                    
-                                    
-                                    <div class="B" style="float:left">
-                                        <button type="button" class="CartQuanAddBtn" style="margin:10px;width:auto" onclick="AjaxUpdate('PwChangeVerify', 'ChPwDiv', 'MainLoader', document.getElementById('curPw').value);">&gt;</button>
+                                    <div id="UpdateMemberInfoErrDiv" class="regErrMsg2">
+
                                     </div>
+                                    
+                                  
                                 </div>
                             </div>
 
@@ -179,8 +211,11 @@
                                         <div class="B">
                                             <span class="PInfoIcon">🏠</span>
                                             <div class="A">
-                                                @address.address_nick<br /><span class="MiniTag" style="color:gray">@address.address_notes</span>
+                                                <button type="button" class="infDelBtn" onclick="hideElement('tlg');showElement('tlg_mask');"> <img class="infCancelBtn" src="~/images/x.png" /></button>
+                                                <span style="color:var(--brown);font-weight:bold;">@address.address_nick:</span> @address.disp_address<br /><span class="MiniTag" style="color:gray">@address.address_notes</span>
+                                                
                                             </div>
+                                            
                                         </div>
                                     }
                                     
@@ -207,7 +242,7 @@
                 
             </div>
 
-
+            <div class="Spacer100">&nbsp;</div>
         </div>
 
     </div>

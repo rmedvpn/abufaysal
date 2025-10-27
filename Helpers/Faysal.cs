@@ -1283,6 +1283,88 @@ namespace Faysal.Helpers
 
 
 
+        public static string UpdateMemberInfo(HttpContext context)
+        {
+            System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("he-IL");
+            DateTime local_time = AppFunctions.LocalTime();
+
+            int u_id = WebSecurity.CurrentUserId;
+            string sessionId = context.Session.Id;
+            
+            string theHtmlOutput = "";
+            var db = Database.Open("faysal");
+            var sqlSelect = "";
+            string Field= Param(context, "value");
+            string theValue= Param(context, "param1");
+                        string errMsg = "!$!";
+
+            if (String.IsNullOrEmpty(theValue))
+            {
+                errMsg += "חובה להזין משהו כאן!<br>";
+            }
+            else
+            {
+                switch (Field)
+                {
+                    case "EMAIL":
+                        if (!AppFunctions.ValidateEmail(theValue))
+                        {
+                            errMsg += "חובה להזין כתובת מייל תקינה!";
+                        }
+                        break;
+                    case "WANUM":
+                        if (!AppFunctions.ValidatePhone(theValue)){
+                            errMsg += "חובה להזין מספר טלפון תקין!";
+                        }
+                        break;
+
+                }
+            }
+                
+
+            //errMsg += Field +"<Br>" +theValue;
+            if(errMsg== "!$!")
+            {
+
+                sqlSelect = "INSERT INTO Contacts(u_id,ts,contact_type,is_active,contact_info) VALUES(@0,@1,@2,@3,@4)";
+                db.Execute(sqlSelect, u_id, local_time, Field, 1, theValue);
+
+                string masked_value = MaskString(theValue);
+
+                switch (Field)
+                {
+                    case "EMAIL":
+                        sqlSelect = "UPDATE users SET email_mask=@0 WHERE u_id=@1";
+                        break;
+                    case "WANUM":
+                        sqlSelect = "UPDATE users SET wanum_mask=@0 WHERE u_id=@1";
+                        break;
+                    case "TLG":
+                        sqlSelect = "UPDATE users SET tlg_mask=@0 WHERE u_id=@1";
+                        break;
+
+                }
+                db.Execute(sqlSelect, masked_value, u_id);
+
+                theHtmlOutput = "המידע עודכן בהצלחה!";
+
+
+            }
+            else
+            {
+                theHtmlOutput = errMsg;
+            }
+
+                
+
+            db.Close();
+
+
+            return theHtmlOutput;
+        }
+
+
+
         public static string MaskString(string input)
         {
             if (string.IsNullOrEmpty(input))
