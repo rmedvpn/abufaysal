@@ -206,8 +206,73 @@
                         
                             <div id="UpdateMemberInfoDiv">
                                 <div class="PropItemQuanMenu">
-                                    <div class="AddAddressDiv">
+                                    <div class="AddAddressDiv" onclick="Accordionize('AccAddAress');FixAccordion('Acc_MemberAddress');">
                                         ➕ הוספת כתובת
+                                    </div>
+
+                                    <button class="accordion" style="display:none" id="AccAddAress"></button>
+                                    <div class="panel">
+                                        <form id="AddAddressForm">
+                                        <div style="" id="new_address_div">
+
+                                            <div class="B">
+                                                <div class="Chkout_TbRow">
+
+                                                    <div class="CkotPropRow">
+                                                        <div class="Chkout_TbRTite">רחוב</div>
+
+                                                        <input type="text" class="Chkout_tb" id="address" name="address">
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="Chkout_TbRow">
+
+                                                    <div class="CkotPropRow">
+                                                        <div class="Chkout_TbRTite">עיר</div>
+
+                                                        <input type="text" class="Chkout_tb" id="city" name="city">
+
+                                                    </div>
+                                                </div>
+                                                <div class="Chkout_TbRow">
+
+                                                    <div class="CkotPropRow">
+                                                        <div class="Chkout_TbRTite">הערות<br />לכתובת</div>
+                                                        <textarea class="Chkout_tb" id="ship_notes" name="ship_notes"></textarea>
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div class="B">
+                                                  
+                                                    <div class="B" >
+                                                        <div class="Chkout_TbRow">
+
+                                                            <div class="CkotPropRow">
+                                                                <div class="Chkout_TbRTite">כינוי?</div>
+
+                                                                <input type="text" class="Chkout_tb" name="Address_nick" id="Address_nick" placeholder="למשל 'בית'.." onclick="this.value='';document.getElementById('Address_remember').checked=true;">
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="B">
+                                                            <div class="regErrMsg2" id="AddAddressErrDiv" style="float:right"></div>
+                                                                <button type="button" class="infUpdateBtn" onclick="AjaxActions('AddAddress', '', 'MainLoader', 'AddAddressForm');">✔</button>
+                                                            <button type="button" class="infUpdateBtn" style="background-color:var(--variable-collection-light-green);" onclick="Accordionize('AccAddAress');FixAccordion('Acc_MemberAddress');"> <img class="infCancelBtn" src="~/images/x.png" /></button>
+                                                            
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                        </form>
                                     </div>
 
                                     @foreach(var address in addresses)

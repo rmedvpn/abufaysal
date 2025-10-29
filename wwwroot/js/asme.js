@@ -128,6 +128,7 @@ function AjaxActions(field, value, loader_element, param1, param2, param3, param
         case "CheckRegistrationCode":
         case "SubmitFeedback":
         case "ChangePw":
+        case "AddAddress":
             var form = document.getElementById(param1);
             formData = new FormData(form);
             break;
@@ -298,6 +299,21 @@ function AjaxActions(field, value, loader_element, param1, param2, param3, param
                         document.getElementById('UpdateMemberInfoErrDiv').innerHTML = theRes.replace("!$!", "");
                         FixAccordion('Acc_UpdInf');
 
+                    }
+
+                    break;
+                    
+
+                case "AddAddress":
+                    if (!theRes.startsWith("!$!")) {
+                        Notify(theRes.replace("!$!", ""), 1);
+                        sbload('BottomUp', 'Caller?p1=MemberInfo');
+                    }
+                    else {
+                        document.getElementById('AddAddressErrDiv').innerHTML = theRes.replace("!$!", "");
+                        FixAccordion('AccAddAress');
+                        FixAccordion('Acc_MemberAddress');
+                        
                     }
                   
                     

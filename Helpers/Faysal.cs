@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Globalization;
+using System.Net;
 using System.Reflection;
 using System.Xml.Linq;
 
@@ -1035,14 +1036,15 @@ namespace Faysal.Helpers
             string session_id = Param(context, "value");
             string full_name = Param(context, "full_name");
             string wanum = Param(context, "wanum");
-            string address = Param(context, "address");
-            string city = Param(context, "city");
             string telegram_nick = Param(context, "telegram_nick");
             string order_notes = Param(context, "order_notes");
             
             int address_id = 0; try { address_id = Convert.ToInt32(Param(context, "address_id")); } catch { }
             string ship_phone = Param(context, "ship_phone");
             string ship_name = Param(context, "ship_name");
+            string address = Param(context, "address");
+            string city = Param(context, "city");
+
             string ship_notes = Param(context, "ship_notes");
             string address_nick = Param(context, "address_nick");
             string member_nick = Param(context, "member_nick");
@@ -1386,6 +1388,66 @@ namespace Faysal.Helpers
 
 
             return theHtmlOutput;
+        }
+
+
+        public static string AddAddress(HttpContext context)
+        {
+            System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("he-IL");
+            DateTime local_time = AppFunctions.LocalTime();
+
+            int u_id = WebSecurity.CurrentUserId;
+           
+            string theHtmlOutput = "";
+
+            string address = Param(context, "address");
+            string city = Param(context, "city");
+
+            string ship_notes = Param(context, "ship_notes");
+            string address_nick = Param(context, "address_nick");
+            string disp_address = MaskString(address + " " + city);
+            int address_id = 0;
+            string errMsg = "";
+
+
+            if (String.IsNullOrEmpty(address) )
+            {
+                errMsg += "חובה להזין רחוב!<br>";
+            }
+            if (String.IsNullOrEmpty(city) )
+            {
+                errMsg += "חובה להזין עיר!<br>";
+            }
+            if (String.IsNullOrEmpty(address_nick) )
+            {
+                errMsg += "חובה להזין כינוי לכתובת!<br>";
+            }
+
+
+            if (errMsg == "")
+            {
+                var db = Database.Open("faysal");
+                var sqlSelect = "";
+
+                sqlSelect = "UPDATE Addresses SET is_default=0 WHERE u_id=@0";
+                db.Execute(sqlSelect, u_id);
+
+
+                sqlSelect = "INSERT INTO Addresses(address,city,last_active,ts,u_id,address_notes,address_nick,disp_address,is_default) ";
+                sqlSelect += " VALUES (@0,@1,@2,@3,@4,@5,@6,@7,@8)";
+                db.Execute(sqlSelect, address, city, local_time, local_time, u_id, ship_notes, address_nick, disp_address, 1);
+
+                theHtmlOutput = "הכתובת נשמרה בהצלחה!";
+                db.Close();
+            }
+            else
+            {
+                theHtmlOutput = "!$!" + errMsg;
+            }
+
+
+
+                return theHtmlOutput;
         }
 
 
