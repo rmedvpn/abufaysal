@@ -19,8 +19,8 @@
     var db = Database.Open("faysal");
     var sqlSelect = "";
 
-    sqlSelect = "SELECT TOP(5) order_id,ts,order_status,grand_total FROM ordertracking WHERE u_id=@0 ORDER BY ts DESC";
-    var orders = db.Query(sqlSelect, u_id);
+    sqlSelect = "SELECT id,ts,q,a,likes FROM faq ORDER BY sort_order";
+    var faqs = db.Query(sqlSelect, u_id);
     db.Close();
 }
 
@@ -41,40 +41,35 @@
 
 
 
+            @foreach(var faq in faqs)
+            {
+                <div class="B">
+                    <div class="MainMenuBtn" onclick="Accordionize('faq_@faq.id');">
+                        @faq.q
+                    </div>
+                    <div class="B" style="text-align:center">
+                        <center>
+                            <button class="accordion" id="faq_@faq.id" style="display:none"></button>
+
+                            <div class="panel" style="width:90%;padding:0">
+
+                                <div class="PropItemQuanMenu" style="padding:10px;">
+                                    @faq.a
+                                </div>
 
 
-            <div class="B">
-                <div class="MainMenuBtn" onclick="PageLoad('ORDERS');controller.close('BottomUp');">היסטוריית הזמנות
-                    <span class="MainMenuIcon">&gt;</span>
 
+                            </div>
+
+                        </center>
+
+                    </div>
                 </div>
-            </div>
 
-            <div class="B">
-                <div class="MainMenuBtn" onclick="PageLoad('ORDERS');controller.close('BottomUp');">שינוי סיסמא
-                    <span class="MainMenuIcon">&gt;</span>
+            }
 
-                </div>
-            </div>
-
-
-
-            <div class="B">
-                <div class="MainMenuBtn" onclick="sbload('BottomUp','Caller?p1=MemberInfo');">
-                    עדכון פרטים
-                    <img class="MainMenuIcon" src="~/images/members.png" />
-                </div>
-            </div>
-
-
-
-            <div class="B">
-                <div class="MainMenuBtn" onclick="PageLoad('ORDERS');">הכתובות שלי 
-                    <span class="MainMenuIcon">?</span>
-                </div>
-            </div>
-
-
+           
+     
             <div class="B">
                 <div class="MainMenuCloseBtn" onclick="controller.open('MainMenu'); ">סגירת תפריט
                     <img class="MainMenuIcon" src="~/images/x.png" />
