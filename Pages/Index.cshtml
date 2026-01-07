@@ -3,7 +3,7 @@
 @inject IHttpContextAccessor HttpContextAccessor
 
 @{
-    if (!WebSecurity.IsAuthenticated) { Response.Redirect("/Login"); }
+   // if (!WebSecurity.IsAuthenticated) { Response.Redirect("/Login"); }
     string username = WebSecurity.CurrentUserName;
     int u_id = WebSecurity.CurrentUserId;
     var db = Database.Open("faysal");
@@ -22,11 +22,24 @@
     <div class="container" >
         <center>
             <div class="top_spacer"></div>
-            <div class="mainGreet">
-                שלום @member_nick
-                <div class="LogOffBtn" onclick="AjaxActions('Logout');">התנתקות</div>
 
-            </div>
+            @if (u_id > 0)
+            {
+                <div class="mainGreet">
+                    שלום @member_nick
+                    <div class="LogOffBtn" onclick="AjaxActions('Logout');">התנתקות</div>
+
+                </div>
+            }
+            else
+            {
+                <div class="mainGreet">
+                    שלום אורח.ת!
+                    <div class="LogOffBtn" onclick="window.location.href='/Login'">התחברות</div>
+
+                </div>
+            }
+
             <img class="logo" style="margin:5px;" src="images/newlogo.png" />
             <div class="HomeSlogan">פייסלים פרימיום
                 <div class="HomeSubSlogan">בעבודת יד ובהתאמה אישית</div>

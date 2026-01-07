@@ -88,7 +88,7 @@ function UserTrack() {
 
                 //Do something about logout?
                 //alert('bye');
-                window.location.href = "/Login";
+              //  window.location.href = "/Login";
             }
 
             //  console.log('UserTrack ');

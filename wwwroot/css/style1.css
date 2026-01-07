@@ -79,7 +79,7 @@ input, textarea, select { /*-moz-appearance: none; -webkit-appearance: none;*/
 
 .container {
     max-width: 450px;
-    min-width: 400px;
+    min-width: 380px;
     margin: 0 ;
     padding: 0;
 }
@@ -1617,6 +1617,7 @@ div.LogOffBtn{
     margin:0;
     overflow:auto;
     font-weight:normal;
+    cursor:pointer;
 }
 div.OrderStatusInfoDiv {
     font-size: 20px;

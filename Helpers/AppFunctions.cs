@@ -27,13 +27,13 @@ namespace Faysal.Helpers
             _connectionString = configuration.GetConnectionString("faysal");
             _httpContextAccessor = httpContextAccessor;
         }
+
         public static string Clean(string s)
         {
             s = (s ?? "").Trim();
             // remove common zero-width marks (LRM/RLM)
             return s.Replace("\u200E", "").Replace("\u200F", "");
         }
-
 
         public static void DoLogin(int u_id)
         {
@@ -50,6 +50,7 @@ namespace Faysal.Helpers
             DoLogout(WebSecurity.CurrentUserId);
             return "✌";
         }
+
         public static void DoLogout(int u_id)
         {
             var db = Database.Open("faysal");
@@ -75,7 +76,6 @@ namespace Faysal.Helpers
 
             return nick;
         }
-
 
         public static bool ValidateEmail(string input)
         {
@@ -140,7 +140,6 @@ namespace Faysal.Helpers
             }
         }
 
-
         public static bool ValidatePhone(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -186,6 +185,7 @@ namespace Faysal.Helpers
 
             return true;
         }
+
         public static bool IsValidUsername(string username)
         {
             if (string.IsNullOrWhiteSpace(username))
@@ -208,7 +208,6 @@ namespace Faysal.Helpers
 
             return true;
         }
-
 
         public static string GetAppProperty(string property)
         {
